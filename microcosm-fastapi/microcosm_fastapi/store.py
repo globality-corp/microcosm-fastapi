@@ -15,7 +15,7 @@ from contextlib import contextmanager
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
-from microcosm_postgres.context import SessionContext
+from microcosm_fastapi.context import SessionContext
 from microcosm_postgres.diff import Version
 from microcosm_postgres.errors import (
     DuplicateModelError,
@@ -52,6 +52,7 @@ class Store:
 
     @property
     def session(self):
+        print("Session", SessionContext.session)
         return SessionContext.session
 
     def new_object_id(self):

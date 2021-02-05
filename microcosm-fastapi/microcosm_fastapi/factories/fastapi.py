@@ -1,6 +1,5 @@
 from microcosm.api import defaults, typed
 from fastapi import FastAPI
-from microcosm_postgres.context import SessionContext
 
 
 @defaults(

@@ -1,69 +1,35 @@
-from databases import Database
-from microcosm_postgres.factories.engine import choose_uri
-from microcosm_postgres.context import SessionContext
+from microcosm_postgres.factories.engine import choose_uri, choose_args
+from microcosm_fastapi.context import SessionContext
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession
 
-class SpecialSelector:
-    def __init__(self, raw_select, database):
-        self.raw_select = raw_select
-        self.database = database
+def make_engine(metadata, config):
+    uri = choose_uri(metadata, config.postgres)
+    args = choose_args(metadata, config.postgres)
+    return create_async_engine(
+        uri,
+        **args,
+    )
 
-    def filter(self, *args, **kwargs):
-        if len(args) == 0 and len(kwargs) == 0:
-            return SpecialSelector(
-                self.raw_select,
-                database=self.database
-            )
-
-        return SpecialSelector(
-            self.raw_select.where(*args, **kwargs),
-            database=self.database
-        )
-
-    async def all(self):
-        return await self.database.fetch_all(query=self.raw_select)
-
-    async def count(self):
-        return await self.database.fetch_all(query=self.raw_select.count())
-
-    def __getattr__(self, attr):
-        # TODO: Add function call
-        # Proxy other requests to the internal raw selector
-        return SpecialSelector(
-            getattr(self.raw_select, attr),
-            database=self.database
-        )
-
-    def __call__(self, *args, **kwargs):
-        return SpecialSelector(
-            self.raw_select(*args, **kwargs),
-            database=self.database
-        )
-
-
-class SpecialSession:
-    def __init__(self, database):
-        self.database = database
-
-    def query(self, obj):
-        print("DIR", dir(obj.__table__.select()))
-        return SpecialSelector(obj.__table__.select(), self.database)
-
-    #Pizza.__table__
 
 def configure_postgres(graph):
     # TODO: Refactor into separate config
     # https://www.encode.io/databases/database_queries/
     #SessionContext.session = SpecialSession()
 
-    database_uri = choose_uri(graph.metadata, graph.config.postgres)
-    database = Database(database_uri)
+    engine = make_engine(graph.metadata, graph.config)
 
-    SessionContext.session = SpecialSession(database)
+    #SessionContext.session = SpecialSession(database)
 
     @graph.app.on_event("startup")
     async def startup():
-        await database.connect()
+        print("STARTUP")
+        SessionContext.session = AsyncSession(engine)
+        print("Value", SessionContext.session)
+       #await database.connect()
 
-    @graph.app.on_event("shutdown")
-    async def shutdown():
-        await database.disconnect()
+    #@graph.app.on_event("shutdown")
+    #async def shutdown():
+    #    await database.disconnect()
+
+    return engine
