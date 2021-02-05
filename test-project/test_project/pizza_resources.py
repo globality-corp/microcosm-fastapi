@@ -11,4 +11,4 @@ class NewPizzaSchema(BaseModel):
 
 class PizzaSchema(NewPizzaSchema):
     id: UUID
-    random_topping: str
+    price: float

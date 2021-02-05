@@ -41,7 +41,6 @@ class Store:
 
     @property
     def session(self):
-        print("Session", SessionContext.session)
         return SessionContext.session
 
     def new_object_id(self):
@@ -159,7 +158,6 @@ class Store:
         :param offset: pagination offset, if any
         :param limit: pagination limit, if any
         """
-        print("RUN THIS")
         query = self._query(*criterion)
         query = self._order_by(query, **kwargs)
         query = self._where(query, **kwargs)
@@ -170,7 +168,7 @@ class Store:
         return [response[0] for response in results.all()]
 
     @postgres_metric_timing(action="search_first")
-    def search_first(self, *criterion, **kwargs):
+    async def search_first(self, *criterion, **kwargs):
         """
         Returns the first match based on criteria or None.
         """
@@ -179,7 +177,9 @@ class Store:
         query = self._where(query, **kwargs)
         # NB: pagination must go last
         query = self._paginate(query, **kwargs)
-        return query.first()
+
+        results = await self.session.execute(query)
+        return results.first()[0]
 
     def expunge(self, instance):
         return self.session.expunge(instance)

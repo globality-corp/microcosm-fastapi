@@ -17,6 +17,7 @@ def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callab
         # and user definitions, which we add next
         configuration = dict(
             operation_id=operation.name,
+            status_code=operation.default_code,
         )
 
         # If the user's function signature has provided a return type via a python

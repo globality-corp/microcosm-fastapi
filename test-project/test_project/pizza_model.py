@@ -7,5 +7,5 @@ class Pizza(EntityMixin, Model):
     toppings = Column(String(), nullable=True)
 
     @property
-    def random_topping(self):
-        return "cheese"
+    def price(self):
+        return 5.0

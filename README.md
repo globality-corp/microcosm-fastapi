@@ -11,3 +11,12 @@ createuser test_project
 createdb -O test_project test_project_db
 createdb -O test_project test_project_test_db
 ```
+
+## Running Tests
+
+```
+pip install pytest pytest-cov pytest-asyncio
+
+cd test-project
+pytest test_project
+```

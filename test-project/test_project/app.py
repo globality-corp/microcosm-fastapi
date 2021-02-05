@@ -26,6 +26,7 @@ def create_app(debug=False, testing=False, model_only=False):
         "postgres",
         "pizza_store",
         "fast_postgres",
+        "session_manager",
     )
 
     if not model_only:
