@@ -8,6 +8,7 @@ from microcosm_fastapi.naming import name_for
 class Namespace:
     subject: Any
     version: Optional[str] = None
+    prefix: str = "api"
 
     def path_for_operation(self, operation: Operation):
         """
@@ -30,7 +31,7 @@ class Namespace:
     def path_prefix(self):
         return [
             part
-            for part in [self.version, self.subject_name]
+            for part in [self.prefix, self.version, self.subject_name]
             if part
         ]
 

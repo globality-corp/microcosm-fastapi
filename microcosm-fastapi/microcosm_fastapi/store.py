@@ -1,16 +1,4 @@
-"""
-Abstraction layer for persistence operations.
-As much as `SQLAlchemy` provides a great deal of power, overuse of its features
-creates dangerous coupling within applications. The two worst violations are:
- a. Using models directly to perform persistence operations causes persistence code
-    to permeate all layers of the application, making it hard to change relationships
-    and to write generic service logic in terms of a uniform persistence interface.
- b. Using explicit relationships between models makes it harder to migrate responsiblity
-    for one side of the relationship to different services.
-Instead, persistence operations should pass through a `Store` layer and should obey
-CRUD conventions as much as possible.
-"""
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError, NoResultFound
@@ -62,14 +50,14 @@ class Store:
         """
         return new_object_id()
 
-    @contextmanager
-    def flushing(self):
+    @asynccontextmanager
+    async def flushing(self):
         """
         Flush the current session, handling common errors.
         """
         try:
             yield
-            self.session.flush()
+            await self.session.flush()
         except (FlushError, IntegrityError) as error:
             error_message = str(error)
             # There ought to be a cleaner way to capture this condition
@@ -87,11 +75,11 @@ class Store:
                 raise ModelIntegrityError(error)
 
     @postgres_metric_timing(action="create")
-    def create(self, instance):
+    async def create(self, instance):
         """
         Create a new model instance.
         """
-        with self.flushing():
+        async with self.flushing():
             if instance.id is None:
                 instance.id = self.new_object_id()
             self.session.add(instance)
@@ -109,49 +97,49 @@ class Store:
         )
 
     @postgres_metric_timing(action="update")
-    def update(self, identifier, new_instance):
+    async def update(self, identifier, new_instance):
         """
         Update an existing model with a new one.
         :raises `ModelNotFoundError` if there is no existing model
         """
-        with self.flushing():
+        async with self.flushing():
             instance = self.retrieve(identifier)
             self.merge(instance, new_instance)
             instance.updated_at = instance.new_timestamp()
         return instance
 
     @postgres_metric_timing(action="update_with_diff")
-    def update_with_diff(self, identifier, new_instance):
+    async def update_with_diff(self, identifier, new_instance):
         """
         Update an existing model with a new one.
         :raises `ModelNotFoundError` if there is no existing model
         """
-        with self.flushing():
-            instance = self.retrieve(identifier)
+        async with self.flushing():
+            instance = await self.retrieve(identifier)
             before = Version(instance)
             self.merge(instance, new_instance)
             instance.updated_at = instance.new_timestamp()
             after = Version(instance)
         return instance, before - after
 
-    def replace(self, identifier, new_instance):
+    async def replace(self, identifier, new_instance):
         """
         Create or update a model.
         """
         try:
             # Note that `self.update()` ultimately calls merge, which will not enforce
             # a strict replacement; absent fields will default to the current values.
-            return self.update(identifier, new_instance)
+            return await self.update(identifier, new_instance)
         except ModelNotFoundError:
-            return self.create(new_instance)
+            return await self.create(new_instance)
 
     @postgres_metric_timing(action="delete")
-    def delete(self, identifier):
+    async def delete(self, identifier):
         """
         Delete a model by primary key.
         :raises `ModelNotFoundError` if the row cannot be deleted.
         """
-        return self._delete(self.model_class.id == identifier)
+        return await self._delete(self.model_class.id == identifier)
 
     @postgres_metric_timing(action="count")
     async def count(self, *criterion, **kwargs):
@@ -276,8 +264,3 @@ class Store:
             query = query.where(*criterion)
 
         return query
-        #return self.session.query(
-        #    self.model_class
-        #).filter(
-        #    *criterion
-        #)

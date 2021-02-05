@@ -1,4 +1,4 @@
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 from functools import wraps
 
 #from microcosm_postgres.operations import new_session, recreate_all
@@ -48,18 +48,18 @@ class SessionContext:
         self.close()
 
 
-@contextmanager
-def transaction(commit=True):
+@asynccontextmanager
+async def transaction(commit=True):
     """
     Wrap a context with a commit/rollback.
     """
     try:
         yield SessionContext.session
         if commit:
-            SessionContext.session.commit()
+            await SessionContext.session.commit()
     except Exception:
         if SessionContext.session:
-            SessionContext.session.rollback()
+            await SessionContext.session.rollback()
         raise
 
 
@@ -68,9 +68,9 @@ def transactional(func):
     Decorate a function call with a commit/rollback and pass the session as the first arg.
     """
     @wraps(func)
-    def wrapper(*args, **kwargs):
-        with transaction():
-            return func(*args, **kwargs)
+    async def wrapper(*args, **kwargs):
+        async with transaction():
+            return await func(*args, **kwargs)
     return wrapper
 
 
@@ -80,8 +80,8 @@ def maybe_transactional(func):
     Useful for dry-run style operations.
     """
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         commit = kwargs.get("commit", True)
-        with transaction(commit=commit):
-            return func(*args, **kwargs)
+        async with transaction(commit=commit):
+            return await func(*args, **kwargs)
     return wrapper
