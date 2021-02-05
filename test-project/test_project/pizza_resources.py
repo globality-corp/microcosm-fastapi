@@ -12,6 +12,3 @@ class NewPizzaSchema(BaseModel):
 
 class PizzaSchema(NewPizzaSchema):
     id: UUID
-
-    class Config:
-        orm_mode = True

@@ -6,6 +6,7 @@ from microcosm_fastapi.conventions.crud import configure_crud
 from test_project.pizza_model import Pizza
 from microcosm_postgres.context import transactional
 from test_project.pizza_resources import NewPizzaSchema, PizzaSchema
+from microcosm_fastapi.conventions.schemas import SearchSchema
 from uuid import UUID
 from typing import List
 
@@ -27,12 +28,15 @@ class PizzaController(CRUDStoreAdapter):
         }
         configure_crud(graph, ns, mappings)
 
-    def retrieve(self, pizza_id: UUID) -> PizzaSchema:
+    async def retrieve(self, pizza_id: UUID) -> PizzaSchema:
+        #return async super()._retrieve(pizza_id)
         return super()._retrieve(pizza_id)
 
-    async def search(self, limit: int = 20, offset: int = 0) -> List[PizzaSchema]:
+    async def search(self, limit: int = 20, offset: int = 0) -> SearchSchema(PizzaSchema):
         #return super()._search(limit=limit, offset=offset)
         values = await super()._search(limit=limit, offset=offset)
+        print(values)
+        return values
         print("ITEM", values["items"][0])
         return values["items"]
         #values = await self.store.session.query(Pizza).filter().offset(10).all()
