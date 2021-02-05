@@ -24,6 +24,7 @@ setup(
         "microcosm>=3.0.0",
         "fastapi",
         "uvicorn",
+        "databases[postgresql]",
     ],
     setup_requires=[
         "nose>=1.3.7",
@@ -33,6 +34,7 @@ setup(
     entry_points={
         "microcosm.factories": [
             "app = microcosm_fastapi.factories.fastapi:configure_fastapi",
+            "fast_postgres = microcosm_fastapi.factories.postgres:configure_postgres",
         ],
     },
     tests_require=[

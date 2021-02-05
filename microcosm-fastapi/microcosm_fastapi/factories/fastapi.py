@@ -1,11 +1,14 @@
-from microcosm.api import defaults
+from microcosm.api import defaults, typed
 from fastapi import FastAPI
+from microcosm_postgres.context import SessionContext
 
 
 @defaults(
-    port=5000,
+    port=typed(int, default_value=5000),
+    host="127.0.0.1",
     debug=True,
 )
 def configure_fastapi(graph):
-    app = FastAPI(port=graph.app.port, debug=graph.app.debug)
+    app = FastAPI(debug=graph.config.app.debug)
+
     return app

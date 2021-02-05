@@ -1,0 +1,38 @@
+from dataclasses import dataclass
+from typing import Any, Optional
+from microcosm_fastapi.operations import Operation, OperationType
+from microcosm_fastapi.naming import name_for
+
+
+@dataclass
+class Namespace:
+    subject: Any
+    version: Optional[str] = None
+
+    def path_for_operation(self, operation: Operation):
+        """
+        Converts a defined operation (either a `NODE_PATTERN` or `EDGE_PATTERN`)
+        into a convention-based URL that can be called on the server.
+
+        (GET, NODE_PATTERN) -> v1/pizza
+        (GET, EDGE_PATTERN) -> v1/pizza/pizza_id
+
+        """
+        if operation.value.pattern == OperationType.NODE_PATTERN:
+            return "/" + "/".join(self.path_prefix)
+        elif operation.value.pattern == OperationType.EDGE_PATTERN:
+            return "/" + "/".join(self.path_prefix + [f"{self.subject_name}_id"])
+        else:
+            raise ValueError()
+
+    @property
+    def path_prefix(self):
+        return [
+            part
+            for part in [self.version, self.subject_name]
+            if part
+        ]
+
+    @property
+    def subject_name(self):
+        return name_for(self.subject)

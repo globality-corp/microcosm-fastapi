@@ -8,5 +8,8 @@ def main(graph):
     ```gunicorn example:app -w 4 -k uvicorn.workers.UvicornWorker```
     """
     run(
-        graph.app, host="127.0.0.1", port=5000, log_level="info"
+        graph.app,
+        host=graph.config.app.host,
+        port=graph.config.app.port,
+        log_level="info",
     )
