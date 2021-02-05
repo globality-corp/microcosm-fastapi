@@ -2,11 +2,15 @@ from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import Operation
 from typing import Callable, Dict
 
+
 def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callable]):
     """
-    Mounts the given mappings into the graph URL.
+    Mounts the supported namespace operations into the FastAPI graph, following our
+    conventions for setting up URL patterns.
 
-    :param mappings: Dict[]
+    :param mappings: Dict[
+        Operation: function
+    ]
 
     """
     for operation, fn in mappings.items():
@@ -25,6 +29,7 @@ def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callab
         if "return" in fn.__annotations__:
             configuration["response_model"] = fn.__annotations__["return"]
 
+        # Construct the unique path for this operation & object namespace
         url_path = namespace.path_for_operation(operation)
 
         method_mapping = {

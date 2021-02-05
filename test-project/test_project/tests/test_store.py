@@ -5,6 +5,7 @@ import pytest
 from microcosm_postgres.operations import recreate_all
 from unittest.mock import patch
 from microcosm_postgres.identifiers import new_object_id
+from microcosm_postgres.errors import ModelNotFoundError
 
 class TestStore:
     def setup(self):
@@ -62,3 +63,19 @@ class TestStore:
         pizza_object = await self.graph.pizza_store.retrieve(self.pizza_id)
         assert pizza_object.id == self.pizza_id
         assert pizza_object.toppings == "cheese"
+
+    @pytest.mark.asyncio
+    async def test_delete(self):
+        with patch.object(self.graph.pizza_store, "new_object_id") as mocked:
+            mocked.return_value = self.pizza_id
+
+            async with transaction():
+                new_pizza = Pizza(toppings="cheese")
+                await self.graph.pizza_store.create(new_pizza)
+
+        await self.graph.pizza_store.retrieve(self.pizza_id)
+
+        await self.graph.pizza_store.delete(self.pizza_id)
+
+        with pytest.raises(ModelNotFoundError):
+            await self.graph.pizza_store.retrieve(self.pizza_id)

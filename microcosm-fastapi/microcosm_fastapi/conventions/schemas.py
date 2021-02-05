@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from typing import List, Any
-from functools import wraps
 
 def SearchSchema(item_class):
     class _SearchSchema(BaseModel):

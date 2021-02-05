@@ -20,9 +20,9 @@ class SessionContext:
         SessionContext.session = AsyncSession(self.graph.fast_postgres)
         return self
 
-    def close(self):
+    async def close(self):
         if SessionContext.session:
-            SessionContext.session.close()
+            await SessionContext.session.close()
             SessionContext.session = None
 
     def recreate_all(self):

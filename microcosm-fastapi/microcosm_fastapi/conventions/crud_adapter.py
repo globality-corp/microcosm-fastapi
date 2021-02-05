@@ -26,10 +26,20 @@ class CRUDStoreAdapter:
         model = self.store.model_class(id=identifier, **body.dict())
         return await self.store.replace(identifier, model)
 
-    def _retrieve(self, identifier: UUID):
-        return self.store.retrieve(identifier)
+    async def _retrieve(self, identifier: UUID):
+        return await self.store.retrieve(identifier)
 
     async def _search(self, offset: int, limit: int, **kwargs):
+        """
+        The search endpoint expects to be serialized by
+        `microcosm_fastapi.conventions.schemas:SearchSchema`
+
+        You can do this via a route definition that looks like:
+
+        def search(self, offset: int, limit: int) -> SearchSchema(PizzaSchema):
+            pass
+
+        """
         items = await self.store.search(offset=offset, limit=limit, **kwargs)
         count = await self.store.count(**kwargs)
         return dict(
