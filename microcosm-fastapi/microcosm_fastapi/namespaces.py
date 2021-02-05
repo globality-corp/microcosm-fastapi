@@ -18,10 +18,11 @@ class Namespace:
         (GET, EDGE_PATTERN) -> v1/pizza/pizza_id
 
         """
-        if operation.value.pattern == OperationType.NODE_PATTERN:
+        if operation.pattern == OperationType.NODE_PATTERN:
             return "/" + "/".join(self.path_prefix)
-        elif operation.value.pattern == OperationType.EDGE_PATTERN:
-            return "/" + "/".join(self.path_prefix + [f"{self.subject_name}_id"])
+        elif operation.pattern == OperationType.EDGE_PATTERN:
+            object_id_key = "{" + f"{self.subject_name}_id" + "}"
+            return "/" + "/".join(self.path_prefix + [object_id_key])
         else:
             raise ValueError()
 

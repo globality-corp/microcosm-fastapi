@@ -10,13 +10,29 @@ def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callab
 
     """
     for operation, fn in mappings.items():
-        optional_configuration = dict()
+        operation = operation.value
+
+        # Configuration params for this swagger endpoint
+        # Some are generated dynamically depending on the specific configurations
+        # and user definitions, which we add next
+        configuration = dict(
+            operation_id=operation.name,
+        )
 
         # If the user's function signature has provided a return type via a python
         # annotation, they want to serialize their response with this type
         if "return" in fn.__annotations__:
-            optional_configuration["response_model"] = fn.__annotations__["return"]
+            configuration["response_model"] = fn.__annotations__["return"]
 
         url_path = namespace.path_for_operation(operation)
-        print("MOUNT", operation, url_path)
-        graph.app.get(url_path, **optional_configuration)(fn)
+
+        method_mapping = {
+            "GET": graph.app.get,
+            "POST": graph.app.post,
+            "PATCH": graph.app.patch,
+            "DELETE": graph.app.delete,
+            "OPTIONS": graph.app.options,
+            "HEAD": graph.app.head,
+            "TRACE": graph.app.trace,
+        }
+        method_mapping[operation.method](url_path, **configuration)(fn)

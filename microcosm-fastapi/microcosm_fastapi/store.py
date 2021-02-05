@@ -233,13 +233,15 @@ class Store:
 
         return query
 
-    def _retrieve(self, *criterion):
+    async def _retrieve(self, *criterion):
         """
         Retrieve a model by some criteria.
         :raises `ModelNotFoundError` if the row cannot be deleted.
         """
         try:
-            return self._query(*criterion).one()
+            query = self._query(*criterion)
+            results = await self.session.execute(query)
+            return results.one()[0]
         except NoResultFound as error:
             raise ModelNotFoundError(
                 "{} not found".format(

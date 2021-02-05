@@ -29,8 +29,7 @@ class PizzaController(CRUDStoreAdapter):
         configure_crud(graph, ns, mappings)
 
     async def retrieve(self, pizza_id: UUID) -> PizzaSchema:
-        #return async super()._retrieve(pizza_id)
-        return super()._retrieve(pizza_id)
+        return await super()._retrieve(pizza_id)
 
     async def search(self, limit: int = 20, offset: int = 0) -> SearchSchema(PizzaSchema):
         #return super()._search(limit=limit, offset=offset)
