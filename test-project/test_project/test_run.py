@@ -19,6 +19,10 @@ def add_to_graph():
         **read_item.__annotations__
     }
 
+    has_dest_ret = 'return' in dest.__annotations__
+    if has_dest_ret:
+        dest_ret = dest.__annotations__['return']
+
     app.get("/items/{item_id}")(read_item)
 
 

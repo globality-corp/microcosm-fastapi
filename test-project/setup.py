@@ -17,6 +17,7 @@ setup(
     entry_points={
         "console_scripts": [
             "runserver = test_project.main:runserver",
+            "createall = test_project.main:createall",
         ],
     },
 )
