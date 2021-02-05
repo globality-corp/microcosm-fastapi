@@ -1,9 +1,5 @@
 from contextlib import asynccontextmanager
 
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm.exc import FlushError, NoResultFound
-
-from microcosm_fastapi.context import SessionContext
 from microcosm_postgres.diff import Version
 from microcosm_postgres.errors import (
     DuplicateModelError,
@@ -15,6 +11,10 @@ from microcosm_postgres.errors import (
 from microcosm_postgres.identifiers import new_object_id
 from microcosm_postgres.metrics import postgres_metric_timing
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import FlushError, NoResultFound
+
+from microcosm_fastapi.context import SessionContext
 
 
 class Store:

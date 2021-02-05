@@ -1,14 +1,16 @@
+from typing import List
+from uuid import UUID
+
 from microcosm.api import binding
+from microcosm_fastapi.context import transactional
+from microcosm_fastapi.conventions.crud import configure_crud
+from microcosm_fastapi.conventions.crud_adapter import CRUDStoreAdapter
+from microcosm_fastapi.conventions.schemas import SearchSchema
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import Operation
-from microcosm_fastapi.conventions.crud_adapter import CRUDStoreAdapter
-from microcosm_fastapi.conventions.crud import configure_crud
+
 from test_project.pizza_model import Pizza
-from microcosm_fastapi.context import transactional
 from test_project.pizza_resources import NewPizzaSchema, PizzaSchema
-from microcosm_fastapi.conventions.schemas import SearchSchema
-from uuid import UUID
-from typing import List
 
 
 @binding("pizza_route")

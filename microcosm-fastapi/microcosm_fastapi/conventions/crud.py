@@ -1,6 +1,7 @@
+from typing import Callable, Dict
+
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import Operation
-from typing import Callable, Dict
 
 
 def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callable]):

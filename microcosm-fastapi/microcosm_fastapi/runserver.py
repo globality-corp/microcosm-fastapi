@@ -1,5 +1,6 @@
 from uvicorn import run
 
+
 def main(graph):
     """
     Launch the local debugging server

@@ -1,11 +1,14 @@
+from unittest.mock import patch
+
+import pytest
+from microcosm_fastapi.context import SessionContext, transaction
+from microcosm_postgres.errors import ModelNotFoundError
+from microcosm_postgres.identifiers import new_object_id
+from microcosm_postgres.operations import recreate_all
+
 from test_project.app import create_app
 from test_project.pizza_model import Pizza
-from microcosm_fastapi.context import transaction, SessionContext
-import pytest
-from microcosm_postgres.operations import recreate_all
-from unittest.mock import patch
-from microcosm_postgres.identifiers import new_object_id
-from microcosm_postgres.errors import ModelNotFoundError
+
 
 class TestStore:
     def setup(self):

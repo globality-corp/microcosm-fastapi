@@ -5,6 +5,7 @@ from inspect import isclass
 
 from inflection import underscore
 
+
 def name_for(obj):
     """
     Get a standard name for a given object, using python's snake case notation.

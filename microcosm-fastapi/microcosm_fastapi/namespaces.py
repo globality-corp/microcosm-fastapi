@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from typing import Any, Optional
-from microcosm_fastapi.operations import Operation, OperationType
+
 from microcosm_fastapi.naming import name_for
+from microcosm_fastapi.operations import Operation, OperationType
 
 
 @dataclass

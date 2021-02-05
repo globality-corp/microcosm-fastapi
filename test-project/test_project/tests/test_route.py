@@ -1,14 +1,16 @@
+from asyncio import get_event_loop
+from unittest.mock import ANY, patch
+
+import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from test_project.pizza_model import Pizza
-from test_project.app import create_app
-from microcosm_postgres.operations import recreate_all
-from unittest.mock import patch
-import pytest
-from microcosm_fastapi.context import transaction, SessionContext
+from microcosm_fastapi.context import SessionContext, transaction
 from microcosm_postgres.identifiers import new_object_id
-from asyncio import get_event_loop
-from unittest.mock import ANY
+from microcosm_postgres.operations import recreate_all
+
+from test_project.app import create_app
+from test_project.pizza_model import Pizza
+
 
 class TestRoute:
     def setup(self):

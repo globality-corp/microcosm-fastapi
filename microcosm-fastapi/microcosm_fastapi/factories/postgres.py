@@ -1,7 +1,7 @@
-from microcosm_postgres.factories.engine import choose_uri, choose_args
+from microcosm_postgres.factories.engine import choose_args, choose_uri
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+
 from microcosm_fastapi.context import SessionContext
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 def make_engine(metadata, config):

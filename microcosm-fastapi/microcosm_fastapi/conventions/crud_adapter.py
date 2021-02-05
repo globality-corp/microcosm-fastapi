@@ -1,8 +1,14 @@
-from microcosm_fastapi.naming import name_for
-from typing import Dict, Any, Callable
-from pydantic import BaseModel
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Optional,
+)
 from uuid import UUID
-from typing import Optional
+
+from pydantic import BaseModel
+
+from microcosm_fastapi.naming import name_for
 
 
 class CRUDStoreAdapter:

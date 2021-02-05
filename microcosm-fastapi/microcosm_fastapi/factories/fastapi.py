@@ -1,5 +1,5 @@
-from microcosm.api import defaults, typed
 from fastapi import FastAPI
+from microcosm.api import defaults, typed
 
 
 @defaults(
