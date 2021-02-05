@@ -1,6 +1,15 @@
-from databases import Database
-from microcosm_postgres.factories.engine import choose_uri
-from microcosm_postgres.context import SessionContext
+from microcosm_postgres.factories.engine import choose_uri, choose_args
+from microcosm_fastapi.context import SessionContext
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession
+
+def make_engine(metadata, config):
+    uri = choose_uri(metadata, config.postgres)
+    args = choose_args(metadata, config.postgres)
+    return create_async_engine(
+        uri,
+        **args,
+    )
 
 
 def configure_postgres(graph):
@@ -8,15 +17,19 @@ def configure_postgres(graph):
     # https://www.encode.io/databases/database_queries/
     #SessionContext.session = SpecialSession()
 
-    database_uri = choose_uri(graph.metadata, graph.config.postgres)
-    database = Database(database_uri)
+    engine = make_engine(graph.metadata, graph.config)
+
+    #SessionContext.session = SpecialSession(database)
 
     @graph.app.on_event("startup")
     async def startup():
-        await database.connect()
+        print("STARTUP")
+        SessionContext.session = AsyncSession(engine)
+        print("Value", SessionContext.session)
+       #await database.connect()
 
-    @graph.app.on_event("shutdown")
-    async def shutdown():
-        await database.disconnect()
+    #@graph.app.on_event("shutdown")
+    #async def shutdown():
+    #    await database.disconnect()
 
-    return database
+    return engine

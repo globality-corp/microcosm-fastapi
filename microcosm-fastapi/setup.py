@@ -24,10 +24,9 @@ setup(
         "microcosm>=3.0.0",
         "fastapi",
         "uvicorn",
-        "databases[postgresql]",
-        #"SQLAlchemy==1.4.0b2",
+        "SQLAlchemy==1.4.0b2",
         # Until 4.1 support is merged into mainline master
-        #"sqlalchemy-utils @ git+https://github.com/slipovenko/sqlalchemy-utils.git@bb77995f7454931b5cdf3acab4fbb82602d8c16c",
+        "sqlalchemy-utils @ git+https://github.com/slipovenko/sqlalchemy-utils.git@bb77995f7454931b5cdf3acab4fbb82602d8c16c",
     ],
     setup_requires=[
         "nose>=1.3.7",

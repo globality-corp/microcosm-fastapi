@@ -7,6 +7,7 @@ from test_project.pizza_model import Pizza
 from microcosm_postgres.context import transactional
 from test_project.pizza_resources import NewPizzaSchema, PizzaSchema
 from uuid import UUID
+from typing import List
 
 
 @binding("pizza_route")
@@ -29,10 +30,11 @@ class PizzaController(CRUDStoreAdapter):
     def retrieve(self, pizza_id: UUID) -> PizzaSchema:
         return super()._retrieve(pizza_id)
 
-    async def search(self, limit: int = 20, offset: int = 0):
+    async def search(self, limit: int = 20, offset: int = 0) -> List[PizzaSchema]:
         #return super()._search(limit=limit, offset=offset)
         values = await super()._search(limit=limit, offset=offset)
-        print(values)
+        print("ITEM", values["items"][0])
+        return values["items"]
         #values = await self.store.session.query(Pizza).filter().offset(10).all()
         #print(values)
         return dict(
