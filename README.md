@@ -8,7 +8,7 @@ A bridge between FastAPI and microcosm. Provide state-of-the-art speed of hostin
 - Specify API requests and responses with business-logic typehinting, while following strongly conventioned CRUD operations to access the database
 - Async postgres support using the latest SQLAlchemy 1.4 (still in beta), to support more concurrent client users with fewer CPU blocking requests
 - Automatic generation of interactive documentation, available on localhost:5000/docs when doing development work
-- Secure by default: locally hosted documentation and other fastapi dependencies
+- No telemetry: locally hosted documentation and other fastapi dependencies
 
 ## Migration from microcosm-flask
 
@@ -119,6 +119,8 @@ class PizzaController(CRUDStoreAdapter):
     async def search(self, limit: int = 20, offset: int = 0) -> SearchSchema(PizzaSchema):
         return await super()._search(limit=limit, offset=offset)
 ```
+
+By convention, edge operations (ie. retrieve / patch / etc) will be passed the object UUID of interest automatically by microcosm-fastapi. This keyword argument is expected to be in the format of `{snake_case(namespace object)}_id`. See `retrieve` for an example here. Clients are still expected to typehint this accordingly as a UUID.
 
 ## Test Project
 
