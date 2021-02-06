@@ -8,9 +8,13 @@ from microcosm_fastapi.docs import get_doc_path
 
 
 def configure_docs(graph):
-    # Use locally hosted documentation dependencies for
-    # additional security
-    # https://github.com/tiangolo/fastapi/issues/2518
+    """
+    Use locally hosted documentation dependencies for
+    additional security
+
+    See: https://github.com/tiangolo/fastapi/issues/2518
+
+    """
     graph.app.mount(
         "/static",
         StaticFiles(directory=get_doc_path("static")),
