@@ -24,6 +24,7 @@ setup(
         "microcosm>=3.0.0",
         "fastapi",
         "uvicorn",
+        "aiofiles",
         "SQLAlchemy==1.4.0b2",
         # @piercefreeman 02/05/2021 - pinned until 4.1 support is merged into mainline master
         "sqlalchemy-utils @ git+https://github.com/slipovenko/sqlalchemy-utils.git@bb77995f7454931b5cdf3acab4fbb82602d8c16c",
@@ -36,6 +37,7 @@ setup(
     entry_points={
         "microcosm.factories": [
             "app = microcosm_fastapi.factories.fastapi:configure_fastapi",
+            "docs = microcosm_fastapi.factories.docs:configure_docs",
             "fast_postgres = microcosm_fastapi.factories.postgres:configure_postgres",
             "session_manager = microcosm_fastapi.factories.session_manager:configure_session_manager"
         ],

@@ -22,6 +22,7 @@ def create_app(debug=False, testing=False, model_only=False):
     )
 
     graph.use(
+        "docs",
         "sessionmaker",
         "postgres",
         "pizza_store",

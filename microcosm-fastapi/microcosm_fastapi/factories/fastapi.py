@@ -8,6 +8,14 @@ from microcosm.api import defaults, typed
     debug=True,
 )
 def configure_fastapi(graph):
-    app = FastAPI(debug=graph.config.app.debug)
+    # Docs use 3rd party dependencies by default - if documentation
+    # is desired by client callers, use the `graph.use("docs")` bundled
+    # with microcosm-fastapi. This hook provides a mirror to the default
+    # docs/redocs but while hosted locally.
+    app = FastAPI(
+        debug=graph.config.app.debug,
+        docs_url=None,
+        redoc_url=None,
+    )
 
     return app
