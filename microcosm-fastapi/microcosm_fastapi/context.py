@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
 from functools import wraps
 
-#from microcosm_postgres.operations import new_session, recreate_all
 from microcosm_postgres.operations import recreate_all
 from sqlalchemy.ext.asyncio import AsyncSession
 
