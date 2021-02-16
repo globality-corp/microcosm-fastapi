@@ -20,10 +20,17 @@ class PizzaDaemonHandler(ChainURIHandlerAsync):
     def get_chain(self):
         return ChainAsync(
             assign("pizza.toppings").to("toppings"),
+            self.process_topping_sync,
+            self.process_topping_async,
         )
 
-    async def process_goal(self, toppings):
-        print("Other toppings")
+    def process_topping_sync(self, toppings):
+        return toppings + "_processed"
+
+    async def process_topping_async(self, toppings):
+        if toppings == "pineapple":
+            raise ValueError()
+        return toppings + "_processed"
 
     @property
     def resource_name(self):
