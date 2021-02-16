@@ -28,6 +28,10 @@ setup(
         "SQLAlchemy==1.4.0b2",
         # @piercefreeman 02/05/2021 - pinned until 4.1 support is merged into mainline master
         "sqlalchemy-utils @ git+https://github.com/slipovenko/sqlalchemy-utils.git@bb77995f7454931b5cdf3acab4fbb82602d8c16c",
+        # @piercefreeman 02/16/2021 - required until we refactor async code
+        # into microcosm-postgres and microcosm-pubsub
+        "microcosm-pubsub",
+        "microcosm-postgres",
     ],
     setup_requires=[
         "nose>=1.3.7",
@@ -38,8 +42,9 @@ setup(
         "microcosm.factories": [
             "app = microcosm_fastapi.factories.fastapi:configure_fastapi",
             "docs = microcosm_fastapi.factories.docs:configure_docs",
-            "fast_postgres = microcosm_fastapi.factories.postgres:configure_postgres",
-            "session_manager = microcosm_fastapi.factories.session_manager:configure_session_manager"
+            "postgres_async = microcosm_fastapi.database.postgres:configure_postgres",
+            "session_manager = microcosm_fastapi.database.session_manager:configure_session_manager",
+            "sqs_message_dispatcher_async = microcosm_fastapi.pubsub.dispatcher:SQSMessageDispatcherAsync"
         ],
     },
     tests_require=[

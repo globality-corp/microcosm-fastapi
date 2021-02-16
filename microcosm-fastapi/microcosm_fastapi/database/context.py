@@ -16,7 +16,7 @@ class SessionContext:
         self.expire_on_commit = expire_on_commit
 
     def open(self):
-        SessionContext.session = AsyncSession(self.graph.fast_postgres)
+        SessionContext.session = AsyncSession(self.graph.postgres_async)
         return self
 
     async def close(self):

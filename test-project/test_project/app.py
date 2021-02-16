@@ -26,7 +26,7 @@ def create_app(debug=False, testing=False, model_only=False):
         "sessionmaker",
         "postgres",
         "pizza_store",
-        "fast_postgres",
+        "postgres_async",
         "session_manager",
     )
 
