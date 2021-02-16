@@ -1,6 +1,7 @@
 from microcosm_pubsub.handlers.uri_handler import URIHandler
 from abc import ABCMeta
 from inspect import iscoroutinefunction
+from httpx import get
 
 
 class URIHandlerAsync(URIHandler, metaclass=ABCMeta):
@@ -43,8 +44,7 @@ class URIHandlerAsync(URIHandler, metaclass=ABCMeta):
                 return response
 
         headers = self.get_headers(message)
-        # TODO: Add in async support here
-        response = get(uri, headers=headers)
+        response = await get(uri, headers=headers)
         if response.status_code == codes.not_found and self.nack_if_not_found:
             raise Nack(self.resource_nack_timeout)
         response.raise_for_status()
