@@ -1,4 +1,4 @@
-from microcosm_fastapi.context import SessionContext
+from microcosm_fastapi.database.context import SessionContext
 
 
 def configure_session_manager(graph):

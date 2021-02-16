@@ -14,7 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
-from microcosm_fastapi.context import SessionContext
+from microcosm_fastapi.database.context import SessionContext
 
 
 class Store:

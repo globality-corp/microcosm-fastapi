@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 import pytest
-from microcosm_fastapi.context import SessionContext, transaction
+from microcosm_fastapi.database.context import SessionContext, transaction
 from microcosm_postgres.errors import ModelNotFoundError
 from microcosm_postgres.identifiers import new_object_id
 from microcosm_postgres.operations import recreate_all

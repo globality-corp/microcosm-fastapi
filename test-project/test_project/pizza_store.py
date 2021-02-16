@@ -1,6 +1,5 @@
 from microcosm.api import binding
-#from microcosm_postgres.store import Store
-from microcosm_fastapi.store import Store
+from microcosm_fastapi.database.store import Store
 
 from test_project.pizza_model import Pizza
 

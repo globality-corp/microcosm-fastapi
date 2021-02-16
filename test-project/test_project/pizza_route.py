@@ -2,7 +2,7 @@ from typing import List
 from uuid import UUID
 
 from microcosm.api import binding
-from microcosm_fastapi.context import transactional
+from microcosm_fastapi.database.context import transactional
 from microcosm_fastapi.conventions.crud import configure_crud
 from microcosm_fastapi.conventions.crud_adapter import CRUDStoreAdapter
 from microcosm_fastapi.conventions.schemas import SearchSchema
