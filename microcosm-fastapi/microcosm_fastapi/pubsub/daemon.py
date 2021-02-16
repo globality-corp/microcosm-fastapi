@@ -1,7 +1,7 @@
 from microcosm_pubsub.daemon import ConsumerDaemon
 
 
-class ConsumerDaemon(ConsumerDaemon):
+class ConsumerDaemonAsync(ConsumerDaemon):
     def process(self):
         """
         Lambda Function method that runs only once

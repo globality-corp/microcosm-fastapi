@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
-from microcosm_fastapi.chain import ChainAsync
-from microcosm_fastapi.handlers.uri_handler import URIHandlerAsync
+from microcosm_fastapi.pubsub.chain.chain import ChainAsync
+from microcosm_fastapi.pubsub.handlers.uri_handler import URIHandlerAsync
 
 
 class ChainHandlerAsync(metaclass=ABCMeta):

@@ -1,4 +1,6 @@
 from microcosm_pubsub.result import MessageHandlingResult
+from dataclasses import dataclass
+from microcosm_pubsub.message import SQSMessage
 
 @dataclass
 class MessageHandlingResultAsync(MessageHandlingResult):

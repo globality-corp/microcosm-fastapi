@@ -1,9 +1,9 @@
 from microcosm_pubsub.dispatcher import SQSMessageDispatcher
 from microcosm_pubsub.result import MessageHandlingResultType
-from microcosm_fastapi.daemon.result import MessageHandlingResultAsync
+from microcosm_fastapi.pubsub.result import MessageHandlingResultAsync
 from asyncio import gather
 from typing import List, Any
-from microcosm.api import defaults
+from microcosm.api import defaults, typed
 from microcosm_logging.decorators import logger
 
 
@@ -16,7 +16,7 @@ from microcosm_logging.decorators import logger
 )
 class SQSMessageDispatcherAsync(SQSMessageDispatcher):
     def __init__(self, graph):
-        super().__init__(self, graph)
+        super().__init__(graph)
 
         self.max_processing_attempts = graph.config.sqs_message_dispatcher_async.message_max_processing_attempts
         self.max_concurrent_operations = graph.config.sqs_message_dispatcher_async.message_max_concurrent_operations
@@ -38,7 +38,7 @@ class SQSMessageDispatcherAsync(SQSMessageDispatcher):
         for message_batch in self.iter_batch(self.sqs_consumer.consume(), self.max_concurrent_operations):
             instances += gather(
                 [
-                    await self.handle_message(message, bound_handlers)
+                    self.handle_message(message, bound_handlers)
                     for message in message_batch
                 ]
             )
@@ -65,7 +65,7 @@ class SQSMessageDispatcherAsync(SQSMessageDispatcher):
 
         return instances
 
-    async def handle_message(self, message, bound_handlers) -> MessageHandlingResult:
+    async def handle_message(self, message, bound_handlers) -> MessageHandlingResultAsync:
         """
         Handle a message.
         """

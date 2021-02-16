@@ -1,5 +1,6 @@
 from microcosm_pubsub.handlers.uri_handler import URIHandler
 from abc import ABCMeta
+from inspect import iscoroutinefunction
 
 
 class URIHandlerAsync(URIHandler, metaclass=ABCMeta):
@@ -12,9 +13,14 @@ class URIHandlerAsync(URIHandler, metaclass=ABCMeta):
             self.on_skip(message, uri, skip_reason)
             return False
 
-        resource = self.convert_resource(
-            await self.get_resource(message, uri),
-        )
+        resource = None
+
+        if iscoroutinefunction(self.get_resource):
+            resource = await self.get_resource(message, uri)
+        else:
+            resource = self.get_resource(message, uri)
+
+        resource = self.convert_resource(resource)
 
         if await self.handle(message, uri, resource):
             self.on_handle(message, uri, resource)

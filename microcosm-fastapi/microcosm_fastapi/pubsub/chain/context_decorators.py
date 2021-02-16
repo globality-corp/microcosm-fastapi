@@ -30,7 +30,7 @@ def get_from_context_async(context, func, assigned=DEFAULT_ASSIGNED):
     """
     positional_args = get_positional_args(func)
 
-    def decorate_common(*args, **kwargs)
+    def decorate_common(*args, **kwargs):
         try:
             context_kwargs = {
                 arg_name: (context[arg_name] if default is Signature.empty else context.get(arg_name, default))
@@ -106,7 +106,7 @@ def save_to_context_by_func_name_async(context, func, assigned=DEFAULT_ASSIGNED)
 
     if iscoroutinefunction(func):
         @wraps(func, assigned=assigned + WRAPPER_ASSIGNMENTS)
-        astnc def decorate(*args, **kwargs):
+        async def decorate(*args, **kwargs):
             value = await func(*args, **kwargs)
             value = decorate_common(value)
             return value
