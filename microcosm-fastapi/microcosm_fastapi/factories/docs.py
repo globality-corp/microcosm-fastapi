@@ -42,3 +42,5 @@ def configure_docs(graph):
             title=graph.app.title + " - ReDoc",
             redoc_js_url="/static/redoc.standalone.js",
         )
+
+    return dict()
