@@ -17,7 +17,7 @@ from sqlalchemy.orm.exc import FlushError, NoResultFound
 from microcosm_fastapi.database.context import SessionContext
 
 
-class Store:
+class StoreAsync:
 
     def __init__(self, graph, model_class, auto_filter_fields=()):
         self.graph = graph
