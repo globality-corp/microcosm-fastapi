@@ -1,10 +1,10 @@
 from typing import Any, List
 
-from pydantic import BaseModel as _BaseModel
+from pydantic import BaseModel as BaseModel
 from microcosm_fastapi.naming import to_camel
 
 
-class BaseModel(_BaseModel):
+class BaseSchema(BaseModel):
     class Config:
         # Hydrate SQLAlchemy models
         orm_mode = True

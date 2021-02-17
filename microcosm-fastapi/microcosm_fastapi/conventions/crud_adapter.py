@@ -62,6 +62,6 @@ class CRUDStoreAdapter:
         count = await self.store.count(**kwargs)
         return count
 
-    async def _update(self, identifier, body):
+    async def _update(self, identifier: UUID, body: BaseModel):
         model = self.store.model_class(id=identifier, **body.dict())
         return self.store.update(identifier, model)

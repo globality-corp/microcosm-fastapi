@@ -1,9 +1,9 @@
 from uuid import UUID
 
-from microcosm_fastapi.conventions.schemas import BaseModel
+from microcosm_fastapi.conventions.schemas import BaseSchema
 
 
-class NewPizzaSchema(BaseModel):
+class NewPizzaSchema(BaseSchema):
     toppings: str
 
 
