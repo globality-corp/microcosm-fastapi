@@ -13,6 +13,9 @@ class BaseSchema(BaseModel):
         alias_generator = to_camel
         allow_population_by_field_name = True
 
+        # Allow "Any" to be used
+        arbitrary_types_allowed = True
+
 
 def SearchSchema(item_class):
     class _SearchSchema(BaseModel):

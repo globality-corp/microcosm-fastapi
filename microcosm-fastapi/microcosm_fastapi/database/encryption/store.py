@@ -1,7 +1,7 @@
 from sqlalchemy.inspection import inspect
 
 from microcosm_postgres.encryption.models import decrypt_instance
-from microcosm_fastapi.database.store import Store
+from microcosm_fastapi.database.store import StoreAsync
 
 
 class EncryptableStoreAsync(StoreAsync):
