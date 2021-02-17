@@ -21,3 +21,9 @@ def name_for(obj):
         return underscore(cls.__alias__)
     else:
         return underscore(cls.__name__)
+
+
+def to_camel(snake_str):
+    first, *others = snake_str.split('_')
+    return ''.join([first.lower(), *map(str.title, others)])
+

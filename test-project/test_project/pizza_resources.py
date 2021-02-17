@@ -1,13 +1,10 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from microcosm_fastapi.conventions.schemas import BaseModel
 
 
 class NewPizzaSchema(BaseModel):
     toppings: str
-
-    class Config:
-        orm_mode = True
 
 
 class PizzaSchema(NewPizzaSchema):
