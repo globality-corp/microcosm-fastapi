@@ -2,6 +2,7 @@ from typing import Callable, Dict
 
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import Operation
+from fastapi.exceptions import FastAPIError
 
 
 def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callable]):
@@ -25,11 +26,6 @@ def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callab
             status_code=operation.default_code,
         )
 
-        # If the user's function signature has provided a return type via a python
-        # annotation, they want to serialize their response with this type
-        if "return" in fn.__annotations__:
-            configuration["response_model"] = fn.__annotations__["return"]
-
         # Construct the unique path for this operation & object namespace
         url_path = namespace.path_for_operation(operation)
 
@@ -42,4 +38,8 @@ def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callab
             "HEAD": graph.app.head,
             "TRACE": graph.app.trace,
         }
-        method_mapping[operation.method](url_path, **configuration)(fn)
+
+        try:
+            method_mapping[operation.method](url_path, **configuration)(fn)
+        except FastAPIError as e:
+            raise ValueError(f"Error configuring endpoint: {url_path} {operation.method}: {e}")
