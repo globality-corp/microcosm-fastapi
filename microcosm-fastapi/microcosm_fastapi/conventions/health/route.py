@@ -1,7 +1,7 @@
 from fastapi.responses import JSONResponse
-from microcosm.api import defaults
+from microcosm.api import defaults, typed
 from microcosm_fastapi.conventions.health.models import Health
-from microcosm_fastapi.conventions.resources import HealthSchema
+from microcosm_fastapi.conventions.health.resources import HealthSchema
 
 
 @defaults(
@@ -12,7 +12,7 @@ def configure_health(graph):
     Mount the health endpoint to the graph
 
     """
-    health_container = Health(graph, include_build_info)
+    health_container = Health(graph, graph.config.health_convention.include_build_info)
 
     @graph.app.get("/health")
     def configure_health_endpoint(self, full: bool = False) -> HealthSchema:
@@ -22,3 +22,5 @@ def configure_health(graph):
             raise JSONResponse(503, content=response_data)
 
         return response_data
+
+    return health_container

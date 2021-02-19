@@ -2,10 +2,11 @@ from distutils import dist
 from io import StringIO
 from json import dumps
 from pkg_resources import DistributionNotFound, get_distribution
+from fastapi.responses import HTMLResponse
 
 from jinja2 import Template
 
-from microcosm_flask.templates import get_template
+from microcosm_fastapi.templates import get_template
 
 
 def configure_landing(graph):   # noqa: C901
@@ -78,11 +79,11 @@ def configure_landing(graph):   # noqa: C901
         """
         config = graph.config_convention.to_dict()
         env = get_env_file_commands(config, graph.metadata.name)
-        health = graph.health_convention.to_dict()
+        health = graph.health_convention.to_object().dict()
         properties = get_properties_and_version()
         swagger_versions = get_swagger_versions()
 
-        return Template(get_template("landing.html")).render(
+        html = Template(get_template("landing.html")).render(
             config=pretty_dict(config),
             description=properties.description if properties else None,
             env=env,
@@ -91,3 +92,5 @@ def configure_landing(graph):   # noqa: C901
             service_name=graph.metadata.name,
             version=getattr(properties, 'version', None),
         )
+
+        return HTMLResponse(html)

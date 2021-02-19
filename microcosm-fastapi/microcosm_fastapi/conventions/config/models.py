@@ -1,4 +1,5 @@
 from typing import Dict, Any
+from microcosm.loaders.compose import PartitioningLoader
 
 class Config:
     """

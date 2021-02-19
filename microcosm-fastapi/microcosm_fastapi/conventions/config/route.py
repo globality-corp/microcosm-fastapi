@@ -6,7 +6,10 @@ def configure_config(graph):
     """
     Configure the config endpoint.
     """
+    config_discovery = Config(graph)
+
     @graph.app.get("/config")
-    def configure_config_endpoint() -> Dict[str, Any]::
-        config_discovery = Config(graph)
+    def configure_config_endpoint():
         return config_discovery.to_dict()
+
+    return config_discovery

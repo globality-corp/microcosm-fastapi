@@ -9,34 +9,48 @@ class FastAPIWrapper(FastAPI):
     - Type-decoration, specify return schema via the return type annotation.
 
     """
-    def get(self, fn, *args, **kwargs):
-        kwargs = self.inject_return_type(kwargs)
-        return super.get(fn, *args, **kwargs)
+    def get(self, *args, **kwargs):
+        def _get(fn):
+            _kwargs = self.inject_return_type(fn, kwargs)
+            return super(FastAPIWrapper, self).get(*args, **_kwargs)(fn)
+        return _get
 
-    def post(self, fn, *args, **kwargs):
-        kwargs = self.inject_return_type(kwargs)
-        return super.post(fn, *args, **kwargs)
+    def post(self, *args, **kwargs):
+        def _post(fn):
+            _kwargs = self.inject_return_type(fn, kwargs)
+            return super(FastAPIWrapper, self).post(*args, **_kwargs)(fn)
+        return _post
 
-    def patch(self, fn, *args, **kwargs):
-        kwargs = self.inject_return_type(kwargs)
-        return super.patch(fn, *args, **kwargs)
+    def patch(self, *args, **kwargs):
+        def _patch(fn):
+            _kwargs = self.inject_return_type(fn, kwargs)
+            return super(FastAPIWrapper, self).patch(*args, **_kwargs)(fn)
+        return _patch
 
-    def delete(self, fn, *args, **kwargs):
-        kwargs = self.inject_return_type(kwargs)
-        return super.delete(fn, *args, **kwargs)
+    def delete(self, *args, **kwargs):
+        def _delete(fn):
+            _kwargs = self.inject_return_type(fn, kwargs)
+            return super(FastAPIWrapper, self).delete(*args, **_kwargs)(fn)
+        return _delete
 
-    def options(self, fn, *args, **kwargs):
-        kwargs = self.inject_return_type(kwargs)
-        return super.options(fn, *args, **kwargs)
+    def options(self, *args, **kwargs):
+        def _options(fn):
+            _kwargs = self.inject_return_type(fn, kwargs)
+            return super(FastAPIWrapper, self).options(*args, **_kwargs)(fn)
+        return _options
 
-    def head(self, fn, *args, **kwargs):
-        kwargs = self.inject_return_type(kwargs)
-        return super.head(fn, *args, **kwargs)
+    def head(self, *args, **kwargs):
+        def _head(fn):
+            _kwargs = self.inject_return_type(fn, kwargs)
+            return super(FastAPIWrapper, self).head(*args, **_kwargs)(fn)
+        return _head
 
-    def trace(self, fn, *args, **kwargs):
-        kwargs = self.inject_return_type(kwargs)
-        return super.trace(fn, *args, **kwargs)
-    
+    def trace(self, *args, **kwargs):
+        def _trace(fn):
+            _kwargs = self.inject_return_type(fn, kwargs)
+            return super(FastAPIWrapper, self).trace(*args, **_kwargs)(fn)
+        return _trace
+ 
     def inject_return_type(self, fn, kwargs):
         # If the user's function signature has provided a return type via a python
         # annotation, they want to serialize their response with this type

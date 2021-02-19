@@ -28,6 +28,11 @@ def create_app(debug=False, testing=False, model_only=False):
         "pizza_store",
         "postgres_async",
         "session_manager",
+        # Conventions
+        "build_info_convention",
+        "health_convention",
+        "config_convention",
+        "landing_convention",
     )
 
     if not model_only:

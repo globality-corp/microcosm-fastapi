@@ -11,7 +11,10 @@ def configure_build_info(graph):
     """
     Configure the build info endpoint.
     """
+    build_info = BuildInfo.from_config(graph.config)
+
     @graph.app.get("/build_info")
     def configure_build_info_endpoint() -> BuildInfoSchema:
-        build_info = BuildInfo.from_config(graph.config)
         return build_info.to_object()
+
+    return build_info

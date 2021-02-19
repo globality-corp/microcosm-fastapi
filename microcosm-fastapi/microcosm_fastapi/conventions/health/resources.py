@@ -4,10 +4,10 @@ from typing import Optional, Dict
 
 class HealthResultSchema(BaseSchema):
     name: str
-    okay: str
+    ok: str
 
 
 class HealthSchema(BaseSchema):
     name: str
-    okay: str
+    ok: str
     checks: Optional[Dict[str, HealthResultSchema]]

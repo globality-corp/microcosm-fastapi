@@ -1,3 +1,5 @@
+from microcosm_fastapi.conventions.health.resources import HealthSchema, HealthResultSchema
+
 class HealthResult:
     def __init__(self, error=None, result=None):
         self.error = error
@@ -46,7 +48,7 @@ class Health:
                 sha1=BuildInfo.check_sha1,
             ))
 
-    def to_object(self, full=None) -> Dict[str, Any]:
+    def to_object(self, full=None) -> HealthSchema:
         """
         Encode the name, the status of all checks, and the current overall status.
         """
