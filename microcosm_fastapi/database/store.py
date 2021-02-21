@@ -20,13 +20,15 @@ from microcosm_fastapi.database.context import SessionContextAsync
 class StoreAsync:
 
     def __init__(self, graph, model_class, auto_filter_fields=()):
-        self.graph = graph
+        if graph:
+            self.graph = graph
+            self.postgres_store_metrics = self.graph.postgres_store_metrics
+
         self.model_class = model_class
         self.auto_filters = {
             auto_filter_field.name: auto_filter_field
             for auto_filter_field in auto_filter_fields
         }
-        self.postgres_store_metrics = self.graph.postgres_store_metrics
         self.assign_model_class_store()
 
     def assign_model_class_store(self):
