@@ -2,7 +2,7 @@ from typing import List
 from uuid import UUID
 
 from microcosm.api import binding
-from microcosm_fastapi.database.context import transactional
+from microcosm_fastapi.database.context import transactional_async
 from microcosm_fastapi.conventions.crud import configure_crud
 from microcosm_fastapi.conventions.crud_adapter import CRUDStoreAdapter
 from microcosm_fastapi.conventions.schemas import SearchSchema
@@ -24,7 +24,7 @@ class PizzaController(CRUDStoreAdapter):
         )
 
         mappings = {
-            Operation.Create: transactional(self.create),
+            Operation.Create: transactional_async(self.create),
             Operation.Retrieve: self.retrieve,
             Operation.Search: self.search,
         }

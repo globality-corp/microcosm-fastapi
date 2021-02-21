@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 import pytest
-from microcosm_fastapi.database.context import SessionContext, transaction
+from microcosm_fastapi.database.context import SessionContextAsync, transaction_async
 from microcosm_postgres.errors import ModelNotFoundError
 from microcosm_postgres.identifiers import new_object_id
 from microcosm_postgres.operations import recreate_all
@@ -14,7 +14,7 @@ class TestStore:
     def setup(self):
         self.graph = create_app(testing=True)
         recreate_all(self.graph)
-        SessionContext(self.graph).open()
+        SessionContextAsync(self.graph).open()
 
         self.pizza_id = new_object_id()
 
@@ -25,7 +25,7 @@ class TestStore:
         with patch.object(self.graph.pizza_store, "new_object_id") as mocked:
             mocked.return_value = self.pizza_id
 
-            async with transaction():
+            async with transaction_async():
                 pizza_obj = await self.graph.pizza_store.create(new_pizza)
 
         assert pizza_obj.id == self.pizza_id
@@ -35,7 +35,7 @@ class TestStore:
         cheese_pizza = Pizza(toppings="cheese")
         pepperoni_pizza = Pizza(toppings="pepperoni")
 
-        async with transaction():
+        async with transaction_async():
             await self.graph.pizza_store.create(cheese_pizza)
             await self.graph.pizza_store.create(pepperoni_pizza)
 
@@ -47,7 +47,7 @@ class TestStore:
         cheese_pizza = Pizza(toppings="cheese")
         pepperoni_pizza = Pizza(toppings="pepperoni")
 
-        async with transaction():
+        async with transaction_async():
             await self.graph.pizza_store.create(cheese_pizza)
             await self.graph.pizza_store.create(pepperoni_pizza)
 
@@ -59,7 +59,7 @@ class TestStore:
         with patch.object(self.graph.pizza_store, "new_object_id") as mocked:
             mocked.return_value = self.pizza_id
 
-            async with transaction():
+            async with transaction_async():
                 new_pizza = Pizza(toppings="cheese")
                 await self.graph.pizza_store.create(new_pizza)
 
@@ -72,7 +72,7 @@ class TestStore:
         with patch.object(self.graph.pizza_store, "new_object_id") as mocked:
             mocked.return_value = self.pizza_id
 
-            async with transaction():
+            async with transaction_async():
                 new_pizza = Pizza(toppings="cheese")
                 await self.graph.pizza_store.create(new_pizza)
 
