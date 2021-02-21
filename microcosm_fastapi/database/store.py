@@ -23,6 +23,9 @@ class StoreAsync:
         if graph:
             self.graph = graph
             self.postgres_store_metrics = self.graph.postgres_store_metrics
+        else:
+            # no-op function for metrics if graph isn't passed
+            self.postgres_store_metrics = lambda *args, **kwargs: None
 
         self.model_class = model_class
         self.auto_filters = {
