@@ -44,11 +44,11 @@ setup(
     entry_points={
         "microcosm.factories": [
             "app = microcosm_fastapi.factories.fastapi:configure_fastapi",
-            "docs = microcosm_fastapi.factories.docs:configure_docs",
             "postgres_async = microcosm_fastapi.database.postgres:configure_postgres",
             "session_manager = microcosm_fastapi.database.session_manager:configure_session_manager",
             "sqs_message_dispatcher_async = microcosm_fastapi.pubsub.dispatcher:SQSMessageDispatcherAsync",
             # Conventions
+            "documentation_convention = microcosm_fastapi.factories.docs:configure_docs",
             "build_info_convention = microcosm_fastapi.conventions.build_info.route:configure_build_info",
             "health_convention = microcosm_fastapi.conventions.health.route:configure_health",
             "config_convention = microcosm_fastapi.conventions.config.route:configure_config",
