@@ -34,6 +34,10 @@ class StoreAsync:
         }
         self.assign_model_class_store()
 
+        # Error checking on subclass definitions
+        if hasattr(self, "_filter"):
+            raise ValueError("_filter is no longer supported, use _where")
+
     def assign_model_class_store(self):
         if self.model_class:
             # Give the model class a backref to allow model-oriented CRUD
