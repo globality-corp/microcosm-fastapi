@@ -22,13 +22,13 @@ def create_app(debug=False, testing=False, model_only=False):
     )
 
     graph.use(
-        "docs",
         "sessionmaker",
         "postgres",
         "pizza_store",
         "postgres_async",
         "session_manager",
         # Conventions
+        "documentation_convention",
         "build_info_convention",
         "health_convention",
         "config_convention",
