@@ -1,4 +1,4 @@
-from microcosm_fastapi.database.context import SessionContext
+from microcosm_fastapi.database.context import SessionContextAsync
 
 
 def configure_session_manager(graph):
@@ -8,4 +8,4 @@ def configure_session_manager(graph):
     to have the necessary database context during launch.
 
     """
-    return SessionContext(graph).open()
+    return SessionContextAsync(graph).open()

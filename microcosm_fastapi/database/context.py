@@ -5,7 +5,7 @@ from microcosm_postgres.operations import recreate_all
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class SessionContext:
+class SessionContextAsync:
     """
     Save current session in well-known location and provide context management.
     """
@@ -16,13 +16,13 @@ class SessionContext:
         self.expire_on_commit = expire_on_commit
 
     def open(self):
-        SessionContext.session = AsyncSession(self.graph.postgres_async)
+        SessionContextAsync.session = AsyncSession(self.graph.postgres_async)
         return self
 
     async def close(self):
-        if SessionContext.session:
-            await SessionContext.session.close()
-            SessionContext.session = None
+        if SessionContextAsync.session:
+            await SessionContextAsync.session.close()
+            SessionContextAsync.session = None
 
     def recreate_all(self):
         """
@@ -48,32 +48,32 @@ class SessionContext:
 
 
 @asynccontextmanager
-async def transaction(commit=True):
+async def transaction_async(commit=True):
     """
     Wrap a context with a commit/rollback.
     """
     try:
-        yield SessionContext.session
+        yield SessionContextAsync.session
         if commit:
-            await SessionContext.session.commit()
+            await SessionContextAsync.session.commit()
     except Exception:
-        if SessionContext.session:
-            await SessionContext.session.rollback()
+        if SessionContextAsync.session:
+            await SessionContextAsync.session.rollback()
         raise
 
 
-def transactional(func):
+def transactional_async(func):
     """
     Decorate a function call with a commit/rollback and pass the session as the first arg.
     """
     @wraps(func)
     async def wrapper(*args, **kwargs):
-        async with transaction():
+        async with transaction_async():
             return await func(*args, **kwargs)
     return wrapper
 
 
-def maybe_transactional(func):
+def maybe_transactional_async(func):
     """
     Variant of `transactional` that will not commit if there's an argument `commit` with a falsey value.
     Useful for dry-run style operations.
@@ -81,6 +81,6 @@ def maybe_transactional(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):
         commit = kwargs.get("commit", True)
-        async with transaction(commit=commit):
+        async with transaction_async(commit=commit):
             return await func(*args, **kwargs)
     return wrapper

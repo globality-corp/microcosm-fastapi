@@ -14,7 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
-from microcosm_fastapi.database.context import SessionContext
+from microcosm_fastapi.database.context import SessionContextAsync
 
 
 class StoreAsync:
@@ -41,7 +41,7 @@ class StoreAsync:
 
     @property
     def session(self):
-        return SessionContext.session
+        return SessionContextAsync.session
 
     def new_object_id(self):
         """

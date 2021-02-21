@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from microcosm.api import defaults, typed
+from fastapi.testclient import TestClient
 
 
 class FastAPIWrapper(FastAPI):
@@ -7,6 +8,7 @@ class FastAPIWrapper(FastAPI):
     Provide basic extensions to FastAPI's syntax.
 
     - Type-decoration, specify return schema via the return type annotation.
+    - Easily create a test client
 
     """
     def get(self, *args, **kwargs):
@@ -51,6 +53,9 @@ class FastAPIWrapper(FastAPI):
             return super(FastAPIWrapper, self).trace(*args, **_kwargs)(fn)
         return _trace
  
+    def test_client(self):
+        return TestClient(self)
+
     def inject_return_type(self, fn, kwargs):
         # If the user's function signature has provided a return type via a python
         # annotation, they want to serialize their response with this type
