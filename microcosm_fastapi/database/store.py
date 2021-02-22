@@ -200,7 +200,11 @@ class StoreAsync:
 
     async def get_first(self, query):
         results = await self.session.execute(query)
-        return results.first()[0]
+        first_result = results.first()
+
+        if not first_result:
+            return None
+        return first_result[0]
 
     def _order_by(self, query, **kwargs):
         """
