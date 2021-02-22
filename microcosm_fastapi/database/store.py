@@ -111,8 +111,8 @@ class StoreAsync:
         :raises `ModelNotFoundError` if there is no existing model
         """
         async with self.flushing():
-            instance = self.retrieve(identifier)
-            self.merge(instance, new_instance)
+            instance = await self.retrieve(identifier)
+            await self.merge(instance, new_instance)
             instance.updated_at = instance.new_timestamp()
         return instance
 
@@ -125,7 +125,7 @@ class StoreAsync:
         async with self.flushing():
             instance = await self.retrieve(identifier)
             before = Version(instance)
-            self.merge(instance, new_instance)
+            await self.merge(instance, new_instance)
             instance.updated_at = instance.new_timestamp()
             after = Version(instance)
         return instance, before - after
@@ -188,11 +188,11 @@ class StoreAsync:
 
         return await self.get_first(query)
 
-    def expunge(self, instance):
-        return self.session.expunge(instance)
+    async def expunge(self, instance):
+        return await self.session.expunge(instance)
 
-    def merge(self, instance, new_instance):
-        self.session.merge(new_instance)
+    async def merge(self, instance, new_instance):
+        await self.session.merge(new_instance)
 
     async def get_all(self, query):
         results = await self.session.execute(query)
@@ -200,7 +200,11 @@ class StoreAsync:
 
     async def get_first(self, query):
         results = await self.session.execute(query)
-        return results.first()[0]
+        first_result = results.first()
+
+        if not first_result:
+            return None
+        return first_result[0]
 
     def _order_by(self, query, **kwargs):
         """
