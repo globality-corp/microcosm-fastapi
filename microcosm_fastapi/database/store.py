@@ -192,7 +192,7 @@ class StoreAsync:
         return self.session.expunge(instance)
 
     def merge(self, instance, new_instance):
-        await self.session.merge(new_instance)
+        self.session.merge(new_instance)
 
     async def get_all(self, query):
         results = await self.session.execute(query)
