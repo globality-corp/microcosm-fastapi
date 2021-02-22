@@ -40,11 +40,11 @@ class SessionContextAsync:
 
     # context manager
 
-    def __enter__(self):
+    async def __aenter__(self):
         return self.open()
 
-    def __exit__(self, *args, **kwargs):
-        self.close()
+    async def __aexit__(self, *args, **kwargs):
+        await self.close()
 
 
 @asynccontextmanager

@@ -173,8 +173,7 @@ class StoreAsync:
         # NB: pagination must go last
         query = self._paginate(query, **kwargs)
 
-        results = await self.session.execute(query)
-        return [response[0] for response in results.all()]
+        return await self.get_all(query)
 
     @postgres_metric_timing(action="search_first")
     async def search_first(self, *criterion, **kwargs):
@@ -187,14 +186,21 @@ class StoreAsync:
         # NB: pagination must go last
         query = self._paginate(query, **kwargs)
 
-        results = await self.session.execute(query)
-        return results.first()[0]
+        return await self.get_first(query)
 
     def expunge(self, instance):
         return self.session.expunge(instance)
 
     def merge(self, instance, new_instance):
-        self.session.merge(new_instance)
+        await self.session.merge(new_instance)
+
+    async def get_all(self, query):
+        results = await self.session.execute(query)
+        return [response[0] for response in results.all()]
+
+    async def get_first(self, query):
+        results = await self.session.execute(query)
+        return results.first()[0]
 
     def _order_by(self, query, **kwargs):
         """
