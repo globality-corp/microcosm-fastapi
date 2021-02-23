@@ -68,7 +68,6 @@ class FastAPIWrapper(FastAPI):
 @defaults(
     port=typed(int, default_value=5000),
     host="127.0.0.1",
-    debug=True,
 )
 def configure_fastapi(graph):
     # Docs use 3rd party dependencies by default - if documentation
@@ -76,7 +75,7 @@ def configure_fastapi(graph):
     # with microcosm-fastapi. This hook provides a mirror to the default
     # docs/redocs but while hosted locally.
     app = FastAPIWrapper(
-        debug=graph.config.app.debug,
+        debug=graph.metadata.debug,
         docs_url=None,
         redoc_url=None,
     )
