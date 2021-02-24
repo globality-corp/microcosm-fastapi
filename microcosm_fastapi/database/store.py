@@ -94,12 +94,12 @@ class StoreAsync:
         return instance
 
     @postgres_metric_timing(action="retrieve")
-    def retrieve(self, identifier, *criterion):
+    async def retrieve(self, identifier, *criterion):
         """
         Retrieve a model by primary key and zero or more other criteria.
         :raises `NotFound` if there is no existing model
         """
-        return self._retrieve(
+        return await self._retrieve(
             self.model_class.id == identifier,
             *criterion
         )

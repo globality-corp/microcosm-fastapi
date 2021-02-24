@@ -64,4 +64,4 @@ class CRUDStoreAdapter:
 
     async def _update(self, identifier: UUID, body: BaseModel):
         model = self.store.model_class(id=identifier, **body.dict())
-        return self.store.update(identifier, model)
+        return await self.store.update(identifier, model)
