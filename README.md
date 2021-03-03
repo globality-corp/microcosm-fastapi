@@ -92,6 +92,7 @@ The goal in our new routing convention is to have one file the provides the full
 ```
 from microcosm_fastapi.conventions.crud import configure_crud
 from microcosm_fastapi.conventions.crud_adapter import CRUDStoreAdapter
+from microcosm_fastapi.database.context import transactional_async
 
 @binding("pizza_route")
 class PizzaController(CRUDStoreAdapter):
@@ -104,7 +105,7 @@ class PizzaController(CRUDStoreAdapter):
         )
 
         mappings = {
-            Operation.Create: transactional(self.create),
+            Operation.Create: transactional_async(self.create),
             Operation.Retrieve: self.retrieve,
             Operation.Search: self.search,
         }
