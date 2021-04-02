@@ -189,7 +189,7 @@ class StoreAsync:
         return await self.get_first(query)
 
     async def expunge(self, instance):
-        return await self.session.expunge(instance)
+        return self.session.expunge(instance)
 
     async def merge(self, instance, new_instance):
         await self.session.merge(new_instance)

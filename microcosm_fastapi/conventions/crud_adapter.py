@@ -9,6 +9,8 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from microcosm_fastapi.naming import name_for
+from fastapi import Response
+from http import HTTPStatus
 
 
 class CRUDStoreAdapter:
@@ -26,7 +28,8 @@ class CRUDStoreAdapter:
         return await self.store.create(model)
 
     async def _delete(self, identifier: UUID):
-        return await self.store.delete(identifier)
+        await self.store.delete(identifier)
+        return Response(status_code=HTTPStatus.NO_CONTENT.value)
 
     async def _replace(self, identifier: UUID, body: BaseModel):
         model = self.store.model_class(id=identifier, **body.dict())

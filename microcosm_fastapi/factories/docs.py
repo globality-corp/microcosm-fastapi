@@ -16,9 +16,9 @@ def configure_docs(graph):
 
     """
     graph.app.mount(
-        "/static",
+        "/doc_static",
         StaticFiles(directory=get_doc_path("static")),
-        name="static"
+        name="doc-static"
     )
 
     @graph.app.get("/docs", include_in_schema=False)
@@ -27,8 +27,8 @@ def configure_docs(graph):
             openapi_url=graph.app.openapi_url,
             title=graph.app.title + " - Swagger UI",
             oauth2_redirect_url=graph.app.swagger_ui_oauth2_redirect_url,
-            swagger_js_url="/static/swagger-ui-bundle.js",
-            swagger_css_url="/static/swagger-ui.css",
+            swagger_js_url="/doc_static/swagger-ui-bundle.js",
+            swagger_css_url="/doc_static/swagger-ui.css",
         )
 
     @graph.app.get(graph.app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
@@ -40,7 +40,7 @@ def configure_docs(graph):
         return get_redoc_html(
             openapi_url=graph.app.openapi_url,
             title=graph.app.title + " - ReDoc",
-            redoc_js_url="/static/redoc.standalone.js",
+            redoc_js_url="/doc_static/redoc.standalone.js",
         )
 
     return dict()
