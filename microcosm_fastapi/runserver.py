@@ -1,5 +1,6 @@
-from uvicorn import run
 from click import command, option
+from uvicorn import run
+
 
 def main(entrypoint, graph):
     default_port = graph.config.app.port

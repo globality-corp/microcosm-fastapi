@@ -1,6 +1,7 @@
 from typing import Any, List
 
 from pydantic import BaseModel as BaseModel
+
 from microcosm_fastapi.naming import to_camel
 
 

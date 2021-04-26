@@ -1,5 +1,10 @@
 from functools import WRAPPER_ASSIGNMENTS, wraps
-from inspect import Parameter, Signature, signature, iscoroutinefunction
+from inspect import (
+    Parameter,
+    Signature,
+    iscoroutinefunction,
+    signature,
+)
 
 from microcosm_pubsub.chain.decorators import BINDS, EXTRACTS
 from microcosm_pubsub.chain.exceptions import ContextKeyNotFound

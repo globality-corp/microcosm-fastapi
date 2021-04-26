@@ -2,8 +2,8 @@ from distutils import dist
 from io import StringIO
 from json import dumps
 from pkg_resources import DistributionNotFound, get_distribution
-from fastapi.responses import HTMLResponse
 
+from fastapi.responses import HTMLResponse
 from jinja2 import Template
 
 from microcosm_fastapi.templates import get_template

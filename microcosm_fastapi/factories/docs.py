@@ -4,6 +4,7 @@ from fastapi.openapi.docs import (
     get_swagger_ui_oauth2_redirect_html,
 )
 from fastapi.staticfiles import StaticFiles
+
 from microcosm_fastapi.docs import get_doc_path
 
 

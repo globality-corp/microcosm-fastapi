@@ -1,6 +1,8 @@
-from microcosm_fastapi.conventions.crud_adapter import CRUDStoreAdapter
-from pydantic import BaseModel
 from uuid import UUID
+
+from pydantic import BaseModel
+
+from microcosm_fastapi.conventions.crud_adapter import CRUDStoreAdapter
 
 
 class EncryptableCRUDStoreAdapter(CRUDStoreAdapter):

@@ -1,5 +1,11 @@
-from pydantic.validators import str_validator 
-from typing import Any, no_type_check, Optional, List
+from typing import (
+    Any,
+    List,
+    Optional,
+    no_type_check,
+)
+
+from pydantic.validators import str_validator
 
 
 class SeparatedList(str):

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from microcosm.api import defaults, typed
 from fastapi.testclient import TestClient
+from microcosm.api import defaults, typed
 
 
 class FastAPIWrapper(FastAPI):

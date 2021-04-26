@@ -1,7 +1,8 @@
-from microcosm_pubsub.handlers.uri_handler import URIHandler
 from abc import ABCMeta
 from inspect import iscoroutinefunction
+
 from httpx import get
+from microcosm_pubsub.handlers.uri_handler import URIHandler
 
 
 class URIHandlerAsync(URIHandler, metaclass=ABCMeta):

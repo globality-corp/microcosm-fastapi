@@ -1,4 +1,5 @@
-from microcosm_fastapi.conventions.health.resources import HealthSchema, HealthResultSchema
+from microcosm_fastapi.conventions.health.resources import HealthResultSchema, HealthSchema
+
 
 class HealthResult:
     def __init__(self, error=None, result=None):

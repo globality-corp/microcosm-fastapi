@@ -1,6 +1,7 @@
 from microcosm.api import defaults
-from microcosm_fastapi.conventions.build_info.resources import BuildInfoSchema
+
 from microcosm_fastapi.conventions.build_info.models import BuildInfo
+from microcosm_fastapi.conventions.build_info.resources import BuildInfoSchema
 
 
 @defaults(

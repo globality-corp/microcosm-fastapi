@@ -1,4 +1,5 @@
 from microcosm.api import defaults
+
 from microcosm_fastapi.conventions.config.models import Config
 
 

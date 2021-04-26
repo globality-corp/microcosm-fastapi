@@ -1,10 +1,12 @@
-from microcosm_pubsub.dispatcher import SQSMessageDispatcher
-from microcosm_pubsub.result import MessageHandlingResultType
-from microcosm_fastapi.pubsub.result import MessageHandlingResultAsync
 from asyncio import gather
-from typing import List, Any
+from typing import Any, List
+
 from microcosm.api import defaults, typed
 from microcosm_logging.decorators import logger
+from microcosm_pubsub.dispatcher import SQSMessageDispatcher
+from microcosm_pubsub.result import MessageHandlingResultType
+
+from microcosm_fastapi.pubsub.result import MessageHandlingResultAsync
 
 
 @logger

@@ -1,5 +1,6 @@
 from microcosm_fastapi.conventions.build_info.resources import BuildInfoSchema
 
+
 class BuildInfo:
 
     def __init__(self, build_num, sha1):

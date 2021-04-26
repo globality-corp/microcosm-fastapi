@@ -1,8 +1,9 @@
 from typing import Callable, Dict
 
+from fastapi.exceptions import FastAPIError
+
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import Operation
-from fastapi.exceptions import FastAPIError
 
 
 def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callable]):
