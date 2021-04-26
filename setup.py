@@ -34,6 +34,7 @@ setup(
         # into microcosm-postgres and microcosm-pubsub
         "microcosm-pubsub",
         "microcosm-postgres",
+        "asyncpg",
     ],
     setup_requires=[
         "nose>=1.3.7",

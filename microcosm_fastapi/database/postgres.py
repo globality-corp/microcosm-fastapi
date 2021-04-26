@@ -3,6 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 
 def make_engine(metadata, config):
+    # Required for async engine - so override user preferences
+    config.postgres.driver = "postgresql+asyncpg"
+
     uri = choose_uri(metadata, config.postgres)
     args = choose_args(metadata, config.postgres)
     return create_async_engine(
