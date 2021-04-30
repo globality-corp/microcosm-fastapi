@@ -25,7 +25,7 @@ setup(
         "fastapi",
         "uvicorn",
         "aiofiles",
-        "SQLAlchemy",
+        "SQLAlchemy>=1.4.0",
         "httpx",
         "click",
         "jinja2",

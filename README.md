@@ -124,6 +124,53 @@ class PizzaController(CRUDStoreAdapter):
 
 By convention, edge operations (ie. retrieve / patch / etc) will be passed the object UUID of interest automatically by microcosm-fastapi. This keyword argument is expected to be in the format of `{snake_case(namespace object)}_id`. See `retrieve` for an example here. Clients are still expected to typehint this accordingly as a UUID.
 
+### Stores
+
+We bundle an async-compatible postgres client alongside `microcosm-fastapi`. To see the maximum performance boosts, you'll need to upgrade your Store instances as well to be async compliant.
+
+Any custom implemented functions must be `await` when calling the superclass.
+
+```
+from microcosm_fastapi.database.store import StoreAsync
+
+@binding("pizza_store")
+class PizzaStore(StoreAsync):
+    def __init__(self, graph):
+        super().__init__(graph, Pizza)
+
+    async def create(self, pizza):
+        pizza.delivery_date = datetime.now()
+        return await super().create(pizza)
+```
+
+### Other Application Changes
+
+Create two new files `wsgi` and `wsgi_debug` to host the production and development graphs separately:
+
+```
+from annotation_jobs.app import create_app
+graph = create_app()
+app = graph.app
+```
+
+```
+from annotation_jobs.app import create_app
+graph = create_app(debug=True)
+app = graph.app
+```
+
+Update your `main.py` to host:
+
+```
+from microcosm_fastapi.runserver import main as runserver_main
+
+def runserver():
+    # This graph is just used for config parameters
+    graph = create_app(debug=True, model_only=True)
+
+    runserver_main("{application_bundle}.wsgi_debug:app", graph)
+```
+
 ## Test Project
 
 We have set up a test project to demonstrate how the new API would look like when deployed within a service. To get started create a new DB:
