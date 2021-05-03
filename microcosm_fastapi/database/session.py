@@ -1,4 +1,3 @@
-from microcosm_fastapi.database.context import SessionContextAsync
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession
 

@@ -4,7 +4,6 @@ from unittest.mock import ANY, patch
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from microcosm_fastapi.database.context import SessionContextAsync, transaction_async
 from microcosm_postgres.identifiers import new_object_id
 from microcosm_postgres.operations import recreate_all
 
@@ -16,7 +15,6 @@ class TestRoute:
     def setup(self):
         self.graph = create_app(testing=True)
         recreate_all(self.graph)
-        SessionContextAsync(self.graph).open()
 
         self.client = TestClient(self.graph.app)
 
