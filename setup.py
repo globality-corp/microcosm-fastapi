@@ -45,7 +45,7 @@ setup(
         "microcosm.factories": [
             "app = microcosm_fastapi.factories.fastapi:configure_fastapi",
             "postgres_async = microcosm_fastapi.database.postgres:configure_postgres",
-            "session_manager = microcosm_fastapi.database.session_manager:configure_session_manager",
+            "session_maker_async = microcosm_fastapi.database.session:configure_session_maker",
             "sqs_message_dispatcher_async = microcosm_fastapi.pubsub.dispatcher:SQSMessageDispatcherAsync",
             # Conventions
             "documentation_convention = microcosm_fastapi.factories.docs:configure_docs",

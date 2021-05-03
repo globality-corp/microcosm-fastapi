@@ -35,10 +35,10 @@ class PizzaSearchSchema(PageSchema):
 Instead of marshmallow, FastAPI makes extensive use of `pydantic` to provide the validation layers. Pydantic is a more modern library in comparison. It uses python typehints in order to define expected field types and has more built-in functionality when compared to marshmallow. It's straightforward to convert the above definitions into ones that are pydantic compatible. Note that we remove the `PizzaSearchSchema` entirely because this definition will be specified in another file.
 
 ```
-from pydantic import BaseModel
+from microcosm_fastapi.conventions.schemas import BaseSchema
 from uuid import UUID
 
-class NewPizza(BaseModel):
+class NewPizza(BaseSchema):
     toppings: str
 
 class Pizza(NewPizza)
@@ -143,6 +143,16 @@ class PizzaStore(StoreAsync):
         return await super().create(pizza)
 ```
 
+Include the following dependencies in your graph:
+
+```
+app.use(
+    "postgres",
+    "session_maker_async",
+    "postgres_async",
+)
+```
+
 ### Other Application Changes
 
 Create two new files `wsgi` and `wsgi_debug` to host the production and development graphs separately:
@@ -170,6 +180,10 @@ def runserver():
 
     runserver_main("{application_bundle}.wsgi_debug:app", graph)
 ```
+
+### Misc Lookup
+
+QueryStringList -> microcosm_fastapi.conventions.parsers.SeparatedList
 
 ## Test Project
 

@@ -9,20 +9,13 @@ class SessionContextAsync:
     """
     Save current session in well-known location and provide context management.
     """
-    session = None
+    session_maker = None
 
     def __init__(self, graph, expire_on_commit=False):
         self.graph = graph
         self.expire_on_commit = expire_on_commit
 
-    def open(self):
-        SessionContextAsync.session = AsyncSession(self.graph.postgres_async)
-        return self
-
-    async def close(self):
-        if SessionContextAsync.session:
-            await SessionContextAsync.session.close()
-            SessionContextAsync.session = None
+        SessionContextAsync.session_maker = graph.session_maker_async
 
     def recreate_all(self):
         """
@@ -31,20 +24,13 @@ class SessionContextAsync:
         if self.graph.metadata.testing:
             recreate_all(self.graph)
 
-    @classmethod
-    def make(cls, graph, expire_on_commit=False):
-        """
-        Create an opened context.
-        """
-        return cls(graph, expire_on_commit).open()
-
-    # context manager
-
     async def __aenter__(self):
-        return self.open()
+        self.session = await SessionContextAsync.session_maker()
+        return self.session
 
     async def __aexit__(self, *args, **kwargs):
-        await self.close()
+        await self.session.close()
+        self.session = None
 
 
 @asynccontextmanager
@@ -52,14 +38,14 @@ async def transaction_async(commit=True):
     """
     Wrap a context with a commit/rollback.
     """
-    try:
-        yield SessionContextAsync.session
-        if commit:
-            await SessionContextAsync.session.commit()
-    except Exception:
-        if SessionContextAsync.session:
-            await SessionContextAsync.session.rollback()
-        raise
+    async with SessionContextAsync.session_maker() as session:
+        try:
+            yield session
+            if commit:
+                await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
 
 
 def transactional_async(func):
