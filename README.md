@@ -35,10 +35,10 @@ class PizzaSearchSchema(PageSchema):
 Instead of marshmallow, FastAPI makes extensive use of `pydantic` to provide the validation layers. Pydantic is a more modern library in comparison. It uses python typehints in order to define expected field types and has more built-in functionality when compared to marshmallow. It's straightforward to convert the above definitions into ones that are pydantic compatible. Note that we remove the `PizzaSearchSchema` entirely because this definition will be specified in another file.
 
 ```
-from pydantic import BaseModel
+from microcosm_fastapi.conventions.schemas import BaseSchema
 from uuid import UUID
 
-class NewPizza(BaseModel):
+class NewPizza(BaseSchema):
     toppings: str
 
 class Pizza(NewPizza)
@@ -92,7 +92,6 @@ The goal in our new routing convention is to have one file the provides the full
 ```
 from microcosm_fastapi.conventions.crud import configure_crud
 from microcosm_fastapi.conventions.crud_adapter import CRUDStoreAdapter
-from microcosm_fastapi.database.context import transactional_async
 from microcosm_fastapi.conventions.schemas import SearchSchema
 
 @binding("pizza_route")
@@ -106,7 +105,7 @@ class PizzaController(CRUDStoreAdapter):
         )
 
         mappings = {
-            Operation.Create: transactional_async(self.create),
+            Operation.Create: self.create,
             Operation.Retrieve: self.retrieve,
             Operation.Search: self.search,
         }
@@ -123,6 +122,67 @@ class PizzaController(CRUDStoreAdapter):
 ```
 
 By convention, edge operations (ie. retrieve / patch / etc) will be passed the object UUID of interest automatically by microcosm-fastapi. This keyword argument is expected to be in the format of `{snake_case(namespace object)}_id`. See `retrieve` for an example here. Clients are still expected to typehint this accordingly as a UUID.
+
+### Stores
+
+We bundle an async-compatible postgres client alongside `microcosm-fastapi`. To see the maximum performance boosts, you'll need to upgrade your Store instances as well to be async compliant.
+
+Any custom implemented functions must be `await` when calling the superclass.
+
+```
+from microcosm_fastapi.database.store import StoreAsync
+
+@binding("pizza_store")
+class PizzaStore(StoreAsync):
+    def __init__(self, graph):
+        super().__init__(graph, Pizza)
+
+    async def create(self, pizza):
+        pizza.delivery_date = datetime.now()
+        return await super().create(pizza)
+```
+
+Include the following dependencies in your graph:
+
+```
+app.use(
+    "postgres",
+    "session_maker_async",
+    "postgres_async",
+)
+```
+
+### Other Application Changes
+
+Create two new files `wsgi` and `wsgi_debug` to host the production and development graphs separately:
+
+```
+from annotation_jobs.app import create_app
+graph = create_app()
+app = graph.app
+```
+
+```
+from annotation_jobs.app import create_app
+graph = create_app(debug=True)
+app = graph.app
+```
+
+Update your `main.py` to host:
+
+```
+from microcosm_fastapi.runserver import main as runserver_main
+
+def runserver():
+    # This graph is just used for config parameters
+    graph = create_app(debug=True, model_only=True)
+
+    runserver_main("{application_bundle}.wsgi_debug:app", graph)
+```
+
+### Misc Lookup
+
+QueryStringList -> microcosm_fastapi.conventions.parsers.SeparatedList
 
 ## Test Project
 

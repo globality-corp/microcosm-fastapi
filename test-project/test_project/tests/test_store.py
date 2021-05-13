@@ -1,7 +1,6 @@
 from unittest.mock import patch
 
 import pytest
-from microcosm_fastapi.database.context import SessionContextAsync, transaction_async
 from microcosm_postgres.errors import ModelNotFoundError
 from microcosm_postgres.identifiers import new_object_id
 from microcosm_postgres.operations import recreate_all
@@ -14,7 +13,6 @@ class TestStore:
     def setup(self):
         self.graph = create_app(testing=True)
         recreate_all(self.graph)
-        SessionContextAsync(self.graph).open()
 
         self.pizza_id = new_object_id()
 

@@ -11,6 +11,7 @@ from fastapi import Response
 from pydantic import BaseModel
 
 from microcosm_fastapi.naming import name_for
+from microcosm_fastapi.operations import Operation
 
 
 class CRUDStoreAdapter:
@@ -38,7 +39,13 @@ class CRUDStoreAdapter:
     async def _retrieve(self, identifier: UUID):
         return await self.store.retrieve(identifier)
 
-    async def _search(self, offset: int, limit: int, **kwargs):
+    async def _search(
+        self,
+        offset: int,
+        limit: int,
+        link_provider: Callable = None,
+        **kwargs
+    ):
         """
         The search endpoint expects to be serialized by
         `microcosm_fastapi.conventions.schemas:SearchSchema`
@@ -51,10 +58,16 @@ class CRUDStoreAdapter:
         """
         items = await self.store.search(offset=offset, limit=limit, **kwargs)
         count = await self.store.count(**kwargs)
-        return dict(
+
+        payload = dict(
             items=items,
             count=count,
         )
+
+        if link_provider:
+            payload["_links"] = link_provider(count)
+
+        return payload
 
     async def _count(
         self,

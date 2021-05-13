@@ -14,14 +14,13 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
-from microcosm_fastapi.database.context import SessionContextAsync
-
 
 class StoreAsync:
 
     def __init__(self, graph, model_class, auto_filter_fields=()):
         if graph:
             self.graph = graph
+            self.session_maker = graph.session_maker_async
             self.postgres_store_metrics = self.graph.postgres_store_metrics
         else:
             # no-op function for metrics if graph isn't passed
@@ -48,10 +47,6 @@ class StoreAsync:
     def model_name(self):
         return self.model_class.__name__ if self.model_class else None
 
-    @property
-    def session(self):
-        return SessionContextAsync.session
-
     def new_object_id(self):
         """
         Injectable id generation to facilitate mocking.
@@ -59,13 +54,13 @@ class StoreAsync:
         return new_object_id()
 
     @asynccontextmanager
-    async def flushing(self):
+    async def flushing(self, session):
         """
         Flush the current session, handling common errors.
         """
         try:
             yield
-            await self.session.flush()
+            await session.flush()
         except (FlushError, IntegrityError) as error:
             error_message = str(error)
             # There ought to be a cleaner way to capture this condition
@@ -87,10 +82,11 @@ class StoreAsync:
         """
         Create a new model instance.
         """
-        async with self.flushing():
-            if instance.id is None:
-                instance.id = self.new_object_id()
-            self.session.add(instance)
+        async with self.session_maker() as session:
+            async with self.flushing():
+                if instance.id is None:
+                    instance.id = self.new_object_id()
+                session.add(instance)
         return instance
 
     @postgres_metric_timing(action="retrieve")
@@ -189,18 +185,22 @@ class StoreAsync:
         return await self.get_first(query)
 
     async def expunge(self, instance):
-        return self.session.expunge(instance)
+        async with self.session_maker() as session:
+            return session.expunge(instance)
 
     async def merge(self, instance, new_instance):
-        await self.session.merge(new_instance)
+        async with self.session_maker() as session:
+            await session.merge(new_instance)
 
     async def get_all(self, query):
-        results = await self.session.execute(query)
-        return [response[0] for response in results.all()]
+        async with self.session_maker() as session:
+            results = await session.execute(query)
+            return [response[0] for response in results.all()]
 
     async def get_first(self, query):
-        results = await self.session.execute(query)
-        first_result = results.first()
+        async with self.session_maker() as session:
+            results = await session.execute(query)
+            first_result = results.first()
 
         if not first_result:
             return None
@@ -247,8 +247,9 @@ class StoreAsync:
         """
         try:
             query = self._query(*criterion)
-            results = await self.session.execute(query)
-            return results.one()[0]
+            async with self.session_maker() as session:
+                results = await session.execute(query)
+                return results.one()[0]
         except NoResultFound as error:
             raise ModelNotFoundError(
                 "{} not found".format(
@@ -262,13 +263,14 @@ class StoreAsync:
         Delete a model by some criterion.
         """
         query = self._query(*criterion)
-        async with self.flushing():
-            count = len(
-                [
-                    self.session.delete(row[0])
-                    for row in await self.session.execute(query)
-                ]
-            )
+        async with self.session_maker() as session:
+            async with self.flushing(session):
+                count = len(
+                    [
+                        session.delete(row[0])
+                        for row in await session.execute(query)
+                    ]
+                )
         if count == 0:
             raise ModelNotFoundError
         return True

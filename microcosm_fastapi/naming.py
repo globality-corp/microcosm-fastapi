@@ -4,6 +4,7 @@ Naming conventions
 from inspect import isclass
 
 from inflection import underscore
+from urllib.parse import urlparse, urlencode, urlunparse
 
 
 def name_for(obj):
@@ -27,3 +28,9 @@ def to_camel(snake_str):
     first, *others = snake_str.split('_')
     return ''.join([first.lower(), *map(str.title, others)])
 
+
+def join_url_with_parameters(url, query):
+    url_parts = list(urlparse(url))
+    url_parts[4] = urlencode(query)
+
+    return urlunparse(url_parts)

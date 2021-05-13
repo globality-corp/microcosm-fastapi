@@ -1,6 +1,6 @@
-from typing import Any, List
+from typing import Any, List, Optional
 
-from pydantic import BaseModel as BaseModel
+from pydantic import BaseModel as BaseModel, AnyHttpUrl, Field
 
 from microcosm_fastapi.naming import to_camel
 
@@ -18,8 +18,23 @@ class BaseSchema(BaseModel):
         arbitrary_types_allowed = True
 
 
+class HrefSchema(BaseModel):
+    href: AnyHttpUrl
+
+
+class LinksSchema(BaseModel):
+    next: Optional[HrefSchema]
+    self: HrefSchema
+    prev: Optional[HrefSchema]
+
+    def dict(self, *args, exclude_none=True, **kwargs):
+        # Exclude next/prev key if not present
+        return BaseModel.dict(self, *args, exclude_none=True, **kwargs)
+
+
 def SearchSchema(item_class):
     class _SearchSchema(BaseModel):
+        links: Optional[LinksSchema] = Field(alias="_links")
         count: int
         items: List[item_class]
 
