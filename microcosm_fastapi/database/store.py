@@ -10,7 +10,7 @@ from microcosm_postgres.errors import (
 )
 from microcosm_postgres.identifiers import new_object_id
 from microcosm_postgres.metrics import postgres_metric_timing
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
@@ -150,11 +150,9 @@ class StoreAsync:
         """
         Count the number of models matching some criterion.
         """
-        #query = self._query(*criterion)
-        #query = self._filter(query, **kwargs)
-        #return await query.count()
-        # TODO: Switch to actual count query
-        return len(await self.search(*criterion, **kwargs))
+        query = select(func.count(self.model_class.id))
+        query = self._where(query, **kwargs)
+        return await self.get_first(query)
 
     @postgres_metric_timing(action="search")
     async def search(self, *criterion, **kwargs):
