@@ -280,7 +280,7 @@ class StoreAsync:
                 async with self.flushing(session):
                     count = len(
                         [
-                            session.delete(row[0])
+                            await session.delete(row[0])
                             for row in await session.execute(query)
                         ]
                     )
