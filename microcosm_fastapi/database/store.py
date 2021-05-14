@@ -77,16 +77,26 @@ class StoreAsync:
             else:
                 raise ModelIntegrityError(error)
 
+    @asynccontextmanager
+    async def with_transaction(self, session):
+        try:
+            yield
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+
     @postgres_metric_timing(action="create")
     async def create(self, instance):
         """
         Create a new model instance.
         """
         async with self.session_maker() as session:
-            async with self.flushing(session):
-                if instance.id is None:
-                    instance.id = self.new_object_id()
-                session.add(instance)
+            async with self.with_transaction(session):
+                async with self.flushing(session):
+                    if instance.id is None:
+                        instance.id = self.new_object_id()
+                    session.add(instance)
         return instance
 
     @postgres_metric_timing(action="retrieve")
@@ -107,10 +117,11 @@ class StoreAsync:
         :raises `ModelNotFoundError` if there is no existing model
         """
         async with self.session_maker() as session:
-            async with self.flushing(session):
-                instance = await self.retrieve(identifier)
-                await self.merge(instance, new_instance)
-                instance.updated_at = instance.new_timestamp()
+            async with self.with_transaction(session):
+                async with self.flushing(session):
+                    instance = await self.retrieve(identifier)
+                    await self.merge(instance, new_instance)
+                    instance.updated_at = instance.new_timestamp()
         return instance
 
     @postgres_metric_timing(action="update_with_diff")
@@ -120,12 +131,13 @@ class StoreAsync:
         :raises `ModelNotFoundError` if there is no existing model
         """
         async with self.session_maker() as session:
-            async with self.flushing(session):
-                instance = await self.retrieve(identifier)
-                before = Version(instance)
-                await self.merge(instance, new_instance)
-                instance.updated_at = instance.new_timestamp()
-                after = Version(instance)
+            async with self.with_transaction(session):
+                async with self.flushing(session):
+                    instance = await self.retrieve(identifier)
+                    before = Version(instance)
+                    await self.merge(instance, new_instance)
+                    instance.updated_at = instance.new_timestamp()
+                    after = Version(instance)
         return instance, before - after
 
     async def replace(self, identifier, new_instance):
@@ -264,13 +276,14 @@ class StoreAsync:
         """
         query = self._query(*criterion)
         async with self.session_maker() as session:
-            async with self.flushing(session):
-                count = len(
-                    [
-                        session.delete(row[0])
-                        for row in await session.execute(query)
-                    ]
-                )
+            async with self.with_transaction(session):
+                async with self.flushing(session):
+                    count = len(
+                        [
+                            session.delete(row[0])
+                            for row in await session.execute(query)
+                        ]
+                    )
         if count == 0:
             raise ModelNotFoundError
         return True
