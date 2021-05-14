@@ -83,7 +83,7 @@ class StoreAsync:
         Create a new model instance.
         """
         async with self.session_maker() as session:
-            async with self.flushing():
+            async with self.flushing(session):
                 if instance.id is None:
                     instance.id = self.new_object_id()
                 session.add(instance)
@@ -106,10 +106,11 @@ class StoreAsync:
         Update an existing model with a new one.
         :raises `ModelNotFoundError` if there is no existing model
         """
-        async with self.flushing():
-            instance = await self.retrieve(identifier)
-            await self.merge(instance, new_instance)
-            instance.updated_at = instance.new_timestamp()
+        async with self.session_maker() as session:
+            async with self.flushing(session):
+                instance = await self.retrieve(identifier)
+                await self.merge(instance, new_instance)
+                instance.updated_at = instance.new_timestamp()
         return instance
 
     @postgres_metric_timing(action="update_with_diff")
@@ -118,12 +119,13 @@ class StoreAsync:
         Update an existing model with a new one.
         :raises `ModelNotFoundError` if there is no existing model
         """
-        async with self.flushing():
-            instance = await self.retrieve(identifier)
-            before = Version(instance)
-            await self.merge(instance, new_instance)
-            instance.updated_at = instance.new_timestamp()
-            after = Version(instance)
+        async with self.session_maker() as session:
+            async with self.flushing(session):
+                instance = await self.retrieve(identifier)
+                before = Version(instance)
+                await self.merge(instance, new_instance)
+                instance.updated_at = instance.new_timestamp()
+                after = Version(instance)
         return instance, before - after
 
     async def replace(self, identifier, new_instance):
