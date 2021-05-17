@@ -39,3 +39,17 @@ class Namespace:
     @property
     def subject_name(self):
         return name_for(self.subject)
+
+    def extract_hostname_from_request(self, request: Request):
+        url = str(request.url)
+        return url.split('/api/')[0]
+
+    def url_for(self, request: Request, operation: Operation, **kwargs):
+        """
+        Construct a URL for an operation against a resource.
+
+        :param kwargs: additional arguments for URL path expansion
+
+        """
+        host_name = self.extract_hostname_from_request(request)
+        return f'{host_name}{self.path_for_operation(operation).format(**kwargs)}'
