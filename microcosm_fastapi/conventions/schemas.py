@@ -38,6 +38,8 @@ def SearchSchema(item_class):
         count: int
         items: List[item_class]
 
+        __config__ = item_class.__config__
+
     _SearchSchema.__name__ = "Search" + item_class.__name__
 
     return _SearchSchema
