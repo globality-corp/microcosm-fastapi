@@ -52,8 +52,6 @@ class BaseSchema(EnhancedBaseModel):
         # Allow "Any" to be used
         arbitrary_types_allowed = True
 
-        use_enum_names = True
-
 
 class HrefSchema(EnhancedBaseModel):
     href: AnyHttpUrl
