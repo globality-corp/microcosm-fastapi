@@ -62,6 +62,8 @@ class CRUDStoreAdapter:
         payload = dict(
             items=items,
             count=count,
+            offset=offset,
+            limit=limit,
         )
 
         if link_provider:

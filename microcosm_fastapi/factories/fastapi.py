@@ -59,9 +59,11 @@ class FastAPIWrapper(FastAPI):
     def inject_return_type(self, fn, kwargs):
         # If the user's function signature has provided a return type via a python
         # annotation, they want to serialize their response with this type
-        if "return" in fn.__annotations__:
-            kwargs["response_model"] = fn.__annotations__["return"]
-
+        try:
+            if "return" in fn.__annotations__:
+                kwargs["response_model"] = fn.__annotations__["return"]
+        except AttributeError:
+            pass
         return kwargs
 
 
