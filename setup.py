@@ -33,7 +33,7 @@ setup(
         # @piercefreeman 02/16/2021 - required until we refactor async code
         # into microcosm-postgres and microcosm-pubsub
         "microcosm-pubsub",
-        "microcosm-postgres",
+        "microcosm-postgres[encryption]>=2.0.0",
         "asyncpg",
     ],
     setup_requires=[
