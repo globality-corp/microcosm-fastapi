@@ -70,6 +70,7 @@ class FastAPIWrapper(FastAPI):
 @defaults(
     port=typed(int, default_value=5000),
     host="127.0.0.1",
+    openapi_url="api/v1/swagger"
 )
 def configure_fastapi(graph):
     # Docs use 3rd party dependencies by default - if documentation
@@ -80,6 +81,7 @@ def configure_fastapi(graph):
         debug=graph.metadata.debug,
         docs_url=None,
         redoc_url=None,
+        openapi_url=graph.config.fastapi.openapi_url,
     )
 
     return app
