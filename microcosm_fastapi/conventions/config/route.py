@@ -9,7 +9,7 @@ def configure_config(graph):
     """
     config_discovery = Config(graph)
 
-    @graph.app.get("/config")
+    @graph.app.get("/api/config")
     def configure_config_endpoint():
         return config_discovery.to_dict()
 
