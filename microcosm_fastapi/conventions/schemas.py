@@ -72,11 +72,14 @@ def SearchSchema(item_class):
         links: Optional[LinksSchema] = Field(alias="_links")
         count: int
         items: List[item_class]
-        offset: Optional[int]
-        limit: Optional[int]
+        offset: int
+        limit: int
 
         __config__ = item_class.__config__
 
-    _SearchSchema.__name__ = "Search" + item_class.__name__
+    # We append "List" to end to remain backwards compatible
+    # If we wanted to change to the following schema: "Search" + item_class.__name__`
+    # then we could create two duplicate our models...
+    _SearchSchema.__name__ = item_class.__name__ + "List"
 
     return _SearchSchema
