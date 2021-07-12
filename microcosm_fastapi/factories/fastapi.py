@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from microcosm.api import defaults, typed
 from microcosm_fastapi.errors import ErrorSchema
 
+
 class FastAPIWrapper(FastAPI):
     """
     Provide basic extensions to FastAPI's syntax.
