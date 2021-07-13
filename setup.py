@@ -53,6 +53,7 @@ setup(
             "health_convention = microcosm_fastapi.conventions.health.route:configure_health",
             "config_convention = microcosm_fastapi.conventions.config.route:configure_config",
             "landing_convention = microcosm_fastapi.conventions.landing.route:configure_landing",
+            "audit_middleware = microcosm_fastapi.audit:configure_audit_middleware",
         ],
     },
     tests_require=[
