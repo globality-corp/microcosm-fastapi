@@ -21,14 +21,14 @@ class EnhancedBaseModel(BaseModel):
             exclude_none: bool,
     ) -> Any:
         # The reason that we're overriding the Pydantic's BaseModel is so that
-        # we can create our own Config parameters such as 'not_use_enum_names'
+        # we can create our own Config parameters such as 'use_enum_names'
 
-        # 'not_use_enum_names' is bespoke pydantic config parameter used to indicate when
-        # enum names shouldn't be used. Because it is more common to want to use enum names,
-        # consumers of the enum base class that don't want to use enum names have to explicitly
-        # put `not_use_enum_names` = True in their cls.Config.
-        # The default execution flow for Enums will be to use their names i.e not_use_enum_names = False
-        if isinstance(value, Enum) and not getattr(cls.Config, "not_use_enum_names", False):
+        # 'use_enum_names' is bespoke pydantic config parameter used to indicate when
+        # enum names (keys) should/shouldn't be used.
+        # Because it is more common to want to use enum names, consumers of the enum
+        # base class that don't want to use enum names have to explicitly
+        # put `use_enum_names` = False in their cls.Config.
+        if isinstance(value, Enum) and getattr(cls.Config, "use_enum_names", True):
             return value.name
 
         return super()._get_value(
