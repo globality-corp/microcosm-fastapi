@@ -11,7 +11,7 @@ class EnhancedBaseModel(BaseModel):
     @classmethod
     def _get_value(
             cls,
-            v: Any,
+            value: Any,
             to_dict: bool,
             by_alias: bool,
             include,
@@ -24,13 +24,15 @@ class EnhancedBaseModel(BaseModel):
         # we can create our own Config parameters such as 'not_use_enum_names'
 
         # 'not_use_enum_names' is bespoke pydantic config parameter used to indicate when
-        # enum names shouldn't be used. Because it is more common to want to use enum names
-        # the default execution flow for Enums will be to use their names.
-        if isinstance(v, Enum) and not getattr(cls.Config, 'not_use_enum_names', False):
-            return v.name
+        # enum names shouldn't be used. Because it is more common to want to use enum names,
+        # consumers of the enum base class that don't want to use enum names have to explicitly
+        # put `not_use_enum_names` = True in their cls.Config.
+        # The default execution flow for Enums will be to use their names i.e not_use_enum_names = False
+        if isinstance(value, Enum) and not getattr(cls.Config, "not_use_enum_names", False):
+            return value.name
 
         return super()._get_value(
-            v,
+            value,
             to_dict,
             by_alias,
             include,
@@ -39,6 +41,7 @@ class EnhancedBaseModel(BaseModel):
             exclude_defaults,
             exclude_none,
         )
+
 
 class BaseSchema(EnhancedBaseModel):
     class Config:
@@ -77,9 +80,6 @@ def SearchSchema(item_class):
 
         __config__ = item_class.__config__
 
-    # We append "List" to end to remain backwards compatible
-    # If we wanted to change to the following schema: "Search" + item_class.__name__`
-    # then we could create two duplicate our models...
     _SearchSchema.__name__ = item_class.__name__ + "List"
 
     return _SearchSchema
