@@ -1,6 +1,6 @@
 from microcosm_postgres.encryption.models import decrypt_instance
 from sqlalchemy.inspection import inspect
-
+from sqlalchemy import select
 from microcosm_fastapi.database.store import StoreAsync
 
 
@@ -79,12 +79,12 @@ class EncryptableStoreAsync(StoreAsync):
         return self.model_class(**values)
 
     async def search_encrypted_ids(self, context_id):
-        query = self.session.query(
-            self.model_class.id,
-        ).where(
-            getattr(self.model_class, self.model_class.__encrypted_identifier__) != None,  # noqa
-            getattr(self.model_class, self.model_class.__encryption_context_key__) == context_id,
-        )
-
-        results = await self.session.execute(query)
+        async with self.session_maker() as session:
+            query = select(
+                self.model_class.id
+            ).where(
+                getattr(self.model_class, self.model_class.__encrypted_identifier__) != None,  # noqa
+                getattr(self.model_class, self.model_class.__encryption_context_key__) == context_id,
+            )
+            results = await session.execute(query)
         return [response[0] for response in results.all()]

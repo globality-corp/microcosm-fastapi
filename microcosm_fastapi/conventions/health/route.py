@@ -15,8 +15,8 @@ def configure_health(graph):
     """
     health_container = Health(graph, graph.config.health_convention.include_build_info)
 
-    @graph.app.get("/health")
-    def configure_health_endpoint(self, full: bool = False) -> HealthSchema:
+    @graph.app.get("/api/health")
+    def configure_health_endpoint(full: bool = False) -> HealthSchema:
         response_data = health_container.to_object(full=full)
 
         if not response_data.ok:

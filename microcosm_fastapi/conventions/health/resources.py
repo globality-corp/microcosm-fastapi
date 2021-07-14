@@ -4,7 +4,7 @@ from microcosm_fastapi.conventions.schemas import BaseSchema
 
 
 class HealthResultSchema(BaseSchema):
-    name: str
+    message: str
     ok: str
 
 

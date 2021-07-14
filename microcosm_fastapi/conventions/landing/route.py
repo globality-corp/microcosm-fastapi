@@ -6,7 +6,8 @@ from pkg_resources import DistributionNotFound, get_distribution
 from fastapi.responses import HTMLResponse
 from jinja2 import Template
 
-from microcosm_fastapi.templates import get_template
+# from microcosm_fastapi.templates import get_template
+from microcosm_fastapi.templates.landing import template
 
 
 def configure_landing(graph):   # noqa: C901
@@ -83,7 +84,7 @@ def configure_landing(graph):   # noqa: C901
         properties = get_properties_and_version()
         swagger_versions = get_swagger_versions()
 
-        html = Template(get_template("landing.html")).render(
+        html = Template(template).render(
             config=pretty_dict(config),
             description=properties.description if properties else None,
             env=env,

@@ -164,8 +164,9 @@ class StoreAsync:
         """
         Count the number of models matching some criterion.
         """
-        query = select(func.count(self.model_class.id))
-        query = self._where(query, **kwargs)
+        query = self._query(*criterion)
+        query = self._where(query, **kwargs).subquery()
+        query = select(func.count(query.c.id))
         return await self.get_first(query)
 
     @postgres_metric_timing(action="search")
