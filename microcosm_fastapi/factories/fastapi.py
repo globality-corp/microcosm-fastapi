@@ -99,4 +99,6 @@ def configure_fastapi(graph):
         redoc_url=None,
     )
 
+    graph.use("request_context")
+
     return app

@@ -41,6 +41,11 @@ def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callab
         }
 
         try:
+            operation_name = namespace.generate_operation_name_for_logging(operation)
+
+            fn = graph.request_state_binder(fn, operation_name)
+            fn = graph.error_adapter(fn)
+
             method_mapping[operation.method](url_path, **configuration)(fn)
         except FastAPIError as e:
             raise ValueError(f"Error configuring endpoint: {url_path} {operation.method}: {e}")

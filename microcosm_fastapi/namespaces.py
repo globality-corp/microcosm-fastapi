@@ -3,7 +3,7 @@ from fastapi import Request
 from typing import Any, Optional
 
 from microcosm_fastapi.naming import name_for
-from microcosm_fastapi.operations import Operation, OperationType
+from microcosm_fastapi.operations import OperationInfo, OperationType, Operation
 
 
 
@@ -12,35 +12,47 @@ class Namespace:
     subject: Any
     version: Optional[str] = None
     prefix: str = "api"
+    object_: Optional[Any] = None
 
-    def path_for_operation(self, operation: Operation):
+    @property
+    def path(self):
+        """
+        Build the path (prefix) leading up to this namespace.
+
+        """
+        return "/".join([
+            part
+            for part in [
+                self.prefix,
+                self.version,
+            ]
+            if part
+        ])
+
+    def path_for_operation(self, operation: OperationInfo):
         """
         Converts a defined operation (either a `NODE_PATTERN` or `EDGE_PATTERN`)
         into a convention-based URL that can be called on the server.
 
-        (GET, NODE_PATTERN) -> v1/pizza
-        (GET, EDGE_PATTERN) -> v1/pizza/pizza_id
+        (GET, NODE_PATTERN) -> /api/v1/pizza
+        (GET, EDGE_PATTERN) -> /api/v1/pizza/pizza_id
 
         """
         if operation.pattern == OperationType.NODE_PATTERN:
-            return "/" + "/".join(self.path_prefix)
+            return "/" + self.path + operation.naming_convention(self.subject)
+
         elif operation.pattern == OperationType.EDGE_PATTERN:
-            object_id_key = "{" + f"{self.subject_name}_id" + "}"
-            return "/" + "/".join(self.path_prefix + [object_id_key])
+            return "/" + self.path + operation.naming_convention(self.subject, self.object_)
         else:
             raise ValueError()
 
     @property
-    def path_prefix(self):
-        return [
-            part
-            for part in [self.prefix, self.version, self.subject_name]
-            if part
-        ]
-
-    @property
     def subject_name(self):
         return name_for(self.subject)
+
+    @property
+    def object_name(self):
+        return name_for(self.object_)
 
     def extract_hostname_from_request(self, request: Request):
         url = str(request.url)
@@ -55,3 +67,15 @@ class Namespace:
         """
         host_name = self.extract_hostname_from_request(request)
         return f'{host_name}{self.path_for_operation(operation).format(**kwargs)}'
+
+    def generate_operation_name_for_logging(self, operation: OperationInfo):
+        """
+        Generate a logging name (useful for logging)
+
+        """
+        return operation.pattern.value.format(
+            subject=self.subject_name,
+            operation=operation.name,
+            object_=self.object_name if self.object_ else None,
+            version=self.version or "v1",
+        )
