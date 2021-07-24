@@ -23,7 +23,9 @@ def maybe_modify_signature(func):
             has_request_param = True
 
     if not has_request_param:
-        params.append(Parameter('request', kind=Parameter.POSITIONAL_OR_KEYWORD, annotation=Request))
+        request_param = Parameter('request', kind=Parameter.POSITIONAL_OR_KEYWORD, annotation=Request)
+        # We insert it at the front as it's not a default parameter
+        params.insert(0, request_param)
         return new_signature.replace(parameters=params), has_request_param
 
     return new_signature, has_request_param
