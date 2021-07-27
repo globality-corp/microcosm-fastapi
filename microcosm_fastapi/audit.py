@@ -25,6 +25,7 @@ from microcosm_fastapi.errors import (
     extract_include_stack_trace,
     extract_status_code,
 )
+from microcosm_fastapi.utils import AsyncIteratorWrapper
 
 
 DEFAULT_INCLUDE_REQUEST_BODY = 400
@@ -54,59 +55,12 @@ def is_uuid(value):
         return False
 
 
-class async_iterator_wrapper:
-    def __init__(self, obj):
-        self._it = iter(obj)
-    def __aiter__(self):
-        return self
-    async def __anext__(self):
-        try:
-            value = next(self._it)
-        except StopIteration:
-            raise StopAsyncIteration
-        return value
-
-
 def should_skip_logging(request: Request):
     """
     Should we skip logging for this handler?
 
     """
     return strtobool(request.headers.get("x-request-nolog", "false"))
-
-
-class RequestWrapper:
-    def __init__(self, request: Request):
-        self.request = request
-        self.method = request.method
-        self.url = request.url
-        self.query_params = request.query_params
-
-        self.state = request.state
-
-        self.json_module = json
-
-    @property
-    def content_length(self):
-        content_length = self.request.headers.get("Content-Length")
-        if content_length is not None:
-            try:
-                return max(0, int(content_length))
-            except (ValueError, TypeError):
-                pass
-
-        return None
-
-    async def get_json(
-            self,
-    ) -> Optional[Any]:
-
-        data = None
-        try:
-            data = await self.request.json()
-        except JSONDecodeError:
-            pass
-        return data
 
 
 class RequestInfo:
@@ -189,6 +143,8 @@ class RequestInfo:
                 logger.debug(self.to_dict())
 
     async def capture_request(self):
+        # TODO - still need to work out how to capture a request
+        # https://github.com/tiangolo/fastapi/issues/394#issuecomment-513051977
         if not self.app_metadata.debug:
             # only capture request body on debug
             return
@@ -203,10 +159,6 @@ class RequestInfo:
                 self.content_length >= self.options.include_request_body
         ):
             # don't capture request body if it's too large
-            return
-
-        if not await self.get_json():
-            # only capture request body if json
             return
 
         self.request_body = await self.get_json()
@@ -324,7 +276,7 @@ async def parse_response(response):
     resp_body = [section async for section in response.__dict__['body_iterator']]
 
     # Repairing FastAPI response
-    response.__setattr__('body_iterator', async_iterator_wrapper(resp_body))
+    response.__setattr__('body_iterator', AsyncIteratorWrapper(resp_body))
 
     # Formatting response body for logging
     try:
@@ -344,12 +296,9 @@ def create_audit_request(graph, options):
         logger = getLogger(AUDIT_LOGGER_NAME)
 
         request_context = graph.request_context(request)
-        # request_wrapper = RequestWrapper(request)
         request_info = RequestInfo(options, request, request_context, graph.metadata)
 
-        await request_info.capture_request()
         try:
-            # process the request
             with elapsed_time(request_info.timing):
                 response = await call_next(request)
                 # We can only set the operation and func name after the
@@ -362,6 +311,7 @@ def create_audit_request(graph, options):
             request_info.capture_error(error)
             raise
         else:
+
             request_error = getattr(request.state, 'error', None)
             if request_error is not None:
                 request_info.capture_error(request_error)
@@ -369,14 +319,12 @@ def create_audit_request(graph, options):
                 await request_info.capture_response(response)
 
             return response
+
         finally:
             if not should_skip_logging(request):
                 request_info.log(logger)
 
     return partial(audit_request, graph, options)
-
-
-
 
 
 @defaults(
