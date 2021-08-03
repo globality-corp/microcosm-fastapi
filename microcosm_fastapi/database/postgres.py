@@ -45,6 +45,9 @@ def make_engine(metadata, config):
     # Required for async engine - so override user preferences
     config.postgres.driver = "postgresql+asyncpg"
 
+    # TODO - move to microcosm @defaults + deal with postgres / postgres_async bindings
+    config.postgres.pool_size = 5
+
     uri = choose_uri(metadata, config.postgres)
     args = choose_args(metadata, config.postgres)
     return create_async_engine(
