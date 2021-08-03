@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional, Type
 from enum import Enum
 
 from pydantic import BaseModel as BaseModel, AnyHttpUrl, Field
@@ -54,6 +54,18 @@ class BaseSchema(EnhancedBaseModel):
 
         # Allow "Any" to be used
         arbitrary_types_allowed = True
+
+        @staticmethod
+        def schema_extra(schema: Dict[str, Any], model: Type['Person']) -> None:
+            """
+            Pydantic hook to post process the json schema output.
+
+            """
+            for field_name, model_field in model.__fields__.items():
+                if model_field.type_ == float:
+                    # We need to add the format `float` value to fit with existing microcosm conventions
+                    # The format `float` is used when converting from a V3 openapi spec -> V2
+                    schema['properties'][f'{field_name}']['format'] = 'float'
 
 
 class HrefSchema(EnhancedBaseModel):
