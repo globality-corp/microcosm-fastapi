@@ -12,7 +12,7 @@ class ErrorContextSchema(BaseSchema):
 
 
 class ErrorSchema(BaseSchema):
-    message: str = "Unknown Error"
-    code: int = 500
+    message: str
+    code: int
     retryable: bool
     context: Optional[ErrorContextSchema]
