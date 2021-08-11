@@ -305,7 +305,6 @@ def create_audit_request(graph, options):
         with elapsed_time(request_info.timing):
             response = await call_next(request)
 
-        # Look at reworking this bit
         request_error = getattr(request.state, 'error', None)
         if request_error is not None:
             request_info.capture_error(request_error)
