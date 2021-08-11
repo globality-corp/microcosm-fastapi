@@ -34,8 +34,9 @@ class Namespace:
         Converts a defined operation (either a `NODE_PATTERN` or `EDGE_PATTERN`)
         into a convention-based URL that can be called on the server.
 
+        # TODO - check these
         (GET, NODE_PATTERN) -> /api/v1/pizza
-        (GET, EDGE_PATTERN) -> /api/v1/pizza/pizza_id
+        (GET, EDGE_PATTERN) -> /api/v1/pizza/pizza_id/order
 
         """
         if operation.pattern == OperationType.NODE_PATTERN:

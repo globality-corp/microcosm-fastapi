@@ -298,6 +298,13 @@ def create_audit_request(graph, options):
         request_context = graph.request_context(request)
         request_info = RequestInfo(options, request, request_context, graph.metadata)
 
+        breakpoint()
+
+        graph.logging_data_map
+        operation_method = request.method
+        request_path = request.url.path
+
+
         try:
             with elapsed_time(request_info.timing):
                 response = await call_next(request)
