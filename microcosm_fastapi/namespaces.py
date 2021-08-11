@@ -53,7 +53,10 @@ class Namespace:
 
     @property
     def object_name(self):
-        return name_for(self.object_)
+        if self.object_ is None:
+            return None
+        else:
+            return name_for(self.object_)
 
     def extract_hostname_from_request(self, request: Request):
         url = str(request.url)

@@ -26,6 +26,7 @@ from microcosm_fastapi.errors import (
     extract_status_code,
 )
 from microcosm_fastapi.utils import AsyncIteratorWrapper
+from microcosm_fastapi.logging_data_map import LoggingInfo
 
 
 DEFAULT_INCLUDE_REQUEST_BODY = 400
@@ -235,13 +236,13 @@ class RequestInfo:
 
             dct["{}_id".format(underscore(parts[1]))] = value
 
-    def set_operation_and_func_name(self):
+    def set_operation_and_func_name(self, logging_info):
         """
-        Extracting and setting operation and function name from request state
+        Setting operation and function name from logging_info
 
         """
-        self.func = getattr(self.request_state, 'func_name', None)
-        self.operation = getattr(self.request_state, 'operation_name', None)
+        self.func = logging_info.function_name
+        self.operation = logging_info.operation_name
 
     @property
     def content_length(self):
@@ -298,38 +299,23 @@ def create_audit_request(graph, options):
         request_context = graph.request_context(request)
         request_info = RequestInfo(options, request, request_context, graph.metadata)
 
-        breakpoint()
+        logging_info: LoggingInfo = graph.logging_data_map.get_entry(request.url.path, request.method)
+        request_info.set_operation_and_func_name(logging_info)
 
-        graph.logging_data_map
-        operation_method = request.method
-        request_path = request.url.path
+        with elapsed_time(request_info.timing):
+            response = await call_next(request)
 
-
-        try:
-            with elapsed_time(request_info.timing):
-                response = await call_next(request)
-                # We can only set the operation and func name after the
-                # decorator in charge of binding this to request state has
-                # been executed
-                request_info.set_operation_and_func_name()
-        except Exception as error:
-            # This shouldn't happen as fastapi seems to swallow HTTPExceptionErrors
-            request_info.set_operation_and_func_name()
-            request_info.capture_error(error)
-            raise
+        # Look at reworking this bit
+        request_error = getattr(request.state, 'error', None)
+        if request_error is not None:
+            request_info.capture_error(request_error)
         else:
+            await request_info.capture_response(response)
 
-            request_error = getattr(request.state, 'error', None)
-            if request_error is not None:
-                request_info.capture_error(request_error)
-            else:
-                await request_info.capture_response(response)
+        if not should_skip_logging(request):
+            request_info.log(logger)
 
-            return response
-
-        finally:
-            if not should_skip_logging(request):
-                request_info.log(logger)
+        return response
 
     return partial(audit_request, graph, options)
 
