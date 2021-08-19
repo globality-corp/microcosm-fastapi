@@ -124,30 +124,10 @@ class RequestInfo:
                 status_code=self.status_code,
             )
 
-        self.post_process_request_body(dct)
         self.post_process_response_body(dct)
         self.post_process_response_headers(dct)
 
         return dct
-
-    async def capture_request(self):
-        if not self.app_metadata.debug:
-            # only capture request body on debug
-            return
-
-        if not self.options.include_request_body:
-            # only capture request body if requested
-            return
-
-        if (
-                self.content_length and
-                self.options.include_request_body is not True and
-                self.content_length >= self.options.include_request_body
-        ):
-            # don't capture request body if it's too large
-            return
-
-        self.request_body = await self.get_json()
 
     async def capture_response(self, response):
         self.success = True
@@ -287,8 +267,6 @@ def create_audit_request(graph, options):
 
         logging_info: LoggingInfo = graph.logging_data_map.get_entry(request.url.path, request.method)
         request_info.set_operation_and_func_name(logging_info)
-
-        await request_info.capture_request()
 
         with elapsed_time(request_info.timing):
             response = await call_next(request)

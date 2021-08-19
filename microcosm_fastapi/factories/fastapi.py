@@ -100,6 +100,7 @@ def configure_fastapi(graph):
         redoc_url=None,
     )
 
+    # Request_context is used for logging purposes
     graph.use("request_context")
 
     return app
