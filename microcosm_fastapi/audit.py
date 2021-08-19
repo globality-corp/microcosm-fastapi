@@ -130,19 +130,6 @@ class RequestInfo:
 
         return dct
 
-    def log(self, logger):
-        if self.status_code == 500:
-            # something actually went wrong; investigate
-            logger.warning(self.to_dict())
-
-        else:
-            # usually log at INFO; a raised exception can be an error or
-            # expected behavior (e.g. 404)
-            if not self.options.log_as_debug:
-                logger.info(self.to_dict())
-            else:
-                logger.debug(self.to_dict())
-
     async def capture_request(self):
         if not self.app_metadata.debug:
             # only capture request body on debug
@@ -313,7 +300,17 @@ def create_audit_request(graph, options):
             await request_info.capture_response(response)
 
         if not should_skip_logging(request):
-            request_info.log(logger)
+            if request_info.status_code == 500:
+                # something actually went wrong; investigate
+                logger.warning(request_info.to_dict())
+
+            else:
+                # usually log at INFO; a raised exception can be an error or
+                # expected behavior (e.g. 404)
+                if not request_info.options.log_as_debug:
+                    logger.info(request_info.to_dict())
+                else:
+                    logger.debug(request_info.to_dict())
 
         return response
 
