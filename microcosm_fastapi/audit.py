@@ -19,14 +19,15 @@ from microcosm.api import defaults, typed
 from microcosm.metadata import Metadata
 from microcosm.config.types import boolean
 from microcosm_logging.timing import elapsed_time
-from microcosm_fastapi.errors import (
-    extract_context,
-    extract_error_message,
-    extract_include_stack_trace,
-    extract_status_code,
-)
+# from microcosm_fastapi.errors import (
+#     extract_context,
+#     extract_error_message,
+#     extract_include_stack_trace,
+#     extract_status_code,
+# )
 from microcosm_fastapi.utils import AsyncIteratorWrapper
 from microcosm_fastapi.logging_data_map import LoggingInfo
+from microcosm_fastapi.errors import ParsedException
 
 
 DEFAULT_INCLUDE_REQUEST_BODY = 400
@@ -80,12 +81,11 @@ class RequestInfo:
         self.request = request
         self.path = request.url.path
         self.query = request.url.query
-        self.request_state = request.state
 
         self.request_context = request_context
         self.timing = dict()
 
-        self.error = None
+        self.parsed_exception = ParsedException()
         self.stack_trace = None
         self.request_body = None
         self.response_body = None
@@ -118,8 +118,8 @@ class RequestInfo:
         if self.success is False:
             dct.update(
                 success=self.success,
-                message=extract_error_message(self.error)[:ERROR_MESSAGE_LIMIT],
-                context=extract_context(self.error),
+                message=self.parsed_exception.error_message[:ERROR_MESSAGE_LIMIT],
+                context=self.parsed_exception.context,
                 stack_trace=self.stack_trace,
                 status_code=self.status_code,
             )
@@ -144,8 +144,6 @@ class RequestInfo:
                 logger.debug(self.to_dict())
 
     async def capture_request(self):
-        # TODO - still need to work out how to capture a request
-        # https://github.com/tiangolo/fastapi/issues/394#issuecomment-513051977
         if not self.app_metadata.debug:
             # only capture request body on debug
             return
@@ -195,12 +193,13 @@ class RequestInfo:
             pass
 
     def capture_error(self, error):
-        self.error = error
-        self.status_code = extract_status_code(error)
+        self.parsed_exception.error = error
+        self.status_code = self.parsed_exception.status_code
+
         self.success = 0 < self.status_code < 400
-        include_stack_trace = extract_include_stack_trace(error)
-        self.stack_trace = getattr(self.request_state, 'traceback', None) \
-            if (not self.success and include_stack_trace) else None
+        # include_stack_trace = extract_include_stack_trace(error)
+        self.stack_trace = getattr(self.request.state, 'traceback', None) \
+            if (not self.success and self.parsed_exception.include_stack_trace) else None
 
     def post_process_request_body(self, dct):
         if not self.request_body:
@@ -301,6 +300,8 @@ def create_audit_request(graph, options):
 
         logging_info: LoggingInfo = graph.logging_data_map.get_entry(request.url.path, request.method)
         request_info.set_operation_and_func_name(logging_info)
+
+        await request_info.capture_request()
 
         with elapsed_time(request_info.timing):
             response = await call_next(request)

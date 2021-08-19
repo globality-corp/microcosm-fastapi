@@ -41,8 +41,6 @@ class LoggingDataMap:
         elif len(path_parts) == 6:
             # Must be an edge pattern
             return (path_parts[2], path_parts[3], path_parts[5], operation_method)
-        else:
-            raise Exception("Unable to parse url path. Please investigate")
 
     def _generate_key_from_namespace(self, namespace, operation_method):
         # single subject -> key = ('v1', 'pizza', 'GET')

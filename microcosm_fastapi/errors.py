@@ -18,66 +18,86 @@ class ErrorSchema(BaseSchema):
     context: Optional[ErrorContextSchema]
 
 
-def extract_context(error):
-    """
-    Extract extract context from an error.
+class ParsedException:
+    def __init__(self):
+        self._error = None
 
-    Errors may (optionally) provide a context attribute which will be encoded
-    in the response.
+        self.context = None
+        self.retryable = False
+        self.error_message = None
+        self.status_code = 500
+        self.include_stack_trace = True
 
-    """
-    return getattr(error, "context", {"errors": []})
+    @property
+    def error(self):
+        return self._error
 
+    @error.setter
+    def error(self, value):
 
-def extract_retryable(error):
-    """
-    Extract a retryable status from an error.
+        self._error = value
+        self.context = self.extract_context()
+        self.retryable = self.extract_retryable()
+        self.error_message = self.extract_error_message()
+        self.status_code = self.extract_status_code()
+        self.include_stack_trace = self.extract_include_stack_trace()
 
-    It's not usually helpful to retry on an error, but it's useful to do so
-    when the application knows it might.
+    def extract_context(self):
+        """
+        Extract extract context from an error.
 
-    """
-    return getattr(error, "retryable", False)
+        Errors may (optionally) provide a context attribute which will be encoded
+        in the response.
 
+        """
+        return getattr(self.error, "context", {"errors": []})
 
-def extract_error_message(error):
-    """
-    Extract a useful message from an error.
+    def extract_retryable(self):
+        """
+        Extract a retryable status from an error.
 
-    Prefer the description attribute, then the message attribute, then
-    the errors string conversion. In each case, fall back to the error class's
-    name in the event that the attribute value was set to a uselessly empty string.
+        It's not usually helpful to retry on an error, but it's useful to do so
+        when the application knows it might.
 
-    """
-    try:
-        return error.description or error.__class__.__name__
-    except AttributeError:
+        """
+        return getattr(self.error, "retryable", False)
+
+    def extract_error_message(self):
+        """
+        Extract a useful message from an error.
+
+        Prefer the description attribute, then the message attribute, then
+        the errors string conversion. In each case, fall back to the error class's
+        name in the event that the attribute value was set to a uselessly empty string.
+
+        """
         try:
-            return str(error.message) or error.__class__.__name__
+            return self.error.description or self.error.__class__.__name__
         except AttributeError:
-            return str(error) or error.__class__.__name__
+            try:
+                return str(self.error.message) or self.error.__class__.__name__
+            except AttributeError:
+                return str(self.error) or self.error.__class__.__name__
 
+    def extract_status_code(self):
+        """
+        Extract an error code from a message.
 
-def extract_status_code(error):
-    """
-    Extract an error code from a message.
-
-    """
-    try:
-        return int(error.code)
-    except (AttributeError, TypeError, ValueError):
+        """
         try:
-            return int(error.status_code)
+            return int(self.error.code)
         except (AttributeError, TypeError, ValueError):
             try:
-                return int(error.errno)
+                return int(self.error.status_code)
             except (AttributeError, TypeError, ValueError):
-                return 500
+                try:
+                    return int(self.error.errno)
+                except (AttributeError, TypeError, ValueError):
+                    return 500
 
+    def extract_include_stack_trace(self):
+        """
+        Extract whether error should include a stack trace.
 
-def extract_include_stack_trace(error):
-    """
-    Extract whether error should include a stack trace.
-
-    """
-    return getattr(error, "include_stack_trace", True)
+        """
+        return getattr(self.error, "include_stack_trace", True)

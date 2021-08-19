@@ -21,7 +21,6 @@ class Namespace:
         i.e for prefix `api` and version `v1`, this function will return `api/v1`
 
         """
-        breakpoint()
         return "/".join([
             part
             for part in [
