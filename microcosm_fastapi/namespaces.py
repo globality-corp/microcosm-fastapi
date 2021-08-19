@@ -14,11 +14,14 @@ class Namespace:
     object_: Optional[Any] = None
 
     @property
-    def path(self):
+    def path(self) -> str:
         """
         Build the path (prefix) leading up to this namespace.
 
+        i.e for prefix `api` and version `v1`, this function will return `api/v1`
+
         """
+        breakpoint()
         return "/".join([
             part
             for part in [
@@ -28,7 +31,7 @@ class Namespace:
             if part
         ])
 
-    def path_for_operation(self, operation: OperationInfo):
+    def path_for_operation(self, operation: OperationInfo) -> str:
         """
         Converts a defined operation (either a `NODE_PATTERN` or `EDGE_PATTERN`)
         into a convention-based URL that can be called on the server.
