@@ -58,11 +58,11 @@ class Namespace:
         else:
             return name_for(self.object_)
 
-    def extract_hostname_from_request(self, request: Request):
+    def extract_hostname_from_request(self, request: Request) -> str:
         url = str(request.url)
         return url.split('/api/')[0]
 
-    def url_for(self, request: Request, operation: Operation, **kwargs):
+    def url_for(self, request: Request, operation: Operation, **kwargs) -> str:
         """
         Construct a URL for an operation against a resource.
 
@@ -72,7 +72,7 @@ class Namespace:
         host_name = self.extract_hostname_from_request(request)
         return f'{host_name}{self.path_for_operation(operation).format(**kwargs)}'
 
-    def generate_operation_name_for_logging(self, operation: OperationInfo):
+    def generate_operation_name_for_logging(self, operation: OperationInfo) -> str:
         """
         Generate a logging name (useful for logging)
 

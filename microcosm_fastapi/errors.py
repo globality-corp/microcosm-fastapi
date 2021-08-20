@@ -30,7 +30,7 @@ class ParsedException:
 
     def extract_context(self):
         """
-        Extract extract context from an error.
+        Extract context from an error.
 
         Errors may (optionally) provide a context attribute which will be encoded
         in the response.

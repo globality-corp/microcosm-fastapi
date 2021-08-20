@@ -2,6 +2,7 @@
 Naming conventions
 """
 from inspect import isclass
+from typing import Any
 
 from inflection import underscore
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
@@ -41,7 +42,7 @@ def join_url_with_parameters(url, params):
     return urlunparse(url_parts)
 
 
-def collection_path_for(name):
+def collection_path_for(name: Any) -> str:
     """
     Get a path for a collection of things.
 
@@ -49,7 +50,7 @@ def collection_path_for(name):
     return f"/{name_for(name)}"
 
 
-def singleton_path_for(name):
+def singleton_path_for(name: Any) -> str:
     """
     Get a path for a singleton thing.
 
@@ -57,7 +58,7 @@ def singleton_path_for(name):
     return f"/{name_for(name)}"
 
 
-def instance_path_for(name, identifier_key=None):
+def instance_path_for(name: Any, identifier_key:str = None) -> str:
     """
     Get a path for thing.
 
@@ -76,7 +77,7 @@ def alias_path_for(name):
     return f"/{name_for(name)}/{{{name_for(name)}_name}}"
 
 
-def relation_path_for(from_name, to_name, identifier_key=None):
+def relation_path_for(from_name: Any, to_name: Any, identifier_key:str = None) -> str:
     """
     Get a path relating a thing to another.
 
