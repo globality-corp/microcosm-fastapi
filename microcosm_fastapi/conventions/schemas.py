@@ -56,7 +56,7 @@ class BaseSchema(EnhancedBaseModel):
         arbitrary_types_allowed = True
 
         @staticmethod
-        def schema_extra(schema: Dict[str, Any], model: Type['Person']) -> None:
+        def schema_extra(schema: Dict[str, Any], model: Type['BaseSchema']) -> None:
             """
             Pydantic hook to post process the json schema output.
 
