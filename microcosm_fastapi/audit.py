@@ -19,12 +19,6 @@ from microcosm.api import defaults, typed
 from microcosm.metadata import Metadata
 from microcosm.config.types import boolean
 from microcosm_logging.timing import elapsed_time
-# from microcosm_fastapi.errors import (
-#     extract_context,
-#     extract_error_message,
-#     extract_include_stack_trace,
-#     extract_status_code,
-# )
 from microcosm_fastapi.utils import AsyncIteratorWrapper
 from microcosm_fastapi.logging_data_map import LoggingInfo
 from microcosm_fastapi.errors import ParsedException
@@ -85,7 +79,7 @@ class RequestInfo:
         self.request_context = request_context
         self.timing = dict()
 
-        self.parsed_exception = ParsedException()
+        self.parsed_exception = None
         self.stack_trace = None
         self.request_body = None
         self.response_body = None
@@ -160,11 +154,10 @@ class RequestInfo:
             pass
 
     def capture_error(self, error):
-        self.parsed_exception.error = error
+        self.parsed_exception = ParsedException(error)
         self.status_code = self.parsed_exception.status_code
 
         self.success = 0 < self.status_code < 400
-        # include_stack_trace = extract_include_stack_trace(error)
         self.stack_trace = getattr(self.request.state, 'traceback', None) \
             if (not self.success and self.parsed_exception.include_stack_trace) else None
 
@@ -272,10 +265,10 @@ def create_audit_request(graph, options):
             response = await call_next(request)
 
         request_error = getattr(request.state, 'error', None)
-        if request_error is not None:
-            request_info.capture_error(request_error)
-        else:
+        if request_error is None:
             await request_info.capture_response(response)
+        else:
+            request_info.capture_error(request_error)
 
         if not should_skip_logging(request):
             if request_info.status_code == 500:

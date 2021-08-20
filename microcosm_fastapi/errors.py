@@ -19,23 +19,9 @@ class ErrorSchema(BaseSchema):
 
 
 class ParsedException:
-    def __init__(self):
-        self._error = None
+    def __init__(self, error):
+        self.error = error
 
-        self.context = None
-        self.retryable = False
-        self.error_message = None
-        self.status_code = 500
-        self.include_stack_trace = True
-
-    @property
-    def error(self):
-        return self._error
-
-    @error.setter
-    def error(self, value):
-
-        self._error = value
         self.context = self.extract_context()
         self.retryable = self.extract_retryable()
         self.error_message = self.extract_error_message()
@@ -101,3 +87,11 @@ class ParsedException:
 
         """
         return getattr(self.error, "include_stack_trace", True)
+
+    def to_dict(self):
+        return {
+            "code": self.status_code,
+            "context": self.context,
+            "message": self.error_message,
+            "retryable": self.retryable
+        }

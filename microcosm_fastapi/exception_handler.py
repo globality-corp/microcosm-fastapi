@@ -16,16 +16,8 @@ async def global_exception_handler(request: Request, call_next):
         return await call_next(request)
     except Exception as error:
         bind_to_request_state(request, error=error, traceback=traceback.format_exc(limit=10))
-        parsed_exception = ParsedException()
-        parsed_exception.error = error
-
-        response_content = {
-            "code": parsed_exception.status_code,
-            "context": parsed_exception.context,
-            "message": parsed_exception.error_message,
-            "retryable": parsed_exception.retryable
-        }
-        return JSONResponse(status_code=response_content["code"], content=response_content)
+        parsed_exception = ParsedException(error)
+        return JSONResponse(status_code=parsed_exception.status_code, content=parsed_exception.to_dict())
 
 
 def configure_global_exception_handler(graph):
