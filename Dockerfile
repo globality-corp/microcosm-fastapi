@@ -24,7 +24,7 @@ ARG EXTRA_INDEX_URL
 ENV EXTRA_INDEX_URL ${EXTRA_INDEX_URL}
 
 ENV CORE_PACKAGES locales
-ENV BUILD_PACKAGES build-essential libffi-dev
+ENV BUILD_PACKAGES build-essential libffi-dev libpq-dev
 ENV OTHER_PACKAGES libssl-dev
 
 
