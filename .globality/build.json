@@ -1,0 +1,11 @@
+{
+  "params": {
+    "app_name": "example",
+    "name": "microcosm-fastapi",
+    "pypi": {
+      "repository": "pypi"
+    }
+  },
+  "type": "python-library",
+  "version": "2021.21.1"
+}
