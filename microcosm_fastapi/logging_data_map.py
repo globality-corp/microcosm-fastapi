@@ -36,12 +36,12 @@ class LoggingDataMap:
         # single subject -> key = ('v1', 'pizza', None, 'GET')
         # subject + object -> key = ('v1', 'pizza', 'order', 'GET')
         path_parts = path.split('/')
-        if len(path_parts) == 5:
-            # Must be a node pattern
-            return (path_parts[2], path_parts[3], None, operation_method)
-        elif len(path_parts) == 6:
+        if len(path_parts) == 6:
             # Must be an edge pattern
             return (path_parts[2], path_parts[3], path_parts[5], operation_method)
+
+        # Must be a node pattern
+        return (path_parts[2], path_parts[3], None, operation_method)
 
     def _generate_key_from_namespace(self, namespace: Namespace, operation_method) -> Tuple[str, str, Optional[str], str]:
         # single subject -> key = ('v1', 'pizza', None, 'GET')
