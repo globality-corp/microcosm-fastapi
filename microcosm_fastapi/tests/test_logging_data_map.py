@@ -61,3 +61,11 @@ class TestLoggingDataMap:
 
         logging_info: LoggingInfo = self.logging_data_map.get_entry(example_path, example_operation_method)
         assert logging_info.operation_name == expected_operation_name
+
+    def test_operation_name_for_random_path(self):
+        expected_operation_name = None
+        example_path = '/random_path'
+        example_operation_method = "GET"
+
+        logging_info: LoggingInfo = self.logging_data_map.get_entry(example_path, example_operation_method)
+        assert logging_info.operation_name == expected_operation_name

@@ -35,6 +35,11 @@ class LoggingDataMap:
     def _generate_key_from_path_url(self, path: str, operation_method: str) -> Tuple[str, str, Optional[str], str]:
         # single subject -> key = ('v1', 'pizza', None, 'GET')
         # subject + object -> key = ('v1', 'pizza', 'order', 'GET')
+
+        # We only care about paths that start with 'api/v'
+        if not path.startswith('/api/v'):
+            return None
+
         path_parts = path.split('/')
         if len(path_parts) == 6:
             # Must be an edge pattern
