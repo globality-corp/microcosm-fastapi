@@ -120,7 +120,7 @@ class StoreAsync:
             async with self.with_transaction(session):
                 async with self.flushing(session):
                     instance = await self.retrieve(identifier)
-                    await self.merge(instance, new_instance)
+                    await self.merge(instance, new_instance, session)
                     instance.updated_at = instance.new_timestamp()
         return instance
 
@@ -135,7 +135,7 @@ class StoreAsync:
                 async with self.flushing(session):
                     instance = await self.retrieve(identifier)
                     before = Version(instance)
-                    await self.merge(instance, new_instance)
+                    await self.merge(instance, new_instance, session)
                     instance.updated_at = instance.new_timestamp()
                     after = Version(instance)
         return instance, before - after
@@ -201,9 +201,8 @@ class StoreAsync:
         async with self.session_maker() as session:
             return session.expunge(instance)
 
-    async def merge(self, instance, new_instance):
-        async with self.session_maker() as session:
-            await session.merge(new_instance)
+    async def merge(self, instance, new_instance, session):
+        await session.merge(new_instance)
 
     async def get_all(self, query):
         async with self.session_maker() as session:
