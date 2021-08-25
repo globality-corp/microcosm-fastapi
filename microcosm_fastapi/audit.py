@@ -2,7 +2,7 @@
 Audit log support for FastAPI routes.
 
 """
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, NamedTuple, Union, Tuple
 from collections import namedtuple
 from distutils.util import strtobool
 from json import loads
@@ -14,6 +14,8 @@ from functools import partial
 from inflection import underscore
 
 from fastapi import Request
+from fastapi.responses import StreamingResponse
+from starlette.datastructures import MutableHeaders
 
 from microcosm.api import defaults, typed
 from microcosm.metadata import Metadata
@@ -24,26 +26,25 @@ from microcosm_fastapi.logging_data_map import LoggingInfo
 from microcosm_fastapi.errors import ParsedException
 
 
-DEFAULT_INCLUDE_REQUEST_BODY = 400
-DEFAULT_INCLUDE_RESPONSE_BODY = 400
+DEFAULT_INCLUDE_REQUEST_BODY_STATUS = 400
+DEFAULT_INCLUDE_RESPONSE_BODY_STATUS = 400
 ERROR_MESSAGE_LIMIT = 2048
 
 AUDIT_LOGGER_NAME = "audit"
 
 
-AuditOptions = namedtuple("AuditOptions", [
-    "include_request_body",
-    "include_response_body",
-    "include_path",
-    "include_query_string",
-    "log_as_debug",
-])
+class AuditOptions(NamedTuple):
+    include_request_body_status: int
+    include_response_body_status: int
+    include_path: bool
+    include_query_string: bool
+    log_as_debug: bool
 
 
 SKIP_LOGGING = "_microcosm_flask_skip_audit_logging"
 
 
-def is_uuid(value):
+def is_uuid(value) -> bool:
     try:
         UUID(value)
         return True
@@ -51,7 +52,7 @@ def is_uuid(value):
         return False
 
 
-def should_skip_logging(request: Request):
+def should_skip_logging(request: Request) -> bool:
     """
     Should we skip logging for this handler?
 
@@ -87,7 +88,7 @@ class RequestInfo:
         self.status_code = None
         self.success = None
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         dct = dict(
             operation=self.operation,
             func=self.func,
@@ -109,7 +110,7 @@ class RequestInfo:
                 success=self.success,
                 status_code=self.status_code,
             )
-        if self.success is False:
+        else:
             dct.update(
                 success=self.success,
                 message=self.parsed_exception.error_message[:ERROR_MESSAGE_LIMIT],
@@ -123,7 +124,7 @@ class RequestInfo:
 
         return dct
 
-    async def capture_response(self, response):
+    async def capture_response(self, response) -> dict:
         self.success = True
 
         body, self.status_code, self.response_headers = await parse_response(response)
@@ -132,7 +133,7 @@ class RequestInfo:
             # only capture responsebody on debug
             return
 
-        if not self.options.include_response_body:
+        if not self.options.include_response_body_status:
             # only capture response body if requested
             return
 
@@ -141,8 +142,8 @@ class RequestInfo:
             return
 
         if (
-                self.options.include_response_body is not True and
-                len(body) >= self.options.include_response_body
+                self.options.include_response_body_status is not True and
+                len(body) >= self.options.include_response_body_status
         ):
             # don't capture response body if it's too large
             return
@@ -153,7 +154,7 @@ class RequestInfo:
             # not json
             pass
 
-    def capture_error(self, error):
+    def capture_error(self, error) -> None:
         self.parsed_exception = ParsedException(error)
         self.status_code = self.parsed_exception.status_code
 
@@ -161,7 +162,7 @@ class RequestInfo:
         self.stack_trace = getattr(self.request.state, 'traceback', None) \
             if (not self.success and self.parsed_exception.include_stack_trace) else None
 
-    def post_process_request_body(self, dct):
+    def post_process_request_body(self, dct) -> None:
         if not self.request_body:
             return
 
@@ -169,7 +170,7 @@ class RequestInfo:
             request_body=self.request_body,
         )
 
-    def post_process_response_body(self, dct):
+    def post_process_response_body(self, dct) -> None:
         if not self.response_body:
             return
 
@@ -177,7 +178,7 @@ class RequestInfo:
             response_body=self.response_body,
         )
 
-    def post_process_response_headers(self, dct):
+    def post_process_response_headers(self, dct) -> None:
         """
         Rewrite X-<>-Id header into audit logs.
         """
@@ -195,7 +196,7 @@ class RequestInfo:
 
             dct["{}_id".format(underscore(parts[1]))] = value
 
-    def set_operation_and_func_name(self, logging_info):
+    def set_operation_and_func_name(self, logging_info: LoggingInfo) -> None:
         """
         Setting operation and function name from logging_info
 
@@ -204,7 +205,7 @@ class RequestInfo:
         self.operation = logging_info.operation_name
 
     @property
-    def content_length(self):
+    def content_length(self) -> Optional[int]:
         content_length = self.request.headers.get("Content-Length")
         if content_length is not None:
             try:
@@ -215,7 +216,7 @@ class RequestInfo:
         return None
 
     async def get_json(
-            self,
+        self,
     ) -> Optional[Any]:
 
         data = None
@@ -226,7 +227,7 @@ class RequestInfo:
         return data
 
 
-async def parse_response(response):
+async def parse_response(response: StreamingResponse) -> Tuple[Union[str | dict], int, MutableHeaders]:
     """
     Parse a FastAPI response into a body, a status code, and headers
 
@@ -273,7 +274,7 @@ def create_audit_request(graph, options):
         if not should_skip_logging(request):
             if request_info.status_code == 500:
                 # something actually went wrong; investigate
-                logger.warning(request_info.to_dict())
+                logger.error(request_info.to_dict())
 
             else:
                 # usually log at INFO; a raised exception can be an error or
@@ -289,8 +290,8 @@ def create_audit_request(graph, options):
 
 
 @defaults(
-    include_request_body=typed(type=int, default_value=DEFAULT_INCLUDE_REQUEST_BODY),
-    include_response_body=typed(type=int, default_value=DEFAULT_INCLUDE_RESPONSE_BODY),
+    include_request_body_status=typed(type=int, default_value=DEFAULT_INCLUDE_REQUEST_BODY_STATUS),
+    include_response_body_status=typed(type=int, default_value=DEFAULT_INCLUDE_RESPONSE_BODY_STATUS),
     include_path=typed(type=boolean, default_value=False),
     include_query_string=typed(type=boolean, default_value=False),
     log_as_debug=typed(type=boolean, default_value=False),
@@ -301,8 +302,8 @@ def configure_audit_middleware(graph):
 
     """
     options = AuditOptions(
-        include_request_body=graph.config.audit_middleware.include_request_body,
-        include_response_body=graph.config.audit_middleware.include_response_body,
+        include_request_body_status=graph.config.audit_middleware.include_request_body_status,
+        include_response_body_status=graph.config.audit_middleware.include_response_body_status,
         include_path=graph.config.audit_middleware.include_path,
         include_query_string=graph.config.audit_middleware.include_query_string,
         log_as_debug=graph.config.audit_middleware.log_as_debug,
