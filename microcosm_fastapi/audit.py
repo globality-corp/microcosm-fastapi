@@ -3,7 +3,6 @@ Audit log support for FastAPI routes.
 
 """
 from typing import Dict, Any, Optional, NamedTuple, Union, Tuple
-from collections import namedtuple
 from distutils.util import strtobool
 from json import loads
 from json.decoder import JSONDecodeError
