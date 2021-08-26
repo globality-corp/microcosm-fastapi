@@ -226,7 +226,7 @@ class RequestInfo:
         return data
 
 
-async def parse_response(response: StreamingResponse) -> Tuple[Union[str | dict], int, MutableHeaders]:
+async def parse_response(response: StreamingResponse) -> Tuple[Any, int, MutableHeaders]:
     """
     Parse a FastAPI response into a body, a status code, and headers
 
