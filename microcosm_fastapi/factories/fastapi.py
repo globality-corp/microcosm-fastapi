@@ -94,9 +94,13 @@ def configure_fastapi(graph):
     # with microcosm-fastapi. This hook provides a mirror to the default
     # docs/redocs but while hosted locally.
     app = FastAPIWrapper(
+        port=graph.config.app.port,
         debug=graph.metadata.debug,
         docs_url=None,
         redoc_url=None,
     )
+
+    # Request_context is used for logging purposes
+    graph.use("request_context")
 
     return app
