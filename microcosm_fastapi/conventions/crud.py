@@ -6,7 +6,12 @@ from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import Operation
 
 
-def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callable]):
+def configure_crud(
+        graph,
+        namespace: Namespace,
+        mappings: Dict[Operation, Callable],
+        response_model_exclude_none: bool = True,
+):
     """
     Mounts the supported namespace operations into the FastAPI graph, following our
     conventions for setting up URL patterns.
@@ -25,6 +30,7 @@ def configure_crud(graph, namespace: Namespace, mappings: Dict[Operation, Callab
         configuration = dict(
             operation_id=operation.name,
             status_code=operation.default_code,
+            response_model_exclude_none=response_model_exclude_none,
         )
 
         # Construct the unique path for this operation & object namespace
