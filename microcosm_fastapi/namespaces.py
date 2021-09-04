@@ -62,7 +62,7 @@ class Namespace:
 
     def extract_hostname_from_request(self, request: Request) -> str:
         url = str(request.url)
-        host_name =  url.split('/api/')[0]
+        host_name = url.split('/api/')[0]
 
         # If the microcosm_environment has been set, assume that we're using https
         environment = environ.get("MICROCOSM_ENVIRONMENT", None)
