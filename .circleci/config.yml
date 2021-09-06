@@ -213,7 +213,21 @@ jobs:
       - run:
           name: Deploy
           command: |
-            echo "Not publishing package!"
+            echo "[distutils]" > ~/.pypirc
+            echo "index-servers =" >> ~/.pypirc
+            echo "    jfrog " >> ~/.pypirc
+            echo >> ~/.pypirc
+            echo "[jfrog]" >> ~/.pypirc
+            echo "repository = https://globality.jfrog.io/globality/api/pypi/pypi" >> ~/.pypirc
+            echo "username   = $JFROG_USERNAME" >> ~/.pypirc
+            echo "password   = $JFROG_PASSWORD" >> ~/.pypirc
+            echo >> ~/.pypirc
+            echo >> ~/.pypirc
+            version=0.${CIRCLE_BUILD_NUM}.dev${CIRCLE_BUILD_NUM}
+            sed  -i '/version \=/s/\".*\"/'"\"${version}\"/" setup.py
+            python setup.py register -r jfrog
+            python setup.py sdist
+            twine upload --repository jfrog dist/microcosm-fastapi-${version}.tar.gz
 
   publish_library:
     <<: *defaults
