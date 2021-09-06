@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 from fastapi import Request
 from typing import Any, Optional
+from os import environ
 
 from microcosm_fastapi.naming import name_for
 from microcosm_fastapi.operations import OperationInfo, OperationType, Operation
+from microcosm_logging.decorators import logger
 
-
+@logger
 @dataclass
 class Namespace:
     subject: Any
@@ -60,7 +62,14 @@ class Namespace:
 
     def extract_hostname_from_request(self, request: Request) -> str:
         url = str(request.url)
-        return url.split('/api/')[0]
+        host_name = url.split('/api/')[0]
+
+        # If the microcosm_environment has been set, assume that we're using https
+        environment = environ.get("MICROCOSM_ENVIRONMENT", None)
+        if environment:
+            host_name = host_name.replace("http", "https")
+
+        return host_name
 
     def url_for(self, request: Request, operation: Operation, **kwargs) -> str:
         """
