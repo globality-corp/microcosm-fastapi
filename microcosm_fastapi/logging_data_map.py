@@ -47,7 +47,7 @@ class LoggingDataMap:
 
         resource_name = self._extract_resource_name(path_parts[3])
         if operation_method == "GET":
-            # "GET" is a special case as both retrieve and search have the same key
+            # "GET" is a special case as both retrieve and search have similar keys
             if len(path_parts) == 5:
                 # we know that we have a Retrieve operation if there are 5 path_parts
                 # e.g ["", "api", "v1", "pizza", "1234"]
