@@ -48,6 +48,7 @@ def configure_crud(
 
         try:
             graph.logging_data_map.add_entry(namespace, operation, fn.__name__)
+            fn = graph.session_injection(fn)
 
             method_mapping[operation.method](url_path, **configuration)(fn)
         except FastAPIError as e:

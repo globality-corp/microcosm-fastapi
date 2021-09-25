@@ -12,7 +12,7 @@ from pydantic import BaseModel
 
 from microcosm_fastapi.naming import name_for
 from microcosm_fastapi.operations import Operation
-
+from sqlalchemy.ext.asyncio import AsyncSession
 
 class CRUDStoreAdapter:
     """
@@ -24,20 +24,20 @@ class CRUDStoreAdapter:
         self.graph = graph
         self.store = store
 
-    async def _create(self, body: BaseModel):
+    async def _create(self, body: BaseModel, session: Optional[AsyncSession] = None):
         model = self.store.model_class(**body.dict())
-        return await self.store.create(model)
+        return await self.store.create(model, session=session)
 
-    async def _delete(self, identifier: UUID):
-        await self.store.delete(identifier)
+    async def _delete(self, identifier: UUID, session: Optional[AsyncSession] = None):
+        await self.store.delete(identifier, session)
         return Response(status_code=HTTPStatus.NO_CONTENT.value)
 
-    async def _replace(self, identifier: UUID, body: BaseModel):
+    async def _replace(self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None):
         model = self.store.model_class(id=identifier, **body.dict())
-        return await self.store.replace(identifier, model)
+        return await self.store.replace(identifier, model, session=session)
 
-    async def _retrieve(self, identifier: UUID):
-        return await self.store.retrieve(identifier)
+    async def _retrieve(self, identifier: UUID, session: Optional[AsyncSession] = None):
+        return await self.store.retrieve(identifier, session=session)
 
     async def _search(
         self,
@@ -80,6 +80,6 @@ class CRUDStoreAdapter:
         count = await self.store.count(**kwargs)
         return count
 
-    async def _update(self, identifier: UUID, body: BaseModel):
+    async def _update(self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None):
         model = self.store.model_class(id=identifier, **body.dict())
-        return await self.store.update(identifier, model)
+        return await self.store.update(identifier, model, session=session)
