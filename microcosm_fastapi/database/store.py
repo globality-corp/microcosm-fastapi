@@ -93,19 +93,19 @@ class StoreAsync:
         """
         Create a new model instance.
         """
-        if session is None:
+        if session:
+            async with self.flushing(session):
+                if instance.id is None:
+                    instance.id = self.new_object_id()
+                session.add(instance)
+
+        else:
             async with self.session_maker() as session:
                 async with self.with_transaction(session):
                     async with self.flushing(session):
                         if instance.id is None:
                             instance.id = self.new_object_id()
                         session.add(instance)
-
-        else:
-            async with self.flushing(session):
-                if instance.id is None:
-                    instance.id = self.new_object_id()
-                session.add(instance)
 
         return instance
 
