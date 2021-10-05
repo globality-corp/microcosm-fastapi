@@ -14,6 +14,7 @@ from microcosm_fastapi.naming import name_for
 from microcosm_fastapi.operations import Operation
 from sqlalchemy.ext.asyncio import AsyncSession
 
+
 class CRUDStoreAdapter:
     """
     Adapt the CRUD conventions callbacks to the `Store` interface.
@@ -44,6 +45,7 @@ class CRUDStoreAdapter:
         offset: int,
         limit: int,
         link_provider: Callable = None,
+        session: Optional[AsyncSession] = None,
         **kwargs
     ):
         """
@@ -56,8 +58,8 @@ class CRUDStoreAdapter:
             pass
 
         """
-        items = await self.store.search(offset=offset, limit=limit, **kwargs)
-        count = await self.store.count(**kwargs)
+        items = await self.store.search(offset=offset, limit=limit, session=session, **kwargs)
+        count = await self.store.count(session=session, **kwargs)
 
         payload = dict(
             items=items,
@@ -75,9 +77,10 @@ class CRUDStoreAdapter:
         self,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
+        session: Optional[AsyncSession] = None,
         **kwargs,
     ):
-        count = await self.store.count(**kwargs)
+        count = await self.store.count(session=session, **kwargs)
         return count
 
     async def _update(self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None):

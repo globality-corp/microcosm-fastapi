@@ -102,6 +102,15 @@ class StoreAsync:
                     async with self.flushing(session):
                         yield session
 
+    @asynccontextmanager
+    async def with_maybe_session(self, session: Optional[AsyncSession] = None):
+        if session:
+            yield session
+
+        else:
+            async with self.session_maker() as session:
+                yield session
+
     @postgres_metric_timing(action="create")
     async def create(self, instance, session: Optional[AsyncSession] = None):
         """
@@ -213,35 +222,21 @@ class StoreAsync:
         return await self.get_first(query, session=session)
 
     async def expunge(self, instance, session: Optional[AsyncSession] = None):
-        if session:
+        async with self.with_maybe_session(session) as session:
             return session.expunge(instance)
-
-        else:
-            async with self.session_maker() as session:
-                return session.expunge(instance)
 
     async def merge(self, instance, new_instance, session: AsyncSession):
         await session.merge(new_instance)
 
     async def get_all(self, query, session: Optional[AsyncSession] = None):
-        if session:
+        async with self.with_maybe_session(session) as session:
             results = await session.execute(query)
             return [response[0] for response in results.all()]
 
-        else:
-            async with self.session_maker() as session:
-                results = await session.execute(query)
-                return [response[0] for response in results.all()]
-
     async def get_first(self, query, session: Optional[AsyncSession] = None):
-        if session:
+        async with self.with_maybe_session(session) as session:
             results = await session.execute(query)
             first_result = results.first()
-
-        else:
-            async with self.session_maker() as session:
-                results = await session.execute(query)
-                first_result = results.first()
 
         if not first_result:
             return None
@@ -288,14 +283,9 @@ class StoreAsync:
         """
         try:
             query = self._query(*criterion)
-            if session:
+            async with self.with_maybe_session(session) as session:
                 results = await session.execute(query)
                 return results.one()[0]
-
-            else:
-                async with self.session_maker() as session:
-                    results = await session.execute(query)
-                    return results.one()[0]
 
         except NoResultFound as error:
             raise ModelNotFoundError(
