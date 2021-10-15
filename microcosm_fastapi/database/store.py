@@ -202,7 +202,18 @@ class StoreAsync:
             return session.expunge(instance)
 
     async def merge(self, instance, new_instance, session):
-        await session.merge(new_instance)
+        """
+        Merge available keys from `new_instance` into `instance`. This is effectively
+        a sql-alchemy equivalent implementation of dict explosions, like
+        {**instance, **new_instance}
+
+        """
+        for key in new_instance.__mapper__.attrs.keys():
+            value = getattr(new_instance, key)
+            if value:
+                setattr(instance, key, value)
+
+        await session.merge(instance)
 
     async def get_all(self, query):
         async with self.session_maker() as session:
