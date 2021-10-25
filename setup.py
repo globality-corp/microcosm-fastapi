@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-fastapi"
-version = "0.0.9"
+version = "0.1.0"
 
 
 setup(
@@ -36,6 +36,7 @@ setup(
         "microcosm-postgres[encryption]>=2.0.0",
         "asyncpg",
         "psycopg2-binary>=2.7.5",
+        "makefun",
     ],
     setup_requires=[
         "nose>=1.3.7",
@@ -57,7 +58,8 @@ setup(
             "audit_middleware = microcosm_fastapi.audit:configure_audit_middleware",
             "request_context = microcosm_fastapi.context:configure_request_context",
             "global_exception_handler = microcosm_fastapi.exception_handler:configure_global_exception_handler",
-            "logging_data_map = microcosm_fastapi.logging_data_map:configure_logging_data_map"
+            "logging_data_map = microcosm_fastapi.logging_data_map:configure_logging_data_map",
+            "session_injection = microcosm_fastapi.session:configure_session_injection"
         ],
     },
     tests_require=[

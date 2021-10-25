@@ -1,7 +1,10 @@
+from typing import Optional
+
 from microcosm_postgres.encryption.models import decrypt_instance
 from sqlalchemy.inspection import inspect
 from sqlalchemy import select
 from microcosm_fastapi.database.store import StoreAsync
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class EncryptableStoreAsync(StoreAsync):
@@ -18,14 +21,14 @@ class EncryptableStoreAsync(StoreAsync):
         super().__init__(graph, model_class, **kwargs)
         self.encrypted_store = encrypted_store
 
-    async def delete(self, identifier):
-        instance = await self.retrieve(identifier)
-        result = super().delete(identifier)
+    async def delete(self, identifier, session: Optional[AsyncSession] = None):
+        instance = await self.retrieve(identifier, session=session)
+        result = super().delete(identifier, session=session)
         if instance.encrypted_identifier:
-            await self.encrypted_store.delete(instance.encrypted_identifier)
+            await self.encrypted_store.delete(instance.encrypted_identifier, session=session)
         return result
 
-    async def update(self, identifier, new_instance):
+    async def update(self, identifier, new_instance, session: Optional[AsyncSession] = None):
         """
         Update an encryptable field, make sure that:
         * We won't change the encryption context key
@@ -33,7 +36,7 @@ class EncryptableStoreAsync(StoreAsync):
         * The return instance.plaintext is the updated one
         Note: Will expunge the returned instance
         """
-        old_instance = await self.retrieve(identifier)
+        old_instance = await self.retrieve(identifier, session=session)
         old_encrypted_identifier = old_instance.encrypted_identifier
 
         if (
@@ -45,7 +48,7 @@ class EncryptableStoreAsync(StoreAsync):
         # If updating a non encrypted field - skip
         if new_instance.plaintext is None and new_instance.encrypted_relationship is None:
             result = super().update(identifier, new_instance)
-            self.expunge(result)
+            self.expunge(result, session=session)
             return result
 
         # Verify that the new instance is encrypted if it should be
@@ -57,14 +60,14 @@ class EncryptableStoreAsync(StoreAsync):
         else:
             decrypt, expected_new_plaintext = decrypt_instance(new_instance)
 
-        result = super().update(identifier, new_instance)
+        result = super().update(identifier, new_instance, session=session)
 
         # Delete the old encrypted value (instead of using sqlalchemy cascade)
         if old_encrypted_identifier != new_instance.encrypted_identifier:
-            await self.encrypted_store.delete(old_encrypted_identifier)
+            await self.encrypted_store.delete(old_encrypted_identifier, session=session)
 
         # Update the return result, super().update() won't do it.
-        self.expunge(result)
+        self.expunge(result, session=session)
         result.plaintext = expected_new_plaintext
         return result
 
@@ -78,13 +81,14 @@ class EncryptableStoreAsync(StoreAsync):
         values[self.model_class.__encryption_context_key__] = encryption_context_key
         return self.model_class(**values)
 
-    async def search_encrypted_ids(self, context_id):
-        async with self.session_maker() as session:
+    async def search_encrypted_ids(self, context_id, session: Optional[AsyncSession] = None):
+        async with self.with_maybe_session(session) as session:
             query = select(
                 self.model_class.id
             ).where(
                 getattr(self.model_class, self.model_class.__encrypted_identifier__) != None,  # noqa
                 getattr(self.model_class, self.model_class.__encryption_context_key__) == context_id,
-            )
+                )
             results = await session.execute(query)
+
         return [response[0] for response in results.all()]

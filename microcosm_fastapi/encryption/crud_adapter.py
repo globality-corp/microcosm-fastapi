@@ -1,6 +1,10 @@
 from uuid import UUID
+from typing import (
+    Optional,
+)
 
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from microcosm_fastapi.conventions.crud_adapter import CRUDStoreAdapter
 
@@ -10,7 +14,7 @@ class EncryptableCRUDStoreAdapter(CRUDStoreAdapter):
     Adapt the CRUD conventions callbacks to the `EncryptableStore` interface.
     """
 
-    async def _update_and_reencrypt(self, identifier: UUID, body: BaseModel):
+    async def _update_and_reencrypt(self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None):
         """
         Support re-encryption by enforcing that every update triggers a
         new encryption call, even if the the original call does not update
@@ -18,7 +22,7 @@ class EncryptableCRUDStoreAdapter(CRUDStoreAdapter):
         """
         encrypted_field_name = self.store.model_class.__plaintext__
 
-        current_model = await self.store.retrieve(identifier)
+        current_model = await self.store.retrieve(identifier, session=session)
         current_value = current_model.plaintext
 
         dict_body = body.dict()
@@ -40,4 +44,4 @@ class EncryptableCRUDStoreAdapter(CRUDStoreAdapter):
         }
 
         model = self.store.model_class(id=identifier, **model_kwargs)
-        return self.store.update(identifier, model)
+        return self.store.update(identifier, model, session=session)
