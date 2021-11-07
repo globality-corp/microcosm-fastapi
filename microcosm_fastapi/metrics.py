@@ -42,7 +42,6 @@ def create_route_metrics(graph):
                 "backend_type:microcosm_fastapi",
             ]
             if request_info.status_code is not None:
-                print('incrementing ddog stats')
                 graph.metrics.increment(
                     name_for(
                         key,
