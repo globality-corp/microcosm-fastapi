@@ -32,31 +32,33 @@ def normalize_status_code(status_code: int) -> str:
 def create_route_metrics(graph):
     async def route_metrics(graph, request: Request, call_next):
         response = await call_next(request)
-        request_info: RequestInfo = request.state.request_info
 
-        key = "route"
-        tags = [
-            f"endpoint:{request_info.operation}",
-            "backend_type:microcosm_fastapi",
-        ]
-        if request_info.status_code is not None:
-            print('incrementing ddog stats')
-            graph.metrics.increment(
-                name_for(
-                    key,
-                    "call",
-                    "count",
-                ),
-                tags=tags + [f"classifier:{normalize_status_code(request_info.status_code)}"],
-            )
+        if getattr(request.state, 'request_info', None):
+            request_info: RequestInfo = request.state.request_info
 
-        if request_info.timing.get('elapsed_time'):
-            elapsed_ms = request_info.timing['elapsed_time']
-            graph.metrics.histogram(
-                name_for(key),
-                elapsed_ms,
-                tags=tags,
+            key = "route"
+            tags = [
+                f"endpoint:{request_info.operation}",
+                "backend_type:microcosm_fastapi",
+            ]
+            if request_info.status_code is not None:
+                print('incrementing ddog stats')
+                graph.metrics.increment(
+                    name_for(
+                        key,
+                        "call",
+                        "count",
+                    ),
+                    tags=tags + [f"classifier:{normalize_status_code(request_info.status_code)}"],
                 )
+
+            if request_info.timing.get('elapsed_time'):
+                elapsed_ms = request_info.timing['elapsed_time']
+                graph.metrics.histogram(
+                    name_for(key),
+                    elapsed_ms,
+                    tags=tags,
+                    )
 
         return response
 
