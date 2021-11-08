@@ -287,7 +287,6 @@ def create_audit_request(graph, options):
                 else:
                     logger.debug(request_info.to_dict())
 
-
         # Setting request state for future middleware functions
         request.state.request_info = request_info
 
