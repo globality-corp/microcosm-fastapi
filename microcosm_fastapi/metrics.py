@@ -57,7 +57,7 @@ def create_route_metrics(graph):
                     name_for(key),
                     elapsed_ms,
                     tags=tags,
-                    )
+                )
 
         return response
 
