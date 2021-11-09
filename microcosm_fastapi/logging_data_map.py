@@ -14,6 +14,9 @@ class LoggingInfo:
     operation_name: Optional[str] = None
     function_name: Optional[str] = None
 
+    def is_empty(self) -> bool:
+        return self.operation_name is None and self.function_name is None
+
 
 class LoggingDataMap:
     def __init__(self):

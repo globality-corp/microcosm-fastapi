@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-fastapi"
-version = "0.1.0"
+version = "0.1.1"
 
 
 setup(
@@ -59,11 +59,15 @@ setup(
             "request_context = microcosm_fastapi.context:configure_request_context",
             "global_exception_handler = microcosm_fastapi.exception_handler:configure_global_exception_handler",
             "logging_data_map = microcosm_fastapi.logging_data_map:configure_logging_data_map",
-            "session_injection = microcosm_fastapi.session:configure_session_injection"
+            "session_injection = microcosm_fastapi.session:configure_session_injection",
+            "route_metrics = microcosm_fastapi.metrics:configure_route_metrics"
         ],
     },
     tests_require=[
         "coverage>=3.7.1",
         "PyHamcrest>=1.9.0",
     ],
+    extras_require={
+        "metrics": "microcosm-metrics>=2.5.1",
+    }
 )

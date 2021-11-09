@@ -259,6 +259,10 @@ def create_audit_request(graph, options):
         request_info = RequestInfo(options, request, request_context, graph.metadata)
 
         logging_info: LoggingInfo = graph.logging_data_map.get_entry(request.url.path, request.method)
+        if logging_info.is_empty():
+            # if logging info is empty then we don't produce any logs and return early
+            return await call_next(request)
+
         request_info.set_operation_and_func_name(logging_info)
 
         with elapsed_time(request_info.timing):
@@ -282,6 +286,9 @@ def create_audit_request(graph, options):
                     logger.info(request_info.to_dict())
                 else:
                     logger.debug(request_info.to_dict())
+
+        # Setting request state for future middleware functions
+        request.state.request_info = request_info
 
         return response
 
