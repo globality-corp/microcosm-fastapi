@@ -16,7 +16,7 @@ def get_metrics(graph):
     """
     Fetch the metrics client from the graph.
 
-    Metrics will be disabled if the not configured.
+    Metrics will be disabled if not configured
 
     """
     try:
