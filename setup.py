@@ -63,12 +63,12 @@ setup(
             "route_metrics = microcosm_fastapi.metrics:configure_route_metrics"
         ],
     },
-    tests_require=[
-        "coverage>=3.7.1",
-        "PyHamcrest>=1.9.0",
-        "pytest",
-    ],
     extras_require={
         "metrics": "microcosm-metrics>=2.5.1",
+        "test": [
+            "coverage>=3.7.1",
+            "PyHamcrest>=1.9.0",
+            "pytest",
+        ],
     }
 )
