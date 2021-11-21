@@ -3,7 +3,6 @@ import asyncio
 import pytest
 from httpx import AsyncClient
 from microcosm.object_graph import create_object_graph
-from microcosm_postgres.models import Model
 
 from microcosm_fastapi.tests.helpers import BaseFixture
 
@@ -24,14 +23,6 @@ def graph():
 async def client(graph):
     async with AsyncClient(app=graph.app, base_url="http://localhost") as client:
         yield client
-
-
-@pytest.fixture
-async def setup_db(event_loop, graph):
-    # TODO: Refactor into the common fastapi library code
-    async with graph.postgres_async.begin() as connection:
-        await connection.run_sync(Model.metadata.drop_all)
-        await connection.run_sync(Model.metadata.create_all)
 
 
 @pytest.fixture

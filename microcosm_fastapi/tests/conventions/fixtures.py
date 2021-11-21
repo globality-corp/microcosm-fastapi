@@ -1,5 +1,9 @@
-from uuid import uuid4
+from typing import Optional
+from uuid import uuid4, UUID
 from copy import copy
+
+from microcosm_fastapi.conventions.schemas import BaseSchema, SearchSchema
+from microcosm_postgres.errors import ModelNotFoundError
 
 PERSON_ID_1 = uuid4()
 PERSON_ID_2 = uuid4()
@@ -18,51 +22,62 @@ PERSON_2 = Person(PERSON_ID_2, "Bob", "Jones")
 PERSON_3 = Person(PERSON_ID_3, "Charlie", "Smith")
 
 
-def person_create(**kwargs):
-    return Person(id=PERSON_ID_2, **kwargs)
+class NewPersonSchema(BaseSchema):
+    first_name: str
+    last_name: str
 
 
-def person_search(offset, limit):
-    return [PERSON_1], 1
+class PersonSchema(NewPersonSchema):
+    id: UUID
 
 
-def person_update_batch(items):
-    return dict(
-        items=[
-            person_create(**item)
-            for item in items
-        ]
+class UpdatePersonSchema(BaseSchema):
+    first_name: Optional[str]
+    last_name: Optional[str]
+
+
+async def person_create(body: NewPersonSchema) -> PersonSchema:
+    return Person(id=PERSON_ID_2, **body.dict())
+
+
+async def person_search(offset: int = 0,
+                  limit: int = 20) -> SearchSchema(PersonSchema):
+
+    payload = dict(
+        items=[PERSON_1],
+        count=1,
+        offset=offset,
+        limit=limit,
     )
+    return payload
 
 
-def person_retrieve(person_id, family_member=None):
-    if family_member:
-        return PERSON_3
-    elif person_id == PERSON_ID_1:
+async def person_retrieve(person_id:UUID) -> PersonSchema:
+    if person_id == PERSON_ID_1:
         return PERSON_1
     else:
-        return None
+        raise ModelNotFoundError(
+            "{} not found".format(
+                Person.__name__,
+            ),
+        )
 
 
-def person_delete(person_id):
+async def person_delete(person_id:UUID):
     return person_id == PERSON_ID_1
 
 
-def person_delete_batch():
-    return True
-
-
-def person_replace(person_id, **kwargs):
-    return Person(id=person_id, **kwargs)
-
-
-def person_update(person_id, **kwargs):
+async def person_update(person_id: UUID, body: UpdatePersonSchema) -> PersonSchema:
     if person_id == PERSON_ID_1:
-        # Copy to avoid changing attr of constant
         person_1_copy = copy(PERSON_1)
-        for key, value in kwargs.items():
+        for key, value in body.dict().items():
+            if value is None:
+                continue
             setattr(person_1_copy, key, value)
         return person_1_copy
     else:
-        return None
-
+        raise ModelNotFoundError(
+            "{} not found".format(
+                Person.__name__,
+            ),
+        )
