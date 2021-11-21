@@ -20,6 +20,8 @@ from microcosm.api import defaults, typed
 from microcosm.metadata import Metadata
 from microcosm.config.types import boolean
 from microcosm_logging.timing import elapsed_time
+
+from microcosm_fastapi.context import capitalise_context
 from microcosm_fastapi.utils import AsyncIteratorWrapper
 from microcosm_fastapi.logging_data_map import LoggingInfo
 from microcosm_fastapi.errors import ParsedException
@@ -102,7 +104,7 @@ class RequestInfo:
             })
 
         if self.request_context is not None:
-            dct.update(self.request_context)
+            dct.update(capitalise_context(self.request_context))
 
         if self.success is True:
             dct.update(

@@ -2,7 +2,9 @@
 Audit structure tests.
 
 """
+import logging
 from logging import DEBUG, NOTSET, getLogger
+from unittest import TestCase
 from unittest.mock import MagicMock
 from uuid import uuid4
 
@@ -12,7 +14,7 @@ from hamcrest import (
     equal_to,
     is_,
     is_not,
-    none,
+    none, has_entries,
 )
 from microcosm.api import create_object_graph
 
@@ -21,7 +23,21 @@ from microcosm_fastapi.audit import (
     RequestInfo,
     should_skip_logging,
 )
+from microcosm_fastapi.conventions.crud import configure_crud
+from microcosm_fastapi.namespaces import Namespace
+from microcosm_fastapi.operations import Operation
 
+from microcosm_fastapi.tests.conventions.fixtures import (
+    PERSON_ID_1,
+    PERSON_ID_2,
+    Person,
+    person_create,
+    person_delete,
+    person_retrieve,
+    person_search,
+    person_update, PERSON_1,
+)
+# from unittest.case import assertLogs
 
 PERSON_MAPPINGS = {
     Operation.Create: person_create,
@@ -32,77 +48,39 @@ PERSON_MAPPINGS = {
 }
 
 
-class TestRequestInfo:
+class TestAudit:
     """
     Test capturing of request data.
 
     """
-    # def setup(self):
-    #     self.graph = create_object_graph("example", testing=True, debug=True)
-    #     self.graph.use(
-    #         "audit_middleware",
-    #     )
-    #
-    #     self.graph.flask.route("/")(test_func)
-    #     self.graph.flask.route("/<foo>")(test_func)
-    #
-    #     self.options = AuditOptions(
-    #         include_request_body=True,
-    #         include_response_body=True,
-    #         include_path=True,
-    #         include_query_string=True,
-    #         log_as_debug=False,
-    #     )
-
     @pytest.fixture
     def base_fixture(self, base, test_graph):
         test_graph.use(
             "audit_middleware",
         )
         options = AuditOptions(
-            include_request_body=True,
-            include_response_body=True,
+            include_request_body_status=True,
+            include_response_body_status=True,
             include_path=True,
             include_query_string=True,
             log_as_debug=False,
         )
-
+        person_ns = Namespace(subject=Person, version="v1")
+        configure_crud(test_graph, person_ns, PERSON_MAPPINGS)
         base.add_attrs(
-            options=options
+            person_id_1=PERSON_ID_1,
+            person_id_2=PERSON_ID_2,
+            base_url="/api/v1/person",
+            options=options,
         )
         return base
 
-    def test_request_context(self):
-        """
-        Log entries can include context from headers.
+    @pytest.mark.asyncio
+    async def test_log_request_id_header(self, client, test_graph, base_fixture, caplog):
+        caplog.set_level(logging.INFO)
+        request_id = '1234'
+        uri = f"{base_fixture.base_url}/{base_fixture.person_id_1}"
+        await client.get(uri, headers={"X-Request-Id": request_id})
 
-        """
-        with self.graph.flask.test_request_context("/", headers={"X-Request-Id": "request-id"}):
-            request_info = RequestInfo(self.options, test_func, self.graph.request_context)
-            dct = request_info.to_dict()
-            request_id = dct.pop("X-Request-Id")
-            assert_that(request_id, is_(equal_to("request-id")))
-            assert_that(
-                dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-                ))),
-            )
-
-
-    def test_log_response_id_header(self):
-        new_id = str(uuid4())
-        with self.graph.flask.test_request_context("/"):
-            request_info = RequestInfo(self.options, test_func, None)
-            request_info.response_headers = {"X-FooBar-Id": new_id}
-
-            logger = MagicMock()
-            request_info.log(logger)
-            logger.info.assert_called_with(dict(
-                operation="test_func",
-                method="GET",
-                func="test_func",
-                foo_bar_id=new_id,
-            ))
+        assert "X-Request-Id" in caplog.messages[0]
+        assert '1234' in caplog.messages[0]

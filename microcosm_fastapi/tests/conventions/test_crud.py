@@ -96,13 +96,6 @@ class TestCRUD:
                 id=str(base_fixture.person_id_1),
             ),
         )
-    # @pytest.mark.asyncio
-    # async def test_retrieve_with_header(self, client, test_graph, base_fixture):
-    #     uri = f"{base_fixture.base_url}/{base_fixture.person_id_1}"
-    #     response = await client.get(uri, headers={"X-Request-Id": "1234"})
-    #
-    #     breakpoint()
-    #     assert_that(response.status_code, is_(equal_to(404)))
 
     @pytest.mark.asyncio
     async def test_create(self, client, test_graph, base_fixture):
