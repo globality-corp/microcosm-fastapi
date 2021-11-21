@@ -21,7 +21,7 @@
 if [ "$1" = "test" ]; then
    # Install standard test dependencies; YMMV
    pip --quiet install \
-       .[test] pytest pytest-cov PyHamcrest
+       .[test] pytest pytest-cov PyHamcrest microcosm_metrics httpx fastapi
    exec pytest
 elif [ "$1" = "lint" ]; then
    # Install standard linting dependencies; YMMV
