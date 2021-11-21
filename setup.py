@@ -66,7 +66,6 @@ setup(
     tests_require=[
         "coverage>=3.7.1",
         "PyHamcrest>=1.9.0",
-        "httpx",
         "pytest",
     ],
     extras_require={
