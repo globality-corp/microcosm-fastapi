@@ -67,7 +67,8 @@ class Namespace:
         # If the microcosm_environment has been set, assume that we're using https
         environment = environ.get("MICROCOSM_ENVIRONMENT", None)
         if environment:
-            host_name = host_name.replace("http", "https")
+            if "https://" not in host_name and "http://" in host_name:
+                host_name = host_name.replace("http", "https")
 
         return host_name
 
