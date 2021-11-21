@@ -69,6 +69,7 @@ setup(
             "coverage>=3.7.1",
             "PyHamcrest>=1.9.0",
             "pytest",
+            "microcosm-metrics"
         ],
     }
 )
