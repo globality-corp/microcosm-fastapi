@@ -64,12 +64,6 @@ class Namespace:
         url = str(request.url)
         host_name = url.split('/api/')[0]
 
-        # If the microcosm_environment has been set, assume that we're using https
-        environment = environ.get("MICROCOSM_ENVIRONMENT", None)
-        if environment:
-            if "https://" not in host_name and "http://" in host_name:
-                host_name = host_name.replace("http", "https")
-
         return host_name
 
     def url_for(self, request: Request, operation: Operation, **kwargs) -> str:

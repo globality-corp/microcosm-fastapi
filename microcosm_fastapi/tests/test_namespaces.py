@@ -109,22 +109,5 @@ class TestHostnameExtraction:
     def test_extract_http_hostname(self, base_fixture, env_vars):
         request = FakeRequest(url="http://www.google.com")
         actual_result = base_fixture.ns.extract_hostname_from_request(request)
-        expected_result = "https://www.google.com"
-        assert actual_result == expected_result
-
-    def test_extract_https_hostname_no_environment_set(self, base_fixture):
-        request = FakeRequest(url="https://www.google.com")
-        actual_result = base_fixture.ns.extract_hostname_from_request(request)
-        expected_result = "https://www.google.com"
-        assert actual_result == expected_result
-
-    def test_extract_http_hostname_no_environment_set(self, base_fixture):
-        request = FakeRequest(url="http://www.google.com")
-        actual_result = base_fixture.ns.extract_hostname_from_request(request)
         expected_result = "http://www.google.com"
         assert actual_result == expected_result
-
-
-
-
-
