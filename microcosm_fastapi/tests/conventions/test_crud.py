@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 import pytest
 from hamcrest import (
     assert_that,
@@ -34,15 +35,15 @@ PERSON_MAPPINGS = {
 class TestCRUD:
 
     @pytest.fixture
-    def base_fixture(self, base, test_graph):
+    def base_fixture(self, test_graph):
         person_ns = Namespace(subject=Person, version="v1")
         configure_crud(test_graph, person_ns, PERSON_MAPPINGS)
-        base.add_attrs(
+        sn = SimpleNamespace(
             person_id_1=PERSON_ID_1,
             person_id_2=PERSON_ID_2,
             base_url="/api/v1/person",
         )
-        return base
+        return sn
 
     @pytest.mark.asyncio
     async def test_retrieve(self, client, test_graph, base_fixture):

@@ -3,25 +3,12 @@ Audit structure tests.
 
 """
 import logging
-from logging import DEBUG, NOTSET, getLogger
-from unittest import TestCase
-from unittest.mock import MagicMock
-from uuid import uuid4
+from types import SimpleNamespace
 
 import pytest
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-    is_not,
-    none, has_entries,
-)
-from microcosm.api import create_object_graph
 
 from microcosm_fastapi.audit import (
     AuditOptions,
-    RequestInfo,
-    should_skip_logging,
 )
 from microcosm_fastapi.conventions.crud import configure_crud
 from microcosm_fastapi.namespaces import Namespace
@@ -54,7 +41,7 @@ class TestAudit:
 
     """
     @pytest.fixture
-    def base_fixture(self, base, test_graph):
+    def base_fixture(self, test_graph):
         test_graph.use(
             "audit_middleware",
         )
@@ -67,13 +54,13 @@ class TestAudit:
         )
         person_ns = Namespace(subject=Person, version="v1")
         configure_crud(test_graph, person_ns, PERSON_MAPPINGS)
-        base.add_attrs(
+        sn = SimpleNamespace(
             person_id_1=PERSON_ID_1,
             person_id_2=PERSON_ID_2,
             base_url="/api/v1/person",
             options=options,
         )
-        return base
+        return sn
 
     @pytest.mark.asyncio
     async def test_log_request_id_header(self, client, test_graph, base_fixture, caplog):

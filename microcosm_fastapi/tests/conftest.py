@@ -4,8 +4,6 @@ import pytest
 from httpx import AsyncClient
 from microcosm.object_graph import create_object_graph
 
-from microcosm_fastapi.tests.helpers import BaseFixture
-
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -29,12 +27,3 @@ async def client(graph):
 def test_graph(graph):
     graph.sns_producer.sns_client.reset_mock()
     yield graph
-
-
-@pytest.fixture
-def base():
-    # This fixture provides a BaseFixture() object which can be used to store test inputs (e.g
-    # sqlalchemy objects, uris for different routes, UUIDs etc.).
-    # Typically each test file will define a `base_fixture` which will use the `base` fixture as an
-    # input and the base_fixture will be passed into each test case on that file.
-    return BaseFixture()

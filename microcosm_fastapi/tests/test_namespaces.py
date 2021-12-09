@@ -1,10 +1,11 @@
+from types import SimpleNamespace
+
 import pytest
 import os
 from unittest import mock
 
 from microcosm_fastapi.namespaces import Namespace
-from microcosm_fastapi.operations import Operation, OperationType
-from fastapi import Request
+from microcosm_fastapi.operations import Operation
 
 
 class Pizza:
@@ -90,15 +91,15 @@ class TestHostnameExtraction:
             yield
 
     @pytest.fixture
-    def base_fixture(self, base):
+    def base_fixture(self):
         pizza_ns = Namespace(
             subject=Pizza,
             version="v1",
         )
-        base.add_attrs(
+        sn = SimpleNamespace(
             ns=pizza_ns
         )
-        return base
+        return sn
 
     def test_extract_https_hostname(self, base_fixture, env_vars):
         request = FakeRequest(url="https://www.google.com")
