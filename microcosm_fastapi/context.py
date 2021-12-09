@@ -8,7 +8,7 @@ X_REQUEST = "X-Request"
 HEADER_PREFIXES = [X_REQUEST]
 
 
-def capitalise_context(dct: Dict):
+def capitalise_context(dct: Dict[str, str]):
     # do conversion to upper case
     # {"x-request-id": "1234"} -> {"X-Request-Id": "1234"}
     return {
