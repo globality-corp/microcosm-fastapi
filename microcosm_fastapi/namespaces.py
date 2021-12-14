@@ -1,10 +1,11 @@
 from dataclasses import dataclass
-from fastapi import Request
 from typing import Any, Optional
 
-from microcosm_fastapi.naming import name_for
-from microcosm_fastapi.operations import OperationInfo, OperationType, Operation
+from fastapi import Request
 from microcosm_logging.decorators import logger
+
+from microcosm_fastapi.naming import name_for
+from microcosm_fastapi.operations import Operation, OperationInfo, OperationType
 
 
 @logger

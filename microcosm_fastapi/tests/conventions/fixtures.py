@@ -1,9 +1,11 @@
-from typing import Optional
-from uuid import uuid4, UUID
 from copy import copy
+from typing import Optional
+from uuid import UUID, uuid4
+
+from microcosm_postgres.errors import ModelNotFoundError
 
 from microcosm_fastapi.conventions.schemas import BaseSchema, SearchSchema
-from microcosm_postgres.errors import ModelNotFoundError
+
 
 PERSON_ID_1 = uuid4()
 PERSON_ID_2 = uuid4()

@@ -1,5 +1,5 @@
+from json import dumps, loads
 from typing import Any, Dict
-from json import loads, dumps
 
 from microcosm.loaders.compose import PartitioningLoader
 

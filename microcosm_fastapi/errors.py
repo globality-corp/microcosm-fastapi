@@ -1,4 +1,9 @@
-from typing import Optional, List, Dict, Any
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+)
 
 from microcosm_fastapi.conventions.schemas import BaseSchema
 

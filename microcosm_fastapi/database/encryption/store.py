@@ -1,10 +1,11 @@
 from typing import Optional
 
 from microcosm_postgres.encryption.models import decrypt_instance
-from sqlalchemy.inspection import inspect
 from sqlalchemy import select
-from microcosm_fastapi.database.store import StoreAsync
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.inspection import inspect
+
+from microcosm_fastapi.database.store import StoreAsync
 
 
 class EncryptableStoreAsync(StoreAsync):

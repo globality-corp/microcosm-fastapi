@@ -2,8 +2,8 @@
 Used to store information that useful for audit logging purposes
 
 """
-from typing import Optional, Tuple, Any
 from dataclasses import dataclass
+from typing import Any, Optional, Tuple
 
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import OperationInfo

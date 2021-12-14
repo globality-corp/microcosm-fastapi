@@ -2,8 +2,8 @@
 Helper functions for pubsub daemons
 
 """
-from functools import partial
 from asyncio import get_event_loop
+from functools import partial
 from typing import Callable
 
 

@@ -1,11 +1,12 @@
-from typing import Callable, Awaitable, Any
+import traceback
+from typing import Any, Awaitable, Callable
+
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from microcosm.object_graph import ObjectGraph
 
 from microcosm_fastapi.errors import ParsedException
 from microcosm_fastapi.utils import bind_to_request_state
-import traceback
 
 
 async def global_exception_handler(

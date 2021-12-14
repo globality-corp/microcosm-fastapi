@@ -3,9 +3,14 @@ Naming conventions
 """
 from inspect import isclass
 from typing import Any
+from urllib.parse import (
+    parse_qsl,
+    urlencode,
+    urlparse,
+    urlunparse,
+)
 
 from inflection import underscore
-from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 
 
 def name_for(obj):

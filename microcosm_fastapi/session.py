@@ -3,13 +3,14 @@ Configuring session injection
 
 """
 import functools
-from inspect import signature, Parameter
+from contextlib import asynccontextmanager
 from copy import deepcopy
-from sqlalchemy.orm import Session
+from inspect import Parameter, signature
+
 from fastapi import Depends
 from makefun import wraps
 from sqlalchemy.ext.asyncio import AsyncSession
-from contextlib import asynccontextmanager
+from sqlalchemy.orm import Session
 
 
 SESSION_PARAMETER_NAME = "db_session"

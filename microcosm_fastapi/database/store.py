@@ -11,10 +11,10 @@ from microcosm_postgres.errors import (
 )
 from microcosm_postgres.identifiers import new_object_id
 from microcosm_postgres.metrics import postgres_metric_timing
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm.exc import FlushError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 
 class StoreAsync:

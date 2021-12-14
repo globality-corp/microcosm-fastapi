@@ -1,8 +1,5 @@
 from http import HTTPStatus
-from typing import (
-    Callable,
-    Optional,
-)
+from typing import Callable, Optional
 from uuid import UUID
 
 from fastapi import Response

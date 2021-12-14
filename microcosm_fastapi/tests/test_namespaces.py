@@ -1,8 +1,8 @@
+import os
 from types import SimpleNamespace
+from unittest import mock
 
 import pytest
-import os
-from unittest import mock
 
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import Operation

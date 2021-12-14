@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+
 import pytest
 from hamcrest import (
     assert_that,
@@ -10,8 +11,8 @@ from hamcrest import (
 from microcosm_fastapi.conventions.crud import configure_crud
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import Operation
-
 from microcosm_fastapi.tests.conventions.fixtures import (
+    PERSON_1,
     PERSON_ID_1,
     PERSON_ID_2,
     Person,
@@ -20,7 +21,6 @@ from microcosm_fastapi.tests.conventions.fixtures import (
     person_retrieve,
     person_search,
     person_update,
-    PERSON_1,
 )
 
 

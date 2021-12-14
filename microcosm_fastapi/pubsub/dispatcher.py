@@ -10,6 +10,7 @@ from microcosm_pubsub.result import MessageHandlingResultType
 
 from microcosm_fastapi.pubsub.result import MessageHandlingResultAsync
 
+
 PUBLISHED_KEY = "X-Request-Published"
 
 

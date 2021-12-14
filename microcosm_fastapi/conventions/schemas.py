@@ -1,7 +1,13 @@
-from typing import Any, Dict, List, Optional, Type
 from enum import Enum
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Type,
+)
 
-from pydantic import BaseModel as BaseModel, AnyHttpUrl, Field
+from pydantic import AnyHttpUrl, BaseModel as BaseModel, Field
 
 from microcosm_fastapi.naming import to_camel
 

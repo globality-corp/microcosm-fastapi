@@ -2,29 +2,34 @@
 Audit log support for FastAPI routes.
 
 """
-from typing import Dict, Any, Optional, NamedTuple, Tuple
+import json
 from distutils.util import strtobool
+from functools import partial
 from json import loads
 from json.decoder import JSONDecodeError
 from logging import getLogger
-import json
+from typing import (
+    Any,
+    Dict,
+    NamedTuple,
+    Optional,
+    Tuple,
+)
 from uuid import UUID
-from functools import partial
-from inflection import underscore
 
 from fastapi import Request
 from fastapi.responses import StreamingResponse
+from inflection import underscore
+from microcosm.api import defaults, typed
+from microcosm.config.types import boolean
+from microcosm.metadata import Metadata
+from microcosm_logging.timing import elapsed_time
 from starlette.datastructures import MutableHeaders
 
-from microcosm.api import defaults, typed
-from microcosm.metadata import Metadata
-from microcosm.config.types import boolean
-from microcosm_logging.timing import elapsed_time
-
 from microcosm_fastapi.context import capitalise_context
-from microcosm_fastapi.utils import AsyncIteratorWrapper
-from microcosm_fastapi.logging_data_map import LoggingInfo
 from microcosm_fastapi.errors import ParsedException
+from microcosm_fastapi.logging_data_map import LoggingInfo
+from microcosm_fastapi.utils import AsyncIteratorWrapper
 
 
 DEFAULT_INCLUDE_REQUEST_BODY_STATUS = 400

@@ -2,14 +2,15 @@
 Metrics extensions for routes.
 
 """
+from functools import partial
+
+from fastapi import Request
 from microcosm.api import defaults, typed
 from microcosm.config.types import boolean
 from microcosm.errors import NotBoundError
-from fastapi import Request
-from functools import partial
+from microcosm_metrics.naming import name_for
 
 from microcosm_fastapi.audit import RequestInfo
-from microcosm_metrics.naming import name_for
 
 
 def get_metrics(graph):
