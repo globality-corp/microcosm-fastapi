@@ -22,6 +22,7 @@ PERSON_2 = Person(PERSON_ID_2, "Bob", "Jones")
 PERSON_3 = Person(PERSON_ID_3, "Charlie", "Smith")
 
 
+
 class NewPersonSchema(BaseSchema):
     first_name: str
     last_name: str
@@ -36,12 +37,11 @@ class UpdatePersonSchema(BaseSchema):
     last_name: Optional[str]
 
 
-async def person_create(body: NewPersonSchema) -> PersonSchema:
+async def person_create(body: NewPersonSchema) -> Person:
     return Person(id=PERSON_ID_2, **body.dict())
 
 
-async def person_search(offset: int = 0,
-                  limit: int = 20) -> SearchSchema(PersonSchema):
+async def person_search(offset: int = 0, limit: int = 20) -> SearchSchema(PersonSchema):
 
     payload = dict(
         items=[PERSON_1],
@@ -52,7 +52,7 @@ async def person_search(offset: int = 0,
     return payload
 
 
-async def person_retrieve(person_id:UUID) -> PersonSchema:
+async def person_retrieve(person_id: UUID) -> Person:
     if person_id == PERSON_ID_1:
         return PERSON_1
     else:
@@ -63,11 +63,11 @@ async def person_retrieve(person_id:UUID) -> PersonSchema:
         )
 
 
-async def person_delete(person_id:UUID):
+async def person_delete(person_id: UUID):
     return person_id == PERSON_ID_1
 
 
-async def person_update(person_id: UUID, body: UpdatePersonSchema) -> PersonSchema:
+async def person_update(person_id: UUID, body: UpdatePersonSchema) -> Person:
     if person_id == PERSON_ID_1:
         person_1_copy = copy(PERSON_1)
         for key, value in body.dict().items():

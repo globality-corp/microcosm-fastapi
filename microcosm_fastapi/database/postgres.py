@@ -19,7 +19,9 @@ def choose_connect_args(metadata, config):
         )
 
     if not config.ssl_cert_path:
-        raise Exception("SSL certificate path (`ssl_cert_path`) must be configured for verification")
+        raise Exception(
+            "SSL certificate path (`ssl_cert_path`) must be configured for verification"
+        )
 
     return dict(
         ssl=ssl.create_default_context(

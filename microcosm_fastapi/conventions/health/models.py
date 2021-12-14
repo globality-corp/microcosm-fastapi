@@ -37,6 +37,7 @@ class Health:
     current object graph as input.
     The overall health is OK if all checks are OK.
     """
+
     def __init__(self, graph, include_build_info=True):
         self.graph = graph
         self.name = graph.metadata.name
@@ -44,10 +45,12 @@ class Health:
         self.checks = dict()
 
         if include_build_info:
-            self.checks.update(dict(
-                build_num=BuildInfo.check_build_num,
-                sha1=BuildInfo.check_sha1,
-            ))
+            self.checks.update(
+                dict(
+                    build_num=BuildInfo.check_build_num,
+                    sha1=BuildInfo.check_sha1,
+                )
+            )
 
     def to_object(self, full=None) -> HealthSchema:
         """

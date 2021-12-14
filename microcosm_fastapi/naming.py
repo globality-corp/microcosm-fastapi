@@ -26,8 +26,8 @@ def name_for(obj):
 
 
 def to_camel(snake_str):
-    first, *others = snake_str.split('_')
-    return ''.join([first.lower(), *map(str.title, others)])
+    first, *others = snake_str.split("_")
+    return "".join([first.lower(), *map(str.title, others)])
 
 
 def join_url_with_parameters(url, params):
@@ -58,7 +58,7 @@ def singleton_path_for(name: Any) -> str:
     return f"/{name_for(name)}"
 
 
-def instance_path_for(name: Any, identifier_key:str = None) -> str:
+def instance_path_for(name: Any, identifier_key: str = None) -> str:
     """
     Get a path for thing.
 
@@ -77,7 +77,7 @@ def alias_path_for(name):
     return f"/{name_for(name)}/{{{name_for(name)}_name}}"
 
 
-def relation_path_for(from_name: Any, to_name: Any, identifier_key:str = None) -> str:
+def relation_path_for(from_name: Any, to_name: Any, identifier_key: str = None) -> str:
     """
     Get a path relating a thing to another.
 

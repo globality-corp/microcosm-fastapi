@@ -16,11 +16,7 @@ def configure_docs(graph):
     See: https://github.com/tiangolo/fastapi/issues/2518
 
     """
-    graph.app.mount(
-        "/doc_static",
-        StaticFiles(directory=get_doc_path("static")),
-        name="doc-static"
-    )
+    graph.app.mount("/doc_static", StaticFiles(directory=get_doc_path("static")), name="doc-static")
 
     @graph.app.get("/docs", include_in_schema=False)
     async def custom_swagger_ui_html():

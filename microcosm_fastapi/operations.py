@@ -11,6 +11,7 @@ from microcosm_fastapi.naming import (
     singleton_path_for,
 )
 
+
 @unique
 class OperationType(Enum):
     NODE_PATTERN = "{subject}.{operation}.{version}"
@@ -40,15 +41,35 @@ class Operation(Enum):
     Update = OperationInfo("update", "PATCH", OperationType.NODE_PATTERN, 200, instance_path_for)
 
     # batch operations
-    DeleteBatch = OperationInfo("delete_batch", "DELETE", OperationType.NODE_PATTERN, 204, collection_path_for)
-    UpdateBatch = OperationInfo("update_batch", "PATCH", OperationType.NODE_PATTERN, 200, collection_path_for)
-    CreateCollection = OperationInfo("create_collection", "POST", OperationType.NODE_PATTERN, 200, collection_path_for)
-    SavedSearch = OperationInfo("saved_search", "POST", OperationType.NODE_PATTERN, 200, collection_path_for)
+    DeleteBatch = OperationInfo(
+        "delete_batch", "DELETE", OperationType.NODE_PATTERN, 204, collection_path_for
+    )
+    UpdateBatch = OperationInfo(
+        "update_batch", "PATCH", OperationType.NODE_PATTERN, 200, collection_path_for
+    )
+    CreateCollection = OperationInfo(
+        "create_collection", "POST", OperationType.NODE_PATTERN, 200, collection_path_for
+    )
+    SavedSearch = OperationInfo(
+        "saved_search", "POST", OperationType.NODE_PATTERN, 200, collection_path_for
+    )
 
     # relation operations
-    CreateFor = OperationInfo("create_for", "POST", OperationType.EDGE_PATTERN, 201, relation_path_for)
-    DeleteFor = OperationInfo("delete_for", "DELETE", OperationType.EDGE_PATTERN, 204, relation_path_for)
-    ReplaceFor = OperationInfo("replace_for", "PUT", OperationType.EDGE_PATTERN, 200, relation_path_for)
-    RetrieveFor = OperationInfo("retrieve_for", "GET", OperationType.EDGE_PATTERN, 200, relation_path_for)
-    SearchFor = OperationInfo("search_for", "GET", OperationType.EDGE_PATTERN, 200, relation_path_for)
-    UpdateFor = OperationInfo("update_for", "PATCH", OperationType.EDGE_PATTERN, 200, relation_path_for)
+    CreateFor = OperationInfo(
+        "create_for", "POST", OperationType.EDGE_PATTERN, 201, relation_path_for
+    )
+    DeleteFor = OperationInfo(
+        "delete_for", "DELETE", OperationType.EDGE_PATTERN, 204, relation_path_for
+    )
+    ReplaceFor = OperationInfo(
+        "replace_for", "PUT", OperationType.EDGE_PATTERN, 200, relation_path_for
+    )
+    RetrieveFor = OperationInfo(
+        "retrieve_for", "GET", OperationType.EDGE_PATTERN, 200, relation_path_for
+    )
+    SearchFor = OperationInfo(
+        "search_for", "GET", OperationType.EDGE_PATTERN, 200, relation_path_for
+    )
+    UpdateFor = OperationInfo(
+        "update_for", "PATCH", OperationType.EDGE_PATTERN, 200, relation_path_for
+    )

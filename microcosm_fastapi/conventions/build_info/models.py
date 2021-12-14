@@ -2,7 +2,6 @@ from microcosm_fastapi.conventions.build_info.resources import BuildInfoSchema
 
 
 class BuildInfo:
-
     def __init__(self, build_num, sha1):
         self.build_num = build_num
         self.sha1 = sha1

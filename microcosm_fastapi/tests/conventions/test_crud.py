@@ -19,7 +19,8 @@ from microcosm_fastapi.tests.conventions.fixtures import (
     person_delete,
     person_retrieve,
     person_search,
-    person_update, PERSON_1,
+    person_update,
+    PERSON_1,
 )
 
 
@@ -33,7 +34,6 @@ PERSON_MAPPINGS = {
 
 
 class TestCRUD:
-
     @pytest.fixture
     def base_fixture(self, test_graph):
         person_ns = Namespace(subject=Person, version="v1")
@@ -71,7 +71,7 @@ class TestCRUD:
         assert_that(
             response.json(),
             has_entries(
-                message='Person not found',
+                message="Person not found",
             ),
         )
 
@@ -90,7 +90,7 @@ class TestCRUD:
         )
 
         assert_that(
-            response.json()['items'][0],
+            response.json()["items"][0],
             has_entries(
                 firstName=PERSON_1.first_name,
                 lastName=PERSON_1.last_name,

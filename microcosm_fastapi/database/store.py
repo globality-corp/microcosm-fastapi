@@ -18,7 +18,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class StoreAsync:
-
     def __init__(self, graph, model_class, auto_filter_fields=()):
         if graph:
             self.graph = graph
@@ -89,7 +88,9 @@ class StoreAsync:
             raise
 
     @asynccontextmanager
-    async def with_maybe_transactional_flushing_session(self, session: Optional[AsyncSession] = None):
+    async def with_maybe_transactional_flushing_session(
+        self, session: Optional[AsyncSession] = None
+    ):
         if session:
             # if providing a session then transactions should be managed outside
             # of this context manager
@@ -129,11 +130,7 @@ class StoreAsync:
         Retrieve a model by primary key and zero or more other criteria.
         :raises `NotFound` if there is no existing model
         """
-        return await self._retrieve(
-            self.model_class.id == identifier,
-            *criterion,
-            session=session
-        )
+        return await self._retrieve(self.model_class.id == identifier, *criterion, session=session)
 
     @postgres_metric_timing(action="update")
     async def update(self, identifier, new_instance, session: Optional[AsyncSession] = None):
@@ -149,7 +146,9 @@ class StoreAsync:
         return result
 
     @postgres_metric_timing(action="update_with_diff")
-    async def update_with_diff(self, identifier, new_instance, session: Optional[AsyncSession] = None):
+    async def update_with_diff(
+        self, identifier, new_instance, session: Optional[AsyncSession] = None
+    ):
         """
         Update an existing model with a new one.
         :raises `ModelNotFoundError` if there is no existing model
@@ -301,12 +300,7 @@ class StoreAsync:
         """
         query = self._query(*criterion)
         async with self.with_maybe_transactional_flushing_session(session) as session:
-            count = len(
-                [
-                    await session.delete(row[0])
-                    for row in await session.execute(query)
-                ]
-            )
+            count = len([await session.delete(row[0]) for row in await session.execute(query)])
 
         if count == 0:
             raise ModelNotFoundError

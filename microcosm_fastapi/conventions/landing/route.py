@@ -10,8 +10,7 @@ from jinja2 import Template
 from microcosm_fastapi.templates.landing import template
 
 
-def configure_landing(graph):   # noqa: C901
-
+def configure_landing(graph):  # noqa: C901
     def get_properties_and_version():
         """
         Parse the properties from the package information
@@ -35,11 +34,11 @@ def configure_landing(graph):   # noqa: C901
             """
             Defines a condition to determine which endpoints are swagger type
             """
-            if(ns.subject == graph.config.swagger_convention.name):
+            if ns.subject == graph.config.swagger_convention.name:
                 return True
             return False
 
-        #for operation, ns, rule, func in iter_endpoints(graph, matches):
+        # for operation, ns, rule, func in iter_endpoints(graph, matches):
         #    versions.append(ns.version)
         # TODO: Add version
         print("TODO: Add version")
@@ -47,7 +46,7 @@ def configure_landing(graph):   # noqa: C901
         return versions
 
     def pretty_dict(dict_):
-        return dumps(dict_, sort_keys=True, indent=2, separators=(',', ': '))
+        return dumps(dict_, sort_keys=True, indent=2, separators=(",", ": "))
 
     def get_env_file_commands(config, conf_key, conf_string=None):
         if conf_string is None:
@@ -56,16 +55,21 @@ def configure_landing(graph):   # noqa: C901
             if isinstance(value, dict):
                 get_env_file_commands(value, "{}__{}".format(conf_key, key), conf_string)
             else:
-                conf_string.append("export {}__{}='{}'".format(conf_key.upper(), key.upper(), value))
+                conf_string.append(
+                    "export {}__{}='{}'".format(conf_key.upper(), key.upper(), value)
+                )
         return conf_string
 
     def get_links(swagger_versions, properties):
         # add links set in config
-        links = {key: value for (key, value) in graph.config.landing_convention.get("links", {}).items()}
+        links = {
+            key: value
+            for (key, value) in graph.config.landing_convention.get("links", {}).items()
+        }
 
         # add links for each swagger version
         for swagger_version in swagger_versions:
-            links["swagger {}". format(swagger_version)] = "api/{}/swagger".format(swagger_version)
+            links["swagger {}".format(swagger_version)] = "api/{}/swagger".format(swagger_version)
 
         # add link to home page
         if hasattr(properties, "url"):
@@ -91,7 +95,7 @@ def configure_landing(graph):   # noqa: C901
             health=pretty_dict(health),
             links=get_links(swagger_versions, properties),
             service_name=graph.metadata.name,
-            version=getattr(properties, 'version', None),
+            version=getattr(properties, "version", None),
         )
 
         return HTMLResponse(html)

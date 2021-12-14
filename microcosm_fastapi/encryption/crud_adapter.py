@@ -14,7 +14,9 @@ class EncryptableCRUDStoreAdapter(CRUDStoreAdapter):
     Adapt the CRUD conventions callbacks to the `EncryptableStore` interface.
     """
 
-    async def _update_and_reencrypt(self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None):
+    async def _update_and_reencrypt(
+        self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None
+    ):
         """
         Support re-encryption by enforcing that every update triggers a
         new encryption call, even if the the original call does not update

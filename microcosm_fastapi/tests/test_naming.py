@@ -14,11 +14,11 @@ from microcosm_fastapi.naming import (
 )
 
 
-class FooBar():
+class FooBar:
     pass
 
 
-class TheBaz():
+class TheBaz:
     __alias__ = "baz"
 
 
@@ -50,6 +50,7 @@ def test_instance_path():
 def test_relation_path():
     assert_that(relation_path_for("foo", "bar"), is_(equal_to("/foo/{foo_id}/bar")))
     assert_that(relation_path_for("foo", "bar"), is_(equal_to("/foo/{foo_id}/bar")))
+
 
 def test_alias_path():
     assert_that(alias_path_for("foo"), is_(equal_to("/foo/{foo_name}")))

@@ -37,8 +37,7 @@ class URIHandlerAsync(URIHandler, metaclass=ABCMeta):
         Passes message context.
         """
         if self.resource_cache and self.resource_cache_whitelist_callable(
-            media_type=message.get("mediaType"),
-            uri=uri
+            media_type=message.get("mediaType"), uri=uri
         ):
             response = self.resource_cache.get(uri)
             if response:

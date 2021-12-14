@@ -93,5 +93,5 @@ class ParsedException:
             "code": self.status_code,
             "context": self.context,
             "message": self.error_message,
-            "retryable": self.retryable
+            "retryable": self.retryable,
         }

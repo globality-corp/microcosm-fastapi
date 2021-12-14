@@ -40,8 +40,8 @@ class EncryptableStoreAsync(StoreAsync):
         old_encrypted_identifier = old_instance.encrypted_identifier
 
         if (
-            new_instance.encryption_context_key and
-            old_instance.encryption_context_key != new_instance.encryption_context_key
+            new_instance.encryption_context_key
+            and old_instance.encryption_context_key != new_instance.encryption_context_key
         ):
             raise ValueError("Cannot change encryption context key")
 
@@ -56,7 +56,9 @@ class EncryptableStoreAsync(StoreAsync):
         # If it is - save the expected new plaintext
         if new_instance.plaintext is not None:
             expected_new_plaintext = new_instance.plaintext
-            new_instance = self.reencrypt_instance(new_instance, old_instance.encryption_context_key)
+            new_instance = self.reencrypt_instance(
+                new_instance, old_instance.encryption_context_key
+            )
         else:
             decrypt, expected_new_plaintext = decrypt_instance(new_instance)
 
@@ -74,8 +76,8 @@ class EncryptableStoreAsync(StoreAsync):
     def reencrypt_instance(self, instance, encryption_context_key):
         mapper = inspect(self.model_class)
         values = {
-            key: value for
-            key, value in instance.__dict__.items()
+            key: value
+            for key, value in instance.__dict__.items()
             if key in mapper.c
         }
         values[self.model_class.__encryption_context_key__] = encryption_context_key
@@ -83,12 +85,12 @@ class EncryptableStoreAsync(StoreAsync):
 
     async def search_encrypted_ids(self, context_id, session: Optional[AsyncSession] = None):
         async with self.with_maybe_session(session) as session:
-            query = select(
-                self.model_class.id
-            ).where(
-                getattr(self.model_class, self.model_class.__encrypted_identifier__) != None,  # noqa
-                getattr(self.model_class, self.model_class.__encryption_context_key__) == context_id,
-                )
+            query = select(self.model_class.id).where(
+                getattr(self.model_class, self.model_class.__encrypted_identifier__)
+                != None,  # noqa
+                getattr(self.model_class, self.model_class.__encryption_context_key__)
+                == context_id,
+            )
             results = await session.execute(query)
 
         return [response[0] for response in results.all()]

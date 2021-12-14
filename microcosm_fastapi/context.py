@@ -12,7 +12,7 @@ def capitalise_context(dct: Dict[str, str]):
     # do conversion to upper case
     # {"x-request-id": "1234"} -> {"X-Request-Id": "1234"}
     return {
-        ('-').join([k_part.capitalize() for k_part in k.split('-')]): v
+        ("-").join([k_part.capitalize() for k_part in k.split("-")]): v
         for k, v in dct.items()
     }
 
@@ -22,12 +22,12 @@ def context_wrapper(include_header_prefixes):
         context = {
             header: value
             for header, value in request.headers.items()
-            if any([
-                header.lower().startswith(prefix.lower())
-                for prefix in include_header_prefixes
-            ])
+            if any(
+                [header.lower().startswith(prefix.lower()) for prefix in include_header_prefixes]
+            )
         }
         return context
+
     return retrieve_context
 
 

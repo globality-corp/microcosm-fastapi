@@ -7,10 +7,10 @@ from microcosm_fastapi.operations import Operation
 
 
 def configure_crud(
-        graph,
-        namespace: Namespace,
-        mappings: Dict[Operation, Callable],
-        response_model_exclude_none: bool = False,
+    graph,
+    namespace: Namespace,
+    mappings: Dict[Operation, Callable],
+    response_model_exclude_none: bool = False,
 ):
     """
     Mounts the supported namespace operations into the FastAPI graph, following our

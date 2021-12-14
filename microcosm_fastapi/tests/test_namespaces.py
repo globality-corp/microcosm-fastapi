@@ -16,7 +16,7 @@ class Waiter:
     pass
 
 
-class FakeRequest():
+class FakeRequest:
     def __init__(self, url):
         self.url = url
 
@@ -84,7 +84,6 @@ def test_create_path_for_search_for_operation():
 
 
 class TestHostnameExtraction:
-
     @pytest.fixture()
     def env_vars(self):
         with mock.patch.dict(os.environ, {"MICROCOSM_ENVIRONMENT": "dev"}):
@@ -96,9 +95,7 @@ class TestHostnameExtraction:
             subject=Pizza,
             version="v1",
         )
-        sn = SimpleNamespace(
-            ns=pizza_ns
-        )
+        sn = SimpleNamespace(ns=pizza_ns)
         return sn
 
     def test_extract_https_hostname(self, base_fixture, env_vars):

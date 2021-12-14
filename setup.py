@@ -71,5 +71,8 @@ setup(
             "pytest",
             "microcosm-metrics"
         ],
+        "lint": [
+            "types-pkg-resources"
+        ]
     }
 )

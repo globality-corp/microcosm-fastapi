@@ -8,6 +8,7 @@ class ChainHandlerAsync(metaclass=ABCMeta):
     """
     Resolve a chain on call. Pass to the chain the message to the chain.
     """
+
     @abstractmethod
     def get_chain(self):
         pass
@@ -22,6 +23,7 @@ class ChainURIHandlerAsync(URIHandlerAsync, metaclass=ABCMeta):
     Resolve a chain on handle.
     Pass to the chain the message and the fetched resource.
     """
+
     @abstractmethod
     def get_chain(self):
         pass

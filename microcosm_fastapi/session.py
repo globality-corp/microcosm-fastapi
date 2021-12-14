@@ -34,14 +34,23 @@ def determine_if_session_param(param: Parameter):
 
 def get_session_param(graph):
     get_session_partial = functools.partial(get_session, graph)
-    return Parameter(SESSION_PARAMETER_NAME, kind=Parameter.POSITIONAL_OR_KEYWORD, annotation=Session, default=Depends(get_session_partial))
+    return Parameter(
+        SESSION_PARAMETER_NAME,
+        kind=Parameter.POSITIONAL_OR_KEYWORD,
+        annotation=Session,
+        default=Depends(get_session_partial),
+    )
 
 
 def modify_signature(graph, sig):
     new_sig = deepcopy(sig)
     params = list(sig.parameters.values())
 
-    params_without_session = [param for param in params if not determine_if_session_param(param)]
+    params_without_session = [
+        param
+        for param in params
+        if not determine_if_session_param(param)
+    ]
     if len(params) == len(params_without_session):
         # We don't have a session_db param so just return original function signature
         return sig
@@ -51,7 +60,6 @@ def modify_signature(graph, sig):
 
 
 def configure_session_injection(graph):
-
     def session_injection(fn):
         sig = signature(fn)
         new_sig = modify_signature(graph, sig)
@@ -61,4 +69,5 @@ def configure_session_injection(graph):
             return await fn(*args, **kwargs)
 
         return decorator
+
     return session_injection

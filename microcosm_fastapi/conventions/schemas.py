@@ -7,18 +7,17 @@ from microcosm_fastapi.naming import to_camel
 
 
 class EnhancedBaseModel(BaseModel):
-
     @classmethod
     def _get_value(
-            cls,
-            value: Any,
-            to_dict: bool,
-            by_alias: bool,
-            include,
-            exclude,
-            exclude_unset: bool,
-            exclude_defaults: bool,
-            exclude_none: bool,
+        cls,
+        value: Any,
+        to_dict: bool,
+        by_alias: bool,
+        include,
+        exclude,
+        exclude_unset: bool,
+        exclude_defaults: bool,
+        exclude_none: bool,
     ) -> Any:
         # The reason that we're overriding the Pydantic's BaseModel is so that
         # we can create our own Config parameters such as 'use_enum_names'
@@ -56,7 +55,7 @@ class BaseSchema(EnhancedBaseModel):
         arbitrary_types_allowed = True
 
         @staticmethod
-        def schema_extra(schema: Dict[str, Any], model: Type['BaseSchema']) -> None:
+        def schema_extra(schema: Dict[str, Any], model: Type["BaseSchema"]) -> None:
             """
             Pydantic hook to post process the json schema output.
 
@@ -65,7 +64,7 @@ class BaseSchema(EnhancedBaseModel):
                 if model_field.type_ == float:
                     # We need to add the format `float` value to fit with existing microcosm conventions
                     # The format `float` is used when converting from a V3 openapi spec -> V2
-                    schema['properties'][f'{field_name}']['format'] = 'float'
+                    schema["properties"][f"{field_name}"]["format"] = "float"
 
 
 class HrefSchema(EnhancedBaseModel):

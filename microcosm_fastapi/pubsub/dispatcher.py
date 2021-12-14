@@ -20,8 +20,12 @@ class SQSMessageDispatcherAsync(SQSMessageDispatcher):
     def __init__(self, graph):
         super().__init__(graph)
 
-        self.max_processing_attempts = graph.config.sqs_message_dispatcher_async.message_max_processing_attempts
-        self.max_concurrent_operations = graph.config.sqs_message_dispatcher_async.message_max_concurrent_operations
+        self.max_processing_attempts = (
+            graph.config.sqs_message_dispatcher_async.message_max_processing_attempts
+        )
+        self.max_concurrent_operations = (
+            graph.config.sqs_message_dispatcher_async.message_max_concurrent_operations
+        )
 
     def handle_batch(self, bound_handlers) -> List[MessageHandlingResultAsync]:
         """
@@ -37,20 +41,22 @@ class SQSMessageDispatcherAsync(SQSMessageDispatcher):
         #
         # We don't anticipate any exceptions from this gather() run because `self.handle_message` already
         # wraps the handler with an exhaustive try/catch
-        for message_batch in self.iter_batch(self.sqs_consumer.consume(), self.max_concurrent_operations):
+        for message_batch in self.iter_batch(
+            self.sqs_consumer.consume(), self.max_concurrent_operations
+        ):
             instances += gather(
-                [
-                    self.handle_message(message, bound_handlers)
-                    for message in message_batch
-                ]
+                [self.handle_message(message, bound_handlers) for message in message_batch]
             )
 
         batch_elapsed_time = (time() - start_time) * 1000
 
-        message_batch_size = len([
-            instance for instance in instances
-            if instance.result != MessageHandlingResultType.IGNORED
-        ])
+        message_batch_size = len(
+            [
+                instance
+                for instance in instances
+                if instance.result != MessageHandlingResultType.IGNORED
+            ]
+        )
 
         if message_batch_size > 0:
             # NB: Expose formatted message
@@ -107,7 +113,7 @@ class SQSMessageDispatcherAsync(SQSMessageDispatcher):
 
     def iter_batch(self, batch: List[Any], k: int):
         for i in range(0, len(batch), k):
-            yield batch[i:i+k]
+            yield batch[i : i + k]
 
 
 def configure_sqs_message(graph):

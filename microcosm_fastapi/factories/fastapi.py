@@ -12,11 +12,13 @@ class FastAPIWrapper(FastAPI):
     - Easily create a test client
 
     """
+
     def get(self, *args, **kwargs):
         def _get(fn):
             _kwargs = self.inject_return_type(fn, kwargs)
             _kwargs = self.inject_default_response(_kwargs)
             return super(FastAPIWrapper, self).get(*args, **_kwargs)(fn)
+
         return _get
 
     def post(self, *args, **kwargs):
@@ -24,6 +26,7 @@ class FastAPIWrapper(FastAPI):
             _kwargs = self.inject_return_type(fn, kwargs)
             _kwargs = self.inject_default_response(_kwargs)
             return super(FastAPIWrapper, self).post(*args, **_kwargs)(fn)
+
         return _post
 
     def patch(self, *args, **kwargs):
@@ -31,6 +34,7 @@ class FastAPIWrapper(FastAPI):
             _kwargs = self.inject_return_type(fn, kwargs)
             _kwargs = self.inject_default_response(_kwargs)
             return super(FastAPIWrapper, self).patch(*args, **_kwargs)(fn)
+
         return _patch
 
     def delete(self, *args, **kwargs):
@@ -38,6 +42,7 @@ class FastAPIWrapper(FastAPI):
             _kwargs = self.inject_return_type(fn, kwargs)
             _kwargs = self.inject_default_response(_kwargs)
             return super(FastAPIWrapper, self).delete(*args, **_kwargs)(fn)
+
         return _delete
 
     def options(self, *args, **kwargs):
@@ -45,6 +50,7 @@ class FastAPIWrapper(FastAPI):
             _kwargs = self.inject_return_type(fn, kwargs)
             _kwargs = self.inject_default_response(_kwargs)
             return super(FastAPIWrapper, self).options(*args, **_kwargs)(fn)
+
         return _options
 
     def head(self, *args, **kwargs):
@@ -52,6 +58,7 @@ class FastAPIWrapper(FastAPI):
             _kwargs = self.inject_return_type(fn, kwargs)
             _kwargs = self.inject_default_response(_kwargs)
             return super(FastAPIWrapper, self).head(*args, **_kwargs)(fn)
+
         return _head
 
     def trace(self, *args, **kwargs):
@@ -59,6 +66,7 @@ class FastAPIWrapper(FastAPI):
             _kwargs = self.inject_return_type(fn, kwargs)
             _kwargs = self.inject_default_response(_kwargs)
             return super(FastAPIWrapper, self).trace(*args, **_kwargs)(fn)
+
         return _trace
 
     def test_client(self):
@@ -78,10 +86,9 @@ class FastAPIWrapper(FastAPI):
         if kwargs.get("responses", None):
             kwargs["responses"]["default"] = {"model": ErrorSchema}
         else:
-            kwargs["responses"] = {"default":  {"model": ErrorSchema}}
+            kwargs["responses"] = {"default": {"model": ErrorSchema}}
 
         return kwargs
-
 
 
 @defaults(

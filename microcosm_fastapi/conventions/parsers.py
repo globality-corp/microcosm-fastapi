@@ -15,7 +15,7 @@ class SeparatedList(str):
     separator = ","
 
     @classmethod
-    def __get_validators__(cls) -> 'CallableGenerator':
+    def __get_validators__(cls) -> "CallableGenerator":
         yield cls.validate
 
     @classmethod
@@ -34,29 +34,25 @@ def LinkProvider(request: Request, offset: int = 0, limit: int = 20):
     to the current location.
 
     """
+
     def CreateLinks(total_count):
         links_payload = dict(
             self=dict(
-                href=join_url_with_parameters(
-                    str(request.url),
-                    dict(offset=offset, limit=limit)
-                )
+                href=join_url_with_parameters(str(request.url), dict(offset=offset, limit=limit))
             )
         )
 
         if offset - limit >= 0:
             links_payload["prev"] = dict(
                 href=join_url_with_parameters(
-                    str(request.url),
-                    dict(offset=offset-limit, limit=limit)
+                    str(request.url), dict(offset=offset - limit, limit=limit)
                 )
             )
 
         if offset + limit <= total_count:
             links_payload["next"] = dict(
                 href=join_url_with_parameters(
-                    str(request.url),
-                    dict(offset=offset+limit, limit=limit)
+                    str(request.url), dict(offset=offset + limit, limit=limit)
                 )
             )
 

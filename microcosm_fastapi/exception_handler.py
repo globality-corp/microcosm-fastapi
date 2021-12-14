@@ -8,7 +8,9 @@ from microcosm_fastapi.utils import bind_to_request_state
 import traceback
 
 
-async def global_exception_handler(request: Request, call_next: Callable[[Request], Response]) -> None:
+async def global_exception_handler(
+    request: Request, call_next: Callable[[Request], Response]
+) -> None:
     """
     Catches exceptions and converts them into JSON responses that can be returned back to the client
     to fit in with existing microcosm conventions
@@ -19,7 +21,9 @@ async def global_exception_handler(request: Request, call_next: Callable[[Reques
     except Exception as error:
         bind_to_request_state(request, error=error, traceback=traceback.format_exc(limit=10))
         parsed_exception = ParsedException(error)
-        return JSONResponse(status_code=parsed_exception.status_code, content=parsed_exception.to_dict())
+        return JSONResponse(
+            status_code=parsed_exception.status_code, content=parsed_exception.to_dict()
+        )
 
 
 def configure_global_exception_handler(graph: ObjectGraph) -> None:
@@ -27,4 +31,4 @@ def configure_global_exception_handler(graph: ObjectGraph) -> None:
     Configure global exception middleware - i.e this middleware will catch all exceptions
 
     """
-    graph.app.middleware('http')(global_exception_handler)
+    graph.app.middleware("http")(global_exception_handler)
