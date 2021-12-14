@@ -16,6 +16,13 @@ class Person:
         self.first_name = first_name
         self.last_name = last_name
 
+    def to_dict(self):
+        return dict(
+            id=self.id,
+            first_name=self.first_name,
+            last_name=self.last_name,
+        )
+
 
 PERSON_1 = Person(PERSON_ID_1, "Alice", "Smith")
 PERSON_2 = Person(PERSON_ID_2, "Bob", "Jones")
@@ -36,8 +43,8 @@ class UpdatePersonSchema(BaseSchema):
     last_name: Optional[str]
 
 
-async def person_create(body: NewPersonSchema) -> Person:
-    return Person(id=PERSON_ID_2, **body.dict())
+async def person_create(body: NewPersonSchema) -> PersonSchema:
+    return Person(id=PERSON_ID_2, **body.dict()).to_dict()
 
 
 async def person_search(offset: int = 0, limit: int = 20) -> SearchSchema(PersonSchema): # type: ignore
@@ -51,9 +58,9 @@ async def person_search(offset: int = 0, limit: int = 20) -> SearchSchema(Person
     return payload
 
 
-async def person_retrieve(person_id: UUID) -> Person:
+async def person_retrieve(person_id: UUID) -> PersonSchema:
     if person_id == PERSON_ID_1:
-        return PERSON_1
+        return PERSON_1.to_dict()
     else:
         raise ModelNotFoundError(
             "{} not found".format(
@@ -66,14 +73,14 @@ async def person_delete(person_id: UUID):
     return person_id == PERSON_ID_1
 
 
-async def person_update(person_id: UUID, body: UpdatePersonSchema) -> Person:
+async def person_update(person_id: UUID, body: UpdatePersonSchema) -> PersonSchema:
     if person_id == PERSON_ID_1:
         person_1_copy = copy(PERSON_1)
         for key, value in body.dict().items():
             if value is None:
                 continue
             setattr(person_1_copy, key, value)
-        return person_1_copy
+        return person_1_copy.to_dict()
     else:
         raise ModelNotFoundError(
             "{} not found".format(

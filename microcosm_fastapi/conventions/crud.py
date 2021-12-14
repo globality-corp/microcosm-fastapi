@@ -9,7 +9,7 @@ from microcosm_fastapi.operations import Operation, OperationInfo
 def configure_crud(
     graph,
     namespace: Namespace,
-    mappings: Dict[OperationInfo, Callable],
+    mappings: Dict[Operation, Callable],
     response_model_exclude_none: bool = False,
 ):
     """
@@ -21,9 +21,8 @@ def configure_crud(
     ]
 
     """
-    for operation, fn in mappings.items():
-        # TODO - check this...
-        # operation = operation.value
+    for op, fn in mappings.items():
+        operation = op.value
 
         # Configuration params for this swagger endpoint
         # Some are generated dynamically depending on the specific configurations
