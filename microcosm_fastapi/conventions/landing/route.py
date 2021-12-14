@@ -6,7 +6,6 @@ from pkg_resources import DistributionNotFound, get_distribution
 from fastapi.responses import HTMLResponse
 from jinja2 import Template
 
-# from microcosm_fastapi.templates import get_template
 from microcosm_fastapi.templates.landing import template
 
 
@@ -41,7 +40,6 @@ def configure_landing(graph):  # noqa: C901
         # for operation, ns, rule, func in iter_endpoints(graph, matches):
         #    versions.append(ns.version)
         # TODO: Add version
-        print("TODO: Add version")
 
         return versions
 
