@@ -71,7 +71,7 @@ setup(
             "pytest",
             "microcosm-metrics"
         ],
-        "lint": [
+        "typehinting": [
             "types-pkg-resources",
             "types-requests"
         ]
