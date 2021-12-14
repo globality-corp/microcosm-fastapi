@@ -1,5 +1,5 @@
 from typing import Callable, Awaitable, Any
-from fastapi import Request, Response
+from fastapi import Request
 from fastapi.responses import JSONResponse
 from microcosm.object_graph import ObjectGraph
 

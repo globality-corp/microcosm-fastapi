@@ -72,7 +72,8 @@ setup(
             "microcosm-metrics"
         ],
         "lint": [
-            "types-pkg-resources"
+            "types-pkg-resources",
+            "types-requests"
         ]
     }
 )

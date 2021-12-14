@@ -1,7 +1,9 @@
 from abc import ABCMeta
 from inspect import iscoroutinefunction
 
+from requests import codes
 from httpx import get
+from microcosm_pubsub.errors import Nack
 from microcosm_pubsub.handlers.uri_handler import URIHandler
 
 

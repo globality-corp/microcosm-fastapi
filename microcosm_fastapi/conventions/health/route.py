@@ -1,4 +1,3 @@
-from fastapi.responses import JSONResponse
 from microcosm.api import defaults, typed
 
 from microcosm_fastapi.conventions.health.models import Health

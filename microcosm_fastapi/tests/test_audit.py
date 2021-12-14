@@ -23,10 +23,7 @@ from microcosm_fastapi.tests.conventions.fixtures import (
     person_retrieve,
     person_search,
     person_update,
-    PERSON_1,
 )
-
-# from unittest.case import assertLogs
 
 PERSON_MAPPINGS = {
     Operation.Create: person_create,

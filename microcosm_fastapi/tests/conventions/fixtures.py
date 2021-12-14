@@ -47,7 +47,7 @@ async def person_create(body: NewPersonSchema) -> PersonSchema:
     return Person(id=PERSON_ID_2, **body.dict()).to_dict()
 
 
-async def person_search(offset: int = 0, limit: int = 20) -> SearchSchema(PersonSchema): # type: ignore
+async def person_search(offset: int = 0, limit: int = 20) -> SearchSchema(PersonSchema):  # type: ignore
 
     payload = dict(
         items=[PERSON_1],

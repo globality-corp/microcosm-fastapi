@@ -3,7 +3,7 @@ from typing import Callable, Dict
 from fastapi.exceptions import FastAPIError
 
 from microcosm_fastapi.namespaces import Namespace
-from microcosm_fastapi.operations import Operation, OperationInfo
+from microcosm_fastapi.operations import Operation
 
 
 def configure_crud(

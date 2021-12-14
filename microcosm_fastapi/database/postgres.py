@@ -1,7 +1,7 @@
 import ssl
 
 from microcosm_postgres.factories.engine import choose_uri
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine
 
 
 def choose_connect_args(metadata, config):

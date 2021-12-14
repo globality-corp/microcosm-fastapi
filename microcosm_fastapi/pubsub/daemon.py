@@ -1,3 +1,4 @@
+from microcosm_daemon.sleep_policy import SleepNow
 from microcosm_pubsub.daemon import ConsumerDaemon
 
 

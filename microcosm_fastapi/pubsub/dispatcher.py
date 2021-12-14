@@ -12,6 +12,7 @@ from microcosm_fastapi.pubsub.result import MessageHandlingResultAsync
 
 PUBLISHED_KEY = "X-Request-Published"
 
+
 @logger
 @defaults(
     # Number of failed attempts after which the message stops being processed
@@ -116,7 +117,7 @@ class SQSMessageDispatcherAsync(SQSMessageDispatcher):
 
     def iter_batch(self, batch: List[Any], k: int):
         for i in range(0, len(batch), k):
-            yield batch[i : i + k]
+            yield batch[i: i + k]
 
 
 def configure_sqs_message(graph):

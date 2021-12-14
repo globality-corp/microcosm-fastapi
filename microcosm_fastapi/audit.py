@@ -2,7 +2,7 @@
 Audit log support for FastAPI routes.
 
 """
-from typing import Dict, Any, Optional, NamedTuple, Union, Tuple
+from typing import Dict, Any, Optional, NamedTuple, Tuple
 from distutils.util import strtobool
 from json import loads
 from json.decoder import JSONDecodeError
@@ -116,7 +116,9 @@ class RequestInfo:
         else:
             dct.update(
                 success=self.success,
-                message=self.parsed_exception.error_message[:ERROR_MESSAGE_LIMIT] if self.parsed_exception else "",
+                message=self.parsed_exception.error_message[:ERROR_MESSAGE_LIMIT]
+                if self.parsed_exception
+                else "",
                 context=self.parsed_exception.context if self.parsed_exception else {"errors": []},
                 stack_trace=self.stack_trace,
                 status_code=self.status_code,
@@ -250,7 +252,7 @@ async def parse_response(response: StreamingResponse) -> Tuple[Any, int, Mutable
     # Formatting response body for logging
     try:
         body = json.loads(resp_body[0].decode())
-    except:
+    except Exception:
         body = str(resp_body)
 
     return body, response.status_code, response.headers

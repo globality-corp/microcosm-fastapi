@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from fastapi import Request
 from typing import Any, Optional
-from os import environ
 
 from microcosm_fastapi.naming import name_for
 from microcosm_fastapi.operations import OperationInfo, OperationType, Operation

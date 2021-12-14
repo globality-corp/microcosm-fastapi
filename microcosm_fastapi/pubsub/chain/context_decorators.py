@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from functools import WRAPPER_ASSIGNMENTS, wraps
 from inspect import (
     Parameter,
@@ -42,7 +43,7 @@ def get_from_context_async(context, func, assigned=DEFAULT_ASSIGNED):
                     if default is Signature.empty
                     else context.get(arg_name, default)
                 )
-                for arg_name, default in positional_args[len(args) :]
+                for arg_name, default in positional_args[len(args):]
                 if arg_name not in kwargs
             }
         except KeyError as error:
@@ -114,7 +115,7 @@ def save_to_context_by_func_name_async(context, func, assigned=DEFAULT_ASSIGNED)
         or not func.__name__.startswith(EXTRACT_PREFIX)
     ):
         return func
-    name = func.__name__[len(EXTRACT_PREFIX) :]
+    name = func.__name__[len(EXTRACT_PREFIX):]
 
     def decorate_common(value):
         context[name] = value
