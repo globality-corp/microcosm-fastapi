@@ -77,7 +77,7 @@ class Namespace:
 
         """
         host_name = self.extract_hostname_from_request(request)
-        return f"{host_name}{self.path_for_operation(operation).format(**kwargs)}"
+        return f"{host_name}{self.path_for_operation(operation.value).format(**kwargs)}"
 
     def generate_operation_name_for_logging(self, operation: OperationInfo) -> str:
         """

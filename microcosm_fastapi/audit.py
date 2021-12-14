@@ -76,8 +76,8 @@ class RequestInfo:
     ):
         self.options = options
         self.app_metadata = app_metadata
-        self.operation = None
-        self.func = None
+        self.operation: Optional[str] = None
+        self.func: Optional[str] = None
         self.method = request.method
         self.args = request.query_params
 
@@ -86,15 +86,15 @@ class RequestInfo:
         self.query = request.url.query
 
         self.request_context = request_context
-        self.timing = dict()
+        self.timing: Dict[Any, Any] = dict()
 
-        self.parsed_exception = None
+        self.parsed_exception: Optional[ParsedException] = None
         self.stack_trace = None
         self.request_body = None
         self.response_body = None
-        self.response_headers = None
-        self.status_code = None
-        self.success = None
+        self.response_headers: Optional[MutableHeaders] = None
+        self.status_code: Optional[int] = None
+        self.success: Optional[bool] = None
 
     def to_dict(self) -> dict:
         dct = dict(operation=self.operation, func=self.func, method=self.method, **self.timing)
@@ -116,8 +116,8 @@ class RequestInfo:
         else:
             dct.update(
                 success=self.success,
-                message=self.parsed_exception.error_message[:ERROR_MESSAGE_LIMIT],
-                context=self.parsed_exception.context,
+                message=self.parsed_exception.error_message[:ERROR_MESSAGE_LIMIT] if self.parsed_exception else "",
+                context=self.parsed_exception.context if self.parsed_exception else {"errors": []},
                 stack_trace=self.stack_trace,
                 status_code=self.status_code,
             )
@@ -127,7 +127,7 @@ class RequestInfo:
 
         return dct
 
-    async def capture_response(self, response) -> dict:
+    async def capture_response(self, response) -> None:
         self.success = True
 
         body, self.status_code, self.response_headers = await parse_response(response)
@@ -156,6 +156,8 @@ class RequestInfo:
         except (TypeError, ValueError):
             # not json
             pass
+
+        return
 
     def capture_error(self, error) -> None:
         self.parsed_exception = ParsedException(error)

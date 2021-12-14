@@ -3,13 +3,13 @@ from typing import Callable, Dict
 from fastapi.exceptions import FastAPIError
 
 from microcosm_fastapi.namespaces import Namespace
-from microcosm_fastapi.operations import Operation
+from microcosm_fastapi.operations import Operation, OperationInfo
 
 
 def configure_crud(
     graph,
     namespace: Namespace,
-    mappings: Dict[Operation, Callable],
+    mappings: Dict[OperationInfo, Callable],
     response_model_exclude_none: bool = False,
 ):
     """
@@ -22,7 +22,8 @@ def configure_crud(
 
     """
     for operation, fn in mappings.items():
-        operation = operation.value
+        # TODO - check this...
+        # operation = operation.value
 
         # Configuration params for this swagger endpoint
         # Some are generated dynamically depending on the specific configurations

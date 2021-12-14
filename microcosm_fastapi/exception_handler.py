@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Awaitable, Any
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from microcosm.object_graph import ObjectGraph
@@ -9,8 +9,8 @@ import traceback
 
 
 async def global_exception_handler(
-    request: Request, call_next: Callable[[Request], Response]
-) -> None:
+    request: Request, call_next: Callable[[Request], Awaitable[Any]]
+) -> JSONResponse:
     """
     Catches exceptions and converts them into JSON responses that can be returned back to the client
     to fit in with existing microcosm conventions

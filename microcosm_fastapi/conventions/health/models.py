@@ -1,4 +1,9 @@
+from itertools import chain
+from typing import Dict
+
+from microcosm_fastapi.conventions.build_info.models import BuildInfo
 from microcosm_fastapi.conventions.health.resources import HealthResultSchema, HealthSchema
+from microcosm_fastapi.errors import ParsedException
 
 
 class HealthResult:
@@ -27,7 +32,8 @@ class HealthResult:
             result = func(graph)
             return cls(result=result)
         except Exception as error:
-            return cls(error=extract_error_message(error))
+            parsed_exception = ParsedException(error)
+            return cls(error=parsed_exception.error_message)
 
 
 class Health:

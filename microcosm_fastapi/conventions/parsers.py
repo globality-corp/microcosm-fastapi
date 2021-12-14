@@ -1,13 +1,12 @@
 from typing import (
     Any,
-    List,
-    Optional,
-    no_type_check,
 )
 
 from fastapi import Request
+from pydantic import BaseConfig
+from pydantic.fields import ModelField
+from pydantic.typing import CallableGenerator
 from pydantic.validators import str_validator
-from microcosm_fastapi.operations import Operation
 from microcosm_fastapi.naming import join_url_with_parameters
 
 

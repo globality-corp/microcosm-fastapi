@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 from microcosm_fastapi.conventions.schemas import BaseSchema
 
@@ -22,13 +22,13 @@ class ParsedException:
     def __init__(self, error):
         self.error = error
 
-        self.context = self.extract_context()
-        self.retryable = self.extract_retryable()
-        self.error_message = self.extract_error_message()
-        self.status_code = self.extract_status_code()
-        self.include_stack_trace = self.extract_include_stack_trace()
+        self.context: Dict[Any, Any] = self.extract_context()
+        self.retryable: bool = self.extract_retryable()
+        self.error_message: str = self.extract_error_message()
+        self.status_code: int = self.extract_status_code()
+        self.include_stack_trace: bool = self.extract_include_stack_trace()
 
-    def extract_context(self):
+    def extract_context(self) -> Dict[Any, Any]:
         """
         Extract context from an error.
 
@@ -38,7 +38,7 @@ class ParsedException:
         """
         return getattr(self.error, "context", {"errors": []})
 
-    def extract_retryable(self):
+    def extract_retryable(self) -> bool:
         """
         Extract a retryable status from an error.
 
@@ -48,7 +48,7 @@ class ParsedException:
         """
         return getattr(self.error, "retryable", False)
 
-    def extract_error_message(self):
+    def extract_error_message(self) -> str:
         """
         Extract a useful message from an error.
 
@@ -65,7 +65,7 @@ class ParsedException:
             except AttributeError:
                 return str(self.error) or self.error.__class__.__name__
 
-    def extract_status_code(self):
+    def extract_status_code(self) -> int:
         """
         Extract an error code from a message.
 
@@ -81,7 +81,7 @@ class ParsedException:
                 except (AttributeError, TypeError, ValueError):
                     return 500
 
-    def extract_include_stack_trace(self):
+    def extract_include_stack_trace(self) -> bool:
         """
         Extract whether error should include a stack trace.
 

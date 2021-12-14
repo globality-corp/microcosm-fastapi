@@ -1,13 +1,16 @@
 from asyncio import gather
+from time import time
 from typing import Any, List
 
 from microcosm.api import defaults, typed
 from microcosm_logging.decorators import logger
+from microcosm_logging.timing import elapsed_time
 from microcosm_pubsub.dispatcher import SQSMessageDispatcher
 from microcosm_pubsub.result import MessageHandlingResultType
 
 from microcosm_fastapi.pubsub.result import MessageHandlingResultAsync
 
+PUBLISHED_KEY = "X-Request-Published"
 
 @logger
 @defaults(
@@ -44,7 +47,7 @@ class SQSMessageDispatcherAsync(SQSMessageDispatcher):
         for message_batch in self.iter_batch(
             self.sqs_consumer.consume(), self.max_concurrent_operations
         ):
-            instances += gather(
+            instances += gather(  # type: ignore
                 [self.handle_message(message, bound_handlers) for message in message_batch]
             )
 

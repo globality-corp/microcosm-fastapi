@@ -22,7 +22,6 @@ PERSON_2 = Person(PERSON_ID_2, "Bob", "Jones")
 PERSON_3 = Person(PERSON_ID_3, "Charlie", "Smith")
 
 
-
 class NewPersonSchema(BaseSchema):
     first_name: str
     last_name: str
@@ -41,7 +40,7 @@ async def person_create(body: NewPersonSchema) -> Person:
     return Person(id=PERSON_ID_2, **body.dict())
 
 
-async def person_search(offset: int = 0, limit: int = 20) -> SearchSchema(PersonSchema):
+async def person_search(offset: int = 0, limit: int = 20) -> SearchSchema(PersonSchema): # type: ignore
 
     payload = dict(
         items=[PERSON_1],

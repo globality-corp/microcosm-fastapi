@@ -2,7 +2,7 @@
 Used to store information that useful for audit logging purposes
 
 """
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Any
 from dataclasses import dataclass
 
 from microcosm_fastapi.namespaces import Namespace
@@ -37,7 +37,7 @@ class LoggingDataMap:
 
     def _generate_key_from_path_url(
         self, path: str, operation_method: str
-    ) -> Tuple[str, str, Optional[str], str]:
+    ) -> Optional[Tuple[str, str, Optional[str], str, Optional[str]]]:
         # single subject -> key = ("v1", "pizza", None, "GET", None)
         # subject + object -> key = ("v1", "pizza", "order", "GET", None)
 
@@ -65,7 +65,7 @@ class LoggingDataMap:
 
     def _generate_key_from_namespace_and_operation(
         self, namespace: Namespace, operation: OperationInfo
-    ) -> Tuple[str, str, Optional[str], str, Optional[str]]:
+    ) -> Tuple[Optional[str], Any, Any, str, Optional[str]]:
         # single subject -> key = ("v1", "pizza", None, "GET", None)
         # subject + object -> key = ("v1", "pizza", "order", "GET", None)
         optional_identifier = self._get_optional_identifier(operation)
