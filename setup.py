@@ -73,7 +73,8 @@ setup(
         ],
         "typehinting": [
             "types-pkg-resources",
-            "types-requests"
+            "types-requests",
+            "types-setuptools"
         ]
     }
 )
