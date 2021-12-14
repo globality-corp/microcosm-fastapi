@@ -42,8 +42,11 @@ def modify_signature(graph, sig):
     params = list(sig.parameters.values())
 
     params_without_session = [param for param in params if not determine_if_session_param(param)]
-    params_without_session.append(get_session_param(graph))
+    if len(params) == len(params_without_session):
+        # We don't have a session_db param so just return original function signature
+        return sig
 
+    params_without_session.append(get_session_param(graph))
     return new_sig.replace(parameters=params_without_session)
 
 

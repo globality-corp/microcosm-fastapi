@@ -1,9 +1,20 @@
+from typing import Dict
+
 from fastapi import Request
 from microcosm.api import defaults
 
 
 X_REQUEST = "X-Request"
 HEADER_PREFIXES = [X_REQUEST]
+
+
+def capitalise_context(dct: Dict[str, str]):
+    # do conversion to upper case
+    # {"x-request-id": "1234"} -> {"X-Request-Id": "1234"}
+    return {
+        ('-').join([k_part.capitalize() for k_part in k.split('-')]): v
+        for k, v in dct.items()
+    }
 
 
 def context_wrapper(include_header_prefixes):

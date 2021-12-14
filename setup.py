@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-fastapi"
-version = "0.1.1"
+version = "0.1.2"
 
 
 setup(
@@ -22,7 +22,7 @@ setup(
     keywords="microcosm",
     install_requires=[
         "microcosm>=3.0.0",
-        "fastapi",
+        "fastapi==0.63.0", # pinning due to issues with issues with higher versions
         "uvicorn",
         "aiofiles",
         "SQLAlchemy>=1.4.0",
@@ -63,11 +63,13 @@ setup(
             "route_metrics = microcosm_fastapi.metrics:configure_route_metrics"
         ],
     },
-    tests_require=[
-        "coverage>=3.7.1",
-        "PyHamcrest>=1.9.0",
-    ],
     extras_require={
         "metrics": "microcosm-metrics>=2.5.1",
+        "test": [
+            "coverage>=3.7.1",
+            "PyHamcrest>=1.9.0",
+            "pytest",
+            "microcosm-metrics"
+        ],
     }
 )
