@@ -1,6 +1,4 @@
-import os
 from types import SimpleNamespace
-from unittest import mock
 
 import pytest
 
@@ -84,11 +82,6 @@ def test_create_path_for_search_for_operation():
 
 
 class TestHostnameExtraction:
-    @pytest.fixture()
-    def env_vars(self):
-        with mock.patch.dict(os.environ, {"MICROCOSM_ENVIRONMENT": "dev"}):
-            yield
-
     @pytest.fixture
     def base_fixture(self):
         pizza_ns = Namespace(
@@ -98,14 +91,21 @@ class TestHostnameExtraction:
         sn = SimpleNamespace(ns=pizza_ns)
         return sn
 
-    def test_extract_https_hostname(self, base_fixture, env_vars):
+    def test_extract_https_hostname(self, base_fixture):
         request = FakeRequest(url="https://www.google.com")
         actual_result = base_fixture.ns.extract_hostname_from_request(request)
         expected_result = "https://www.google.com"
         assert actual_result == expected_result
 
-    def test_extract_http_hostname(self, base_fixture, env_vars):
+    def test_extract_http_hostname(self, base_fixture):
         request = FakeRequest(url="http://www.google.com")
         actual_result = base_fixture.ns.extract_hostname_from_request(request)
         expected_result = "http://www.google.com"
+        assert actual_result == expected_result
+
+    def test_url_for(self, base_fixture):
+        request = FakeRequest(url="http://www.my-service.com")
+        operation = Operation.Search.value
+        actual_result = base_fixture.ns.url_for(request, operation)
+        expected_result = "http://www.my-service.com/api/v1/pizza"
         assert actual_result == expected_result

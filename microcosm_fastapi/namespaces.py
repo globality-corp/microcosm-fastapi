@@ -5,7 +5,7 @@ from fastapi import Request
 from microcosm_logging.decorators import logger
 
 from microcosm_fastapi.naming import name_for
-from microcosm_fastapi.operations import Operation, OperationInfo, OperationType
+from microcosm_fastapi.operations import OperationInfo, OperationType
 
 
 @logger
@@ -69,7 +69,7 @@ class Namespace:
 
         return host_name
 
-    def url_for(self, request: Request, operation: Operation, **kwargs) -> str:
+    def url_for(self, request: Request, operation: OperationInfo, **kwargs) -> str:
         """
         Construct a URL for an operation against a resource.
 
@@ -77,7 +77,7 @@ class Namespace:
 
         """
         host_name = self.extract_hostname_from_request(request)
-        return f"{host_name}{self.path_for_operation(operation.value).format(**kwargs)}"
+        return f"{host_name}{self.path_for_operation(operation).format(**kwargs)}"
 
     def generate_operation_name_for_logging(self, operation: OperationInfo) -> str:
         """
