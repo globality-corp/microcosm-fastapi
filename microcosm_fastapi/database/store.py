@@ -140,10 +140,10 @@ class StoreAsync:
         """
         async with self.with_maybe_transactional_flushing_session(session) as session:
             instance = await self.retrieve(identifier)
-            result = await self.merge(instance, new_instance, session)
+            await self.merge(instance, new_instance, session)
             instance.updated_at = instance.new_timestamp()
 
-        return result
+        return instance
 
     @postgres_metric_timing(action="update_with_diff")
     async def update_with_diff(
@@ -156,11 +156,11 @@ class StoreAsync:
         async with self.with_maybe_transactional_flushing_session(session) as session:
             instance = await self.retrieve(identifier, session=session)
             before = Version(instance)
-            result = await self.merge(instance, new_instance, session)
+            await self.merge(instance, new_instance, session)
             instance.updated_at = instance.new_timestamp()
             after = Version(instance)
 
-        return result, before - after
+        return instance, before - after
 
     async def replace(self, identifier, new_instance, session: Optional[AsyncSession] = None):
         """
@@ -225,7 +225,7 @@ class StoreAsync:
             return session.expunge(instance)
 
     async def merge(self, instance, new_instance, session: AsyncSession):
-        return await session.merge(new_instance)
+        await session.merge(new_instance)
 
     async def get_all(self, query, session: Optional[AsyncSession] = None):
         async with self.with_maybe_session(session) as session:
