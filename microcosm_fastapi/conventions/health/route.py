@@ -1,4 +1,3 @@
-from fastapi.responses import JSONResponse
 from microcosm.api import defaults, typed
 
 from microcosm_fastapi.conventions.health.models import Health
@@ -20,7 +19,7 @@ def configure_health(graph):
         response_data = health_container.to_object(full=full)
 
         if not response_data.ok:
-            raise JSONResponse(503, content=response_data)
+            raise
 
         return response_data
 

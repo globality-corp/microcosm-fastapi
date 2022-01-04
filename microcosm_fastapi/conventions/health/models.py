@@ -1,4 +1,9 @@
+from itertools import chain
+from typing import Dict
+
+from microcosm_fastapi.conventions.build_info.models import BuildInfo
 from microcosm_fastapi.conventions.health.resources import HealthResultSchema, HealthSchema
+from microcosm_fastapi.errors import ParsedException
 
 
 class HealthResult:
@@ -27,7 +32,8 @@ class HealthResult:
             result = func(graph)
             return cls(result=result)
         except Exception as error:
-            return cls(error=extract_error_message(error))
+            parsed_exception = ParsedException(error)
+            return cls(error=parsed_exception.error_message)
 
 
 class Health:
@@ -37,6 +43,7 @@ class Health:
     current object graph as input.
     The overall health is OK if all checks are OK.
     """
+
     def __init__(self, graph, include_build_info=True):
         self.graph = graph
         self.name = graph.metadata.name
@@ -44,10 +51,12 @@ class Health:
         self.checks = dict()
 
         if include_build_info:
-            self.checks.update(dict(
-                build_num=BuildInfo.check_build_num,
-                sha1=BuildInfo.check_sha1,
-            ))
+            self.checks.update(
+                dict(
+                    build_num=BuildInfo.check_build_num,
+                    sha1=BuildInfo.check_sha1,
+                )
+            )
 
     def to_object(self, full=None) -> HealthSchema:
         """

@@ -1,5 +1,5 @@
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
 
 
 def configure_session_maker(graph):

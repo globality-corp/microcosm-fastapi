@@ -5,20 +5,20 @@ Naming tests.
 from hamcrest import assert_that, equal_to, is_
 
 from microcosm_fastapi.naming import (
+    alias_path_for,
     collection_path_for,
     instance_path_for,
     name_for,
     relation_path_for,
     singleton_path_for,
-    alias_path_for,
 )
 
 
-class FooBar():
+class FooBar:
     pass
 
 
-class TheBaz():
+class TheBaz:
     __alias__ = "baz"
 
 
@@ -50,6 +50,7 @@ def test_instance_path():
 def test_relation_path():
     assert_that(relation_path_for("foo", "bar"), is_(equal_to("/foo/{foo_id}/bar")))
     assert_that(relation_path_for("foo", "bar"), is_(equal_to("/foo/{foo_id}/bar")))
+
 
 def test_alias_path():
     assert_that(alias_path_for("foo"), is_(equal_to("/foo/{foo_name}")))

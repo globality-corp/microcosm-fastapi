@@ -2,8 +2,8 @@
 Used to store information that useful for audit logging purposes
 
 """
-from typing import Optional, Tuple
 from dataclasses import dataclass
+from typing import Any, Optional, Tuple
 
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import OperationInfo
@@ -35,7 +35,9 @@ class LoggingDataMap:
             # Return empty LoggingInfo
             return LoggingInfo()
 
-    def _generate_key_from_path_url(self, path: str, operation_method: str) -> Tuple[str, str, Optional[str], str]:
+    def _generate_key_from_path_url(
+        self, path: str, operation_method: str
+    ) -> Optional[Tuple[str, str, Optional[str], str, Optional[str]]]:
         # single subject -> key = ("v1", "pizza", None, "GET", None)
         # subject + object -> key = ("v1", "pizza", "order", "GET", None)
 
@@ -61,11 +63,19 @@ class LoggingDataMap:
         # Must be a node pattern
         return (path_parts[2], resource_name, None, operation_method, None)
 
-    def _generate_key_from_namespace_and_operation(self, namespace: Namespace, operation: OperationInfo) -> Tuple[str, str, Optional[str], str, Optional[str]]:
+    def _generate_key_from_namespace_and_operation(
+        self, namespace: Namespace, operation: OperationInfo
+    ) -> Tuple[Optional[str], Any, Any, str, Optional[str]]:
         # single subject -> key = ("v1", "pizza", None, "GET", None)
         # subject + object -> key = ("v1", "pizza", "order", "GET", None)
         optional_identifier = self._get_optional_identifier(operation)
-        return namespace.version, namespace.subject_name, namespace.object_name, operation.method, optional_identifier
+        return (
+            namespace.version,
+            namespace.subject_name,
+            namespace.object_name,
+            operation.method,
+            optional_identifier,
+        )
 
     def _get_optional_identifier(self, operation: OperationInfo) -> Optional[str]:
         """
@@ -77,7 +87,7 @@ class LoggingDataMap:
         else:
             return None
 
-    def _extract_resource_name(self, url_path_part:str) -> str:
+    def _extract_resource_name(self, url_path_part: str) -> str:
         # e.g url_path_part -> "pizza?name=margherita"
         return url_path_part.split("?")[0]
 

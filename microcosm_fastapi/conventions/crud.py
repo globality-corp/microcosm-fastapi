@@ -7,10 +7,10 @@ from microcosm_fastapi.operations import Operation
 
 
 def configure_crud(
-        graph,
-        namespace: Namespace,
-        mappings: Dict[Operation, Callable],
-        response_model_exclude_none: bool = False,
+    graph,
+    namespace: Namespace,
+    mappings: Dict[Operation, Callable],
+    response_model_exclude_none: bool = False,
 ):
     """
     Mounts the supported namespace operations into the FastAPI graph, following our
@@ -21,8 +21,8 @@ def configure_crud(
     ]
 
     """
-    for operation, fn in mappings.items():
-        operation = operation.value
+    for op, fn in mappings.items():
+        operation = op.value
 
         # Configuration params for this swagger endpoint
         # Some are generated dynamically depending on the specific configurations

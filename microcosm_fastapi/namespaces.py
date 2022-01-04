@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from fastapi import Request
 from typing import Any, Optional
-from os import environ
+
+from fastapi import Request
+from microcosm_logging.decorators import logger
 
 from microcosm_fastapi.naming import name_for
-from microcosm_fastapi.operations import OperationInfo, OperationType, Operation
-from microcosm_logging.decorators import logger
+from microcosm_fastapi.operations import OperationInfo, OperationType
+
 
 @logger
 @dataclass
@@ -23,14 +24,16 @@ class Namespace:
         i.e for prefix `api` and version `v1`, this function will return `api/v1`
 
         """
-        return "/".join([
-            part
-            for part in [
-                self.prefix,
-                self.version,
+        return "/".join(
+            [
+                part
+                for part in [
+                    self.prefix,
+                    self.version,
+                ]
+                if part
             ]
-            if part
-        ])
+        )
 
     def path_for_operation(self, operation: OperationInfo) -> str:
         """
@@ -62,11 +65,11 @@ class Namespace:
 
     def extract_hostname_from_request(self, request: Request) -> str:
         url = str(request.url)
-        host_name = url.split('/api/')[0]
+        host_name = url.split("/api/")[0]
 
         return host_name
 
-    def url_for(self, request: Request, operation: Operation, **kwargs) -> str:
+    def url_for(self, request: Request, operation: OperationInfo, **kwargs) -> str:
         """
         Construct a URL for an operation against a resource.
 
@@ -74,7 +77,7 @@ class Namespace:
 
         """
         host_name = self.extract_hostname_from_request(request)
-        return f'{host_name}{self.path_for_operation(operation).format(**kwargs)}'
+        return f"{host_name}{self.path_for_operation(operation).format(**kwargs)}"
 
     def generate_operation_name_for_logging(self, operation: OperationInfo) -> str:
         """

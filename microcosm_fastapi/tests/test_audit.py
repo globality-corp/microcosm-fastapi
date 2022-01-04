@@ -7,13 +7,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from microcosm_fastapi.audit import (
-    AuditOptions,
-)
+from microcosm_fastapi.audit import AuditOptions
 from microcosm_fastapi.conventions.crud import configure_crud
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import Operation
-
 from microcosm_fastapi.tests.conventions.fixtures import (
     PERSON_ID_1,
     PERSON_ID_2,
@@ -22,9 +19,9 @@ from microcosm_fastapi.tests.conventions.fixtures import (
     person_delete,
     person_retrieve,
     person_search,
-    person_update, PERSON_1,
+    person_update,
 )
-# from unittest.case import assertLogs
+
 
 PERSON_MAPPINGS = {
     Operation.Create: person_create,
@@ -40,6 +37,7 @@ class TestAudit:
     Test capturing of request data.
 
     """
+
     @pytest.fixture
     def base_fixture(self, test_graph):
         test_graph.use(
@@ -65,9 +63,9 @@ class TestAudit:
     @pytest.mark.asyncio
     async def test_log_request_id_header(self, client, test_graph, base_fixture, caplog):
         caplog.set_level(logging.INFO)
-        request_id = '1234'
+        request_id = "1234"
         uri = f"{base_fixture.base_url}/{base_fixture.person_id_1}"
         await client.get(uri, headers={"X-Request-Id": request_id})
 
         assert "X-Request-Id" in caplog.messages[0]
-        assert '1234' in caplog.messages[0]
+        assert "1234" in caplog.messages[0]

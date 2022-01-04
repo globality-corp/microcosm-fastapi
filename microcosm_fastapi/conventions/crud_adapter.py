@@ -1,17 +1,9 @@
 from http import HTTPStatus
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Optional,
-)
+from typing import Callable, Optional
 from uuid import UUID
 
 from fastapi import Response
 from pydantic import BaseModel
-
-from microcosm_fastapi.naming import name_for
-from microcosm_fastapi.operations import Operation
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -21,6 +13,7 @@ class CRUDStoreAdapter:
     Does NOT impose transactions; use the `microcosm_postgres.context.transactional` decorator.
 
     """
+
     def __init__(self, graph, store):
         self.graph = graph
         self.store = store
@@ -33,7 +26,9 @@ class CRUDStoreAdapter:
         await self.store.delete(identifier, session)
         return Response(status_code=HTTPStatus.NO_CONTENT.value)
 
-    async def _replace(self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None):
+    async def _replace(
+        self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None
+    ):
         model = self.store.model_class(id=identifier, **body.dict())
         return await self.store.replace(identifier, model, session=session)
 
@@ -46,7 +41,7 @@ class CRUDStoreAdapter:
         limit: int,
         link_provider: Callable = None,
         session: Optional[AsyncSession] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         The search endpoint expects to be serialized by
@@ -83,6 +78,8 @@ class CRUDStoreAdapter:
         count = await self.store.count(session=session, **kwargs)
         return count
 
-    async def _update(self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None):
+    async def _update(
+        self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None
+    ):
         model = self.store.model_class(id=identifier, **body.dict())
         return await self.store.update(identifier, model, session=session)

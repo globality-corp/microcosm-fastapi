@@ -1,9 +1,11 @@
-from typing import Optional
-from uuid import uuid4, UUID
 from copy import copy
+from typing import Optional
+from uuid import UUID, uuid4
+
+from microcosm_postgres.errors import ModelNotFoundError
 
 from microcosm_fastapi.conventions.schemas import BaseSchema, SearchSchema
-from microcosm_postgres.errors import ModelNotFoundError
+
 
 PERSON_ID_1 = uuid4()
 PERSON_ID_2 = uuid4()
@@ -15,6 +17,13 @@ class Person:
         self.id = id
         self.first_name = first_name
         self.last_name = last_name
+
+    def to_dict(self):
+        return dict(
+            id=self.id,
+            first_name=self.first_name,
+            last_name=self.last_name,
+        )
 
 
 PERSON_1 = Person(PERSON_ID_1, "Alice", "Smith")
@@ -37,11 +46,10 @@ class UpdatePersonSchema(BaseSchema):
 
 
 async def person_create(body: NewPersonSchema) -> PersonSchema:
-    return Person(id=PERSON_ID_2, **body.dict())
+    return Person(id=PERSON_ID_2, **body.dict()).to_dict()
 
 
-async def person_search(offset: int = 0,
-                  limit: int = 20) -> SearchSchema(PersonSchema):
+async def person_search(offset: int = 0, limit: int = 20) -> SearchSchema(PersonSchema):  # type: ignore
 
     payload = dict(
         items=[PERSON_1],
@@ -52,9 +60,9 @@ async def person_search(offset: int = 0,
     return payload
 
 
-async def person_retrieve(person_id:UUID) -> PersonSchema:
+async def person_retrieve(person_id: UUID) -> PersonSchema:
     if person_id == PERSON_ID_1:
-        return PERSON_1
+        return PERSON_1.to_dict()
     else:
         raise ModelNotFoundError(
             "{} not found".format(
@@ -63,7 +71,7 @@ async def person_retrieve(person_id:UUID) -> PersonSchema:
         )
 
 
-async def person_delete(person_id:UUID):
+async def person_delete(person_id: UUID):
     return person_id == PERSON_ID_1
 
 
@@ -74,7 +82,7 @@ async def person_update(person_id: UUID, body: UpdatePersonSchema) -> PersonSche
             if value is None:
                 continue
             setattr(person_1_copy, key, value)
-        return person_1_copy
+        return person_1_copy.to_dict()
     else:
         raise ModelNotFoundError(
             "{} not found".format(

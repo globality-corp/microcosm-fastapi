@@ -2,14 +2,15 @@
 Metrics extensions for routes.
 
 """
+from functools import partial
+
+from fastapi import Request
 from microcosm.api import defaults, typed
 from microcosm.config.types import boolean
 from microcosm.errors import NotBoundError
-from fastapi import Request
-from functools import partial
+from microcosm_metrics.naming import name_for
 
 from microcosm_fastapi.audit import RequestInfo
-from microcosm_metrics.naming import name_for
 
 
 def get_metrics(graph):
@@ -33,7 +34,7 @@ def create_route_metrics(graph):
     async def route_metrics(graph, request: Request, call_next):
         response = await call_next(request)
 
-        if getattr(request.state, 'request_info', None):
+        if getattr(request.state, "request_info", None):
             request_info: RequestInfo = request.state.request_info
 
             key = "route"
@@ -51,8 +52,8 @@ def create_route_metrics(graph):
                     tags=tags + [f"classifier:{normalize_status_code(request_info.status_code)}"],
                 )
 
-            if request_info.timing.get('elapsed_time'):
-                elapsed_ms = request_info.timing['elapsed_time']
+            if request_info.timing.get("elapsed_time"):
+                elapsed_ms = request_info.timing["elapsed_time"]
                 graph.metrics.histogram(
                     name_for(key),
                     elapsed_ms,
@@ -73,10 +74,6 @@ def configure_route_metrics(graph):
 
     """
     metrics = get_metrics(graph)
-    enabled = bool(
-        metrics
-        and metrics.host != "localhost"
-        and graph.config.route_metrics.enabled
-    )
+    enabled = bool(metrics and metrics.host != "localhost" and graph.config.route_metrics.enabled)
     if enabled:
         graph.app.middleware("http")(create_route_metrics(graph))

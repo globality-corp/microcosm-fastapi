@@ -2,7 +2,9 @@ from abc import ABCMeta
 from inspect import iscoroutinefunction
 
 from httpx import get
+from microcosm_pubsub.errors import Nack
 from microcosm_pubsub.handlers.uri_handler import URIHandler
+from requests import codes
 
 
 class URIHandlerAsync(URIHandler, metaclass=ABCMeta):
@@ -37,8 +39,7 @@ class URIHandlerAsync(URIHandler, metaclass=ABCMeta):
         Passes message context.
         """
         if self.resource_cache and self.resource_cache_whitelist_callable(
-            media_type=message.get("mediaType"),
-            uri=uri
+            media_type=message.get("mediaType"), uri=uri
         ):
             response = self.resource_cache.get(uri)
             if response:
