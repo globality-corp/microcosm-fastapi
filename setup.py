@@ -22,7 +22,8 @@ setup(
     keywords="microcosm",
     install_requires=[
         "microcosm>=3.0.0",
-        "fastapi==0.63.0", # pinning due to issues with issues with higher versions
+        # "fastapi==0.63.0", # pinning due to issues with issues with higher versions
+        "fastapi",
         "uvicorn",
         "aiofiles",
         "SQLAlchemy>=1.4.0",
