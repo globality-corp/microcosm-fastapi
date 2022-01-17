@@ -40,6 +40,8 @@ def choose_args(metadata, config):
         max_overflow=config.max_overflow,
         pool_size=config.pool_size,
         pool_timeout=config.pool_timeout,
+        # TODO - move to microcosm @defaults + deal with postgres / postgres_async bindings
+        pool_pre_ping=True,
     )
 
 
