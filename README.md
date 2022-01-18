@@ -212,9 +212,9 @@ setup.py
 .bumpversion.cfg
 ```
 
-As soon as you've bumped your version and pushes the bumps into the repo then merge your PR.
+As soon as you've bumped your version and pushed your changes, then merge your PR.
 
-Once the PR has been merged, checkout the latest from master and push the respective tags
+Once the PR has been merged, checkout the latest from master then tag and push:
 ```shell
 git checkout master
 git pull
