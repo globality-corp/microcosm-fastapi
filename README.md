@@ -202,3 +202,23 @@ pip install pytest pytest-cov pytest-asyncio
 cd test-project
 pytest test_project
 ```
+
+## Bumping Versions
+
+When you're ready to merge your PR, you'll need to bump the version of package.
+There are two files that you need to update with the new version you're bumping to:
+```sh
+setup.py
+.bumpversion.cfg
+```
+
+As soon as you've bumped your version and pushes the bumps into the repo then merge your PR.
+
+Once the PR has been merged, checkout the latest from master and push the respective tags
+```shell
+git checkout master
+git pull
+git tag X.X.X 
+git push --tags
+```
+
