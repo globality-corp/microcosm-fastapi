@@ -139,7 +139,7 @@ class StoreAsync:
         :raises `ModelNotFoundError` if there is no existing model
         """
         async with self.with_maybe_transactional_flushing_session(session) as session:
-            instance = await self.retrieve(identifier)
+            instance = await self.retrieve(identifier, session=session)
             await self.merge(instance, new_instance, session)
             instance.updated_at = instance.new_timestamp()
 
