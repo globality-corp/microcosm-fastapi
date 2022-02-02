@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-fastapi"
-version = "0.1.4"
+version = "0.1.5"
 
 
 setup(
@@ -27,6 +27,7 @@ setup(
         "aiofiles",
         "SQLAlchemy>=1.4.0",
         "httpx",
+        "h11<0.13", # @pierce 01-24-2022 pin because of httpx conflict
         "click",
         "jinja2",
         "sqlalchemy-utils",

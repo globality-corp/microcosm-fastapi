@@ -40,11 +40,13 @@ def choose_args(metadata, config):
         max_overflow=config.max_overflow,
         pool_size=config.pool_size,
         pool_timeout=config.pool_timeout,
+        # GLOB-60776 - move to microcosm @defaults + deal with postgres / postgres_async bindings
+        pool_pre_ping=True,
     )
 
 
 def make_engine(metadata, config):
-    # TODO - move to microcosm @defaults + deal with postgres / postgres_async bindings
+    # GLOB-60776 - move to microcosm @defaults + deal with postgres / postgres_async bindings
     # Required for async engine - so override user preferences
     config.postgres.driver = "postgresql+asyncpg"
 
