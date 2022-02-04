@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-fastapi"
-version = "0.1.5"
+version = "0.1.6"
 
 
 setup(
@@ -22,7 +22,7 @@ setup(
     keywords="microcosm",
     install_requires=[
         "microcosm>=3.0.0",
-        "fastapi==0.63.0", # pinning due to issues with issues with higher versions
+        "fastapi",
         "uvicorn",
         "aiofiles",
         "SQLAlchemy>=1.4.0",
