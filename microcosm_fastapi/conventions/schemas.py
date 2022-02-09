@@ -67,6 +67,9 @@ class BaseSchema(EnhancedBaseModel):
 
             """
             for field_name, model_field in model.__fields__.items():
+                if hasattr(model.__config__, "alias_generator"):
+                    field_name = model.__config__.alias_generator(field_name)
+
                 if model_field.type_ == float:
                     # We need to add the format `float` value to fit with existing microcosm conventions
                     # The format `float` is used when converting from a V3 openapi spec -> V2
