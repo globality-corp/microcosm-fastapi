@@ -1,9 +1,12 @@
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from fastapi import Request
 from pydantic import BaseConfig
 from pydantic.fields import ModelField
 from pydantic.validators import str_validator
+
+if TYPE_CHECKING:
+    from pydantic.typing import CallableGenerator
 
 from microcosm_fastapi.naming import join_url_with_parameters
 
