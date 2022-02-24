@@ -6,7 +6,6 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from microcosm_postgres.identifiers import new_object_id
 from microcosm_postgres.operations import recreate_all
-
 from test_project.app import create_app
 from test_project.pizza_model import Pizza
 

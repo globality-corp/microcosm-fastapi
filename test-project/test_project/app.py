@@ -1,12 +1,11 @@
 """
 Create the application.
 """
+import test_project.pizza_route  # noqa: 401
+import test_project.pizza_store  # noqa: 401
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_each, load_from_environ
 from microcosm.loaders.compose import load_config_and_secrets
-
-import test_project.pizza_route  # noqa: 401
-import test_project.pizza_store  # noqa: 401
 
 
 def create_app(debug=False, testing=False, model_only=False):

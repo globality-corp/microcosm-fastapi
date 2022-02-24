@@ -1,7 +1,7 @@
 from microcosm.api import binding
-from microcosm_fastapi.database.store import StoreAsync
-
 from test_project.pizza_model import Pizza
+
+from microcosm_fastapi.database.store import StoreAsync
 
 
 @binding("pizza_store")
