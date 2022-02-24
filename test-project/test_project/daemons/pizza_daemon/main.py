@@ -1,12 +1,12 @@
+import test_project.daemons.pizza_daemon.handler  # noqa: 401
 from microcosm.loaders import (
     load_each,
     load_from_dict,
     load_from_environ,
     load_from_json_file,
 )
-from microcosm_fastapi.pubsub.daemon import ConsumerDaemonAsync
 
-import test_project.daemons.pizza_daemon.handler  # noqa: 401
+from microcosm_fastapi.pubsub.daemon import ConsumerDaemonAsync
 
 
 class PizzaDaemon(ConsumerDaemonAsync):

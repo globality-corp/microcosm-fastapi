@@ -1,12 +1,15 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from fastapi import Request
 from pydantic import BaseConfig
 from pydantic.fields import ModelField
-from pydantic.typing import CallableGenerator
 from pydantic.validators import str_validator
 
 from microcosm_fastapi.naming import join_url_with_parameters
+
+
+if TYPE_CHECKING:
+    from pydantic.typing import CallableGenerator
 
 
 class SeparatedList(str):

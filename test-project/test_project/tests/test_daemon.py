@@ -1,7 +1,9 @@
-from test_project.daemons.pizza_daemon.main import PizzaDaemon
 from unittest.mock import Mock, patch
-from test_project.daemons.pizza_daemon.handler import PizzaModel
+
 import pytest
+from test_project.daemons.pizza_daemon.handler import PizzaModel
+from test_project.daemons.pizza_daemon.main import PizzaDaemon
+
 
 class TestDaemon:
     def setup(self):
