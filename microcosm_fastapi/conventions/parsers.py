@@ -12,7 +12,6 @@ if TYPE_CHECKING:
     from pydantic.typing import CallableGenerator
 
 
-
 class SeparatedList(str):
     separator = ","
 
