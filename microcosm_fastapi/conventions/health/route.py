@@ -1,11 +1,12 @@
 from microcosm.api import defaults, typed
+from microcosm.config.types import boolean
 
 from microcosm_fastapi.conventions.health.models import Health
 from microcosm_fastapi.conventions.health.resources import HealthSchema
 
 
 @defaults(
-    include_build_info=typed(bool, default=True),
+    include_build_info=typed(boolean, default_value=True),
 )
 def configure_health(graph):
     """
