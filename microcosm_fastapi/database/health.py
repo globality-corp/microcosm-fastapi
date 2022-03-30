@@ -11,7 +11,7 @@ async def check_health(graph):
 
     """
     async with graph.session_maker_async() as session:
-        session.execute("SELECT 1;")
+        await session.execute("SELECT 1;")
 
 
 async def check_alembic(graph):
@@ -22,9 +22,10 @@ async def check_alembic(graph):
 
     """
     async with graph.session_maker_async() as session:
-        return session.execute(
+        result = await session.execute(
             "SELECT version_num FROM alembic_version LIMIT 1;",
-        ).scalar()
+        )
+        return result.scalar()
 
 
 async def get_current_head_version(graph):

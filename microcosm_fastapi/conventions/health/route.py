@@ -17,8 +17,8 @@ def configure_health(graph):
 
     # TODO - maybe make this async
     @graph.app.get("/api/health")
-    def configure_health_endpoint(full: bool = False) -> HealthSchema:
-        response_data = health_container.to_object(full=full)
+    async def configure_health_endpoint(full: bool = False) -> HealthSchema:
+        response_data = await health_container.to_object(full=full)
 
         if not response_data.ok:
             raise
