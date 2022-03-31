@@ -40,9 +40,7 @@ def configure_landing(graph):  # noqa: C901
             Defines a condition to determine which endpoints are swagger type
 
             """
-            if graph.config.swagger_convention.name in path:
-                return True
-            return False
+            return graph.config.swagger_convention.name in path
 
         for route in iter_endpoints(graph, is_swagger_endpoint):
             # route comes in as /api/v2/swagger
