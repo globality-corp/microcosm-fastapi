@@ -1,3 +1,4 @@
+import asyncio
 from itertools import chain
 from typing import Dict
 
@@ -27,9 +28,13 @@ class HealthResult:
         )
 
     @classmethod
-    def evaluate(cls, func, graph) -> "HealthResult":
+    async def evaluate(cls, func, graph) -> "HealthResult":
         try:
-            result = func(graph)
+            if asyncio.iscoroutinefunction(func):
+                result = await func(graph)
+            else:
+                result = func(graph)
+
             return cls(result=result)
         except Exception as error:
             parsed_exception = ParsedException(error)
@@ -58,7 +63,7 @@ class Health:
                 )
             )
 
-    def to_object(self, full=None) -> HealthSchema:
+    async def to_object(self, full=None) -> HealthSchema:
         """
         Encode the name, the status of all checks, and the current overall status.
         """
@@ -69,7 +74,7 @@ class Health:
 
         # evaluate checks
         check_results: Dict[str, HealthResult] = {
-            key: HealthResult.evaluate(func, self.graph)
+            key: await HealthResult.evaluate(func, self.graph)
             for key, func in checks
         }
 
