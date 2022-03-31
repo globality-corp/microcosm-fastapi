@@ -23,23 +23,29 @@ def configure_landing(graph):  # noqa: C901
         except DistributionNotFound:
             return None
 
+    def iter_endpoints(graph, match_func):
+        for route in graph.app.routes:
+            if match_func(route.path):
+                yield route
+
     def get_swagger_versions():
         """
         Finds all swagger conventions that are bound to the graph
+
         """
         versions = []
 
-        def matches(operation, ns, rule):
+        def matches(path):
             """
             Defines a condition to determine which endpoints are swagger type
+
             """
-            if ns.subject == graph.config.swagger_convention.name:
+            if graph.config.swagger_convention.name in path:
                 return True
             return False
 
-        # for operation, ns, rule, func in iter_endpoints(graph, matches):
-        #    versions.append(ns.version)
-        # TODO: Add version
+        for route in iter_endpoints(graph, matches):
+            versions.append(route.path.split("/")[2])
 
         return versions
 
@@ -76,13 +82,17 @@ def configure_landing(graph):  # noqa: C901
         return links
 
     @graph.app.get("/")
-    def render_landing_page():
+    async def render_landing_page():
         """
         Render landing page
+
         """
         config = graph.config_convention.to_dict()
         env = get_env_file_commands(config, graph.metadata.name)
-        health = graph.health_convention.to_object().dict()
+
+        health = await graph.health_convention.to_object()
+        health = health.dict()
+
         properties = get_properties_and_version()
         swagger_versions = get_swagger_versions()
 
