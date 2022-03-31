@@ -35,7 +35,7 @@ def configure_landing(graph):  # noqa: C901
         """
         versions = []
 
-        def matches(path):
+        def is_swagger_endpoint(path):
             """
             Defines a condition to determine which endpoints are swagger type
 
@@ -44,7 +44,10 @@ def configure_landing(graph):  # noqa: C901
                 return True
             return False
 
-        for route in iter_endpoints(graph, matches):
+        for route in iter_endpoints(graph, is_swagger_endpoint):
+            # route comes in as /api/v2/swagger
+            # so we split to get this -> ['', 'api', 'v2', 'swagger']
+            # and then get the version value from the array
             versions.append(route.path.split("/")[2])
 
         return versions
