@@ -84,10 +84,19 @@ class FastAPIWrapper(FastAPI):
         return kwargs
 
     def inject_default_response(self, kwargs):
+        default_response = {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "schema": {}
+                }
+            }
+        }
+
         if kwargs.get("responses", None):
-            kwargs["responses"]["default"] = {"model": ErrorSchema}
+            kwargs["responses"][200] = default_response
         else:
-            kwargs["responses"] = {"default": {"model": ErrorSchema}}
+            kwargs["responses"] = {200: default_response}
 
         return kwargs
 
