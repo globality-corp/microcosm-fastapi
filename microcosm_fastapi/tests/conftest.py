@@ -1,6 +1,7 @@
 import asyncio
 
 import pytest
+import pytest_asyncio
 from httpx import AsyncClient
 from microcosm.object_graph import create_object_graph
 
@@ -17,7 +18,7 @@ def graph():
     return create_object_graph(name="example", testing=True)
 
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 async def client(graph):
     async with AsyncClient(app=graph.app, base_url="http://localhost") as client:
         yield client
