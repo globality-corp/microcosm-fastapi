@@ -49,7 +49,7 @@ class EncryptableStoreAsync(StoreAsync):
         # If updating a non encrypted field - skip
         if new_instance.plaintext is None and new_instance.encrypted_relationship is None:
             result = super().update(identifier, new_instance)
-            self.expunge(result, session=session)
+            await self.expunge(result, session=session)
             return result
 
         # Verify that the new instance is encrypted if it should be
@@ -70,7 +70,7 @@ class EncryptableStoreAsync(StoreAsync):
             await self.encrypted_store.delete(old_encrypted_identifier, session=session)
 
         # Update the return result, super().update() won't do it.
-        self.expunge(result, session=session)
+        await self.expunge(result, session=session)
         result.plaintext = expected_new_plaintext
         return result
 

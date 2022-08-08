@@ -25,7 +25,7 @@ setup(
         "fastapi",
         "uvicorn",
         "aiofiles",
-        "SQLAlchemy>=1.4.0[asyncio]",
+        "SQLAlchemy[asyncio]>=1.4.0",
         "httpx",
         "h11<0.13", # @pierce 01-24-2022 pin because of httpx conflict
         "click",

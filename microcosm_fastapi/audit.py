@@ -63,7 +63,7 @@ def should_skip_logging(request: Request) -> bool:
     Should we skip logging for this handler?
 
     """
-    return strtobool(request.headers.get("x-request-nolog", "false"))
+    return bool(strtobool(request.headers.get("x-request-nolog", "false")))
 
 
 class RequestInfo:
