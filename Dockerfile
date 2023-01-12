@@ -12,8 +12,7 @@
 #
 
 # ----------- deps -----------
-# Install from Debian Stretch with modern Python support
-FROM python:slim-stretch as deps
+FROM python:3.10-slim-bullseye as deps
 
 #
 # Most services will use the same set of packages here, though a few will install
@@ -24,7 +23,7 @@ ARG EXTRA_INDEX_URL
 ENV EXTRA_INDEX_URL ${EXTRA_INDEX_URL}
 
 ENV CORE_PACKAGES locales
-ENV BUILD_PACKAGES build-essential libffi-dev libpq-dev
+ENV BUILD_PACKAGES build-essential libffi-dev
 ENV OTHER_PACKAGES libssl-dev
 
 
@@ -84,7 +83,6 @@ RUN pip install --no-cache-dir --upgrade --extra-index-url ${EXTRA_INDEX_URL} /s
     apt-get remove --purge -y ${BUILD_PACKAGES} && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
-
 
 # ----------- final -----------
 FROM base

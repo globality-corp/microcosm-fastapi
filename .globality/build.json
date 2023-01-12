@@ -1,11 +1,15 @@
 {
   "params": {
     "app_name": "example",
+    "docker": {
+      "docker_tag": "python:3.10-slim-bullseye"
+    },
     "name": "microcosm-fastapi",
     "pypi": {
       "repository": "pypi"
-    }
+    },
+    "test_command": "pytest"
   },
   "type": "python-library",
-  "version": "2022.31.0"
+  "version": "2022.47.1"
 }
