@@ -14,7 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Pierce Freeman",
     author_email="pierce.freeman@globality.com",
-    url="https://github.com/piercefreeman/microcosm-fastapi",
+    url="https://github.com/globality-corp/microcosm-fastapi",
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     zip_safe=False,
