@@ -1,9 +1,14 @@
 {
   "params": {
-    "app_name": "example",
     "docker": {
       "docker_tag": "python:3.10-slim-bullseye"
     },
+    "entrypoint": {
+      "pre_typehinting_commands": [
+        "pip install .[typehinting]"
+      ]
+    },
+    "lib_name": "microcosm_fastapi",
     "name": "microcosm-fastapi",
     "pypi": {
       "repository": "pypi"

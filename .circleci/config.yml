@@ -148,7 +148,7 @@ jobs:
           when: always
           command: |
             mkdir -p test-results/pytest
-            docker cp service_tests:/src/example/tests/test-results/pytest/junit.xml $(pwd)/test-results/pytest/junit.xml
+            docker cp service_tests:/src/microcosm_fastapi/tests/test-results/pytest/junit.xml $(pwd)/test-results/pytest/junit.xml
 
       - store_test_results:
           path: test-results
