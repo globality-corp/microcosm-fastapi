@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-fastapi"
-version = "0.1.10"
+version = "0.1.11"
 
 
 setup(
