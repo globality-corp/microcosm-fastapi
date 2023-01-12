@@ -2,7 +2,7 @@
 Naming conventions
 """
 from inspect import isclass
-from typing import Any
+from typing import Any, Optional
 from urllib.parse import (
     parse_qsl,
     urlencode,
@@ -63,7 +63,7 @@ def singleton_path_for(name: Any) -> str:
     return f"/{name_for(name)}"
 
 
-def instance_path_for(name: Any, identifier_key: str = None) -> str:
+def instance_path_for(name: Any, identifier_key: Optional[str] = None) -> str:
     """
     Get a path for thing.
 
@@ -82,7 +82,7 @@ def alias_path_for(name):
     return f"/{name_for(name)}/{{{name_for(name)}_name}}"
 
 
-def relation_path_for(from_name: Any, to_name: Any, identifier_key: str = None) -> str:
+def relation_path_for(from_name: Any, to_name: Any, identifier_key: Optional[str] = None) -> str:
     """
     Get a path relating a thing to another.
 

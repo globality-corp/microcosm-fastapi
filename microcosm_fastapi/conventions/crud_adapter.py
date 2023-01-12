@@ -39,7 +39,7 @@ class CRUDStoreAdapter:
         self,
         offset: int,
         limit: int,
-        link_provider: Callable = None,
+        link_provider: Optional[Callable] = None,
         session: Optional[AsyncSession] = None,
         **kwargs,
     ):
