@@ -23,7 +23,7 @@ class CRUDStoreAdapter:
         return await self.store.create(model, session=session)
 
     async def _delete(self, identifier: UUID, session: Optional[AsyncSession] = None):
-        await self.store.delete(identifier, session)
+        await self.store.delete(identifier, session=session)
         return Response(status_code=HTTPStatus.NO_CONTENT.value)
 
     async def _replace(
@@ -39,7 +39,7 @@ class CRUDStoreAdapter:
         self,
         offset: int,
         limit: int,
-        link_provider: Callable = None,
+        link_provider: Optional[Callable] = None,
         session: Optional[AsyncSession] = None,
         **kwargs,
     ):

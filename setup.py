@@ -3,18 +3,18 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-fastapi"
-version = "0.1.10"
+version = "0.1.11"
 
 
 setup(
     name=project,
     version=version,
     description="Opinionated microservice API with FastAPI",
-    #long_description=open("README.md").read(),
-    #long_description_content_type="text/markdown",
-    author="Pierce Freeman",
-    author_email="pierce.freeman@globality.com",
-    url="https://github.com/piercefreeman/microcosm-fastapi",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    author="Globality Engineering",
+    author_email="engineering@globality.com",
+    url="https://github.com/globality-corp//microcosm-fastapi",
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     zip_safe=False,
@@ -70,12 +70,20 @@ setup(
             "coverage>=3.7.1",
             "PyHamcrest>=1.9.0",
             "pytest",
+            "pytest-cov",
+            "pytest-asyncio",
             "microcosm-metrics"
         ],
         "typehinting": [
             "types-pkg-resources",
             "types-requests",
             "types-setuptools"
+        ],
+        "lint": [
+            "flake8",
+            "flake8-print",
+            "flake8-logging-format",
+            "flake8-isort",
         ]
     }
 )

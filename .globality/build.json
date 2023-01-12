@@ -1,11 +1,20 @@
 {
   "params": {
-    "app_name": "example",
+    "docker": {
+      "docker_tag": "python:3.8-slim"
+    },
+    "entrypoint": {
+      "pre_typehinting_commands": [
+        "pip install .[typehinting]"
+      ]
+    },
+    "lib_name": "microcosm_fastapi",
     "name": "microcosm-fastapi",
     "pypi": {
       "repository": "pypi"
-    }
+    },
+    "test_command": "pytest"
   },
   "type": "python-library",
-  "version": "2022.31.0"
+  "version": "2022.47.1"
 }
