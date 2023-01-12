@@ -1,7 +1,7 @@
 {
   "params": {
     "docker": {
-      "docker_tag": "python:3.10-slim-bullseye"
+      "docker_tag": "python:3.8-slim"
     },
     "entrypoint": {
       "pre_typehinting_commands": [
