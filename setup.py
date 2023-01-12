@@ -70,12 +70,20 @@ setup(
             "coverage>=3.7.1",
             "PyHamcrest>=1.9.0",
             "pytest",
+            "pytest-cov",
+            "pytest-asyncio",
             "microcosm-metrics"
         ],
         "typehinting": [
             "types-pkg-resources",
             "types-requests",
             "types-setuptools"
+        ],
+        "lint": [
+            "flake8",
+            "flake8-print",
+            "flake8-logging-format",
+            "flake8-isort",
         ]
     }
 )
