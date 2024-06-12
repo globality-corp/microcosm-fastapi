@@ -8,13 +8,7 @@ from functools import partial
 from json import loads
 from json.decoder import JSONDecodeError
 from logging import getLogger
-from typing import (
-    Any,
-    Dict,
-    NamedTuple,
-    Optional,
-    Tuple,
-)
+from typing import Any, NamedTuple
 from uuid import UUID
 
 from fastapi import Request
@@ -76,13 +70,13 @@ class RequestInfo:
         self,
         options: AuditOptions,
         request: Request,
-        request_context: Dict[str, Any],
+        request_context: dict[str, Any],
         app_metadata: Metadata,
     ):
         self.options = options
         self.app_metadata = app_metadata
-        self.operation: Optional[str] = None
-        self.func: Optional[str] = None
+        self.operation: str | None = None
+        self.func: str | None = None
         self.method = request.method
         self.args = request.query_params
 
@@ -91,15 +85,15 @@ class RequestInfo:
         self.query = request.url.query
 
         self.request_context = request_context
-        self.timing: Dict[Any, Any] = dict()
+        self.timing: dict[Any, Any] = dict()
 
-        self.parsed_exception: Optional[ParsedException] = None
+        self.parsed_exception: ParsedException | None = None
         self.stack_trace = None
         self.request_body = None
         self.response_body = None
-        self.response_headers: Optional[MutableHeaders] = None
-        self.status_code: Optional[int] = None
-        self.success: Optional[bool] = None
+        self.response_headers: MutableHeaders | None = None
+        self.status_code: int | None = None
+        self.success: bool | None = None
 
     def to_dict(self) -> dict:
         dct = dict(operation=self.operation, func=self.func, method=self.method, **self.timing)
@@ -209,7 +203,7 @@ class RequestInfo:
             if parts[-1] != "Id":
                 continue
 
-            dct["{}_id".format(underscore(parts[1]))] = value
+            dct[f"{underscore(parts[1])}_id"] = value
 
     def set_operation_and_func_name(self, logging_info: LoggingInfo) -> None:
         """
@@ -220,7 +214,7 @@ class RequestInfo:
         self.operation = logging_info.operation_name
 
     @property
-    def content_length(self) -> Optional[int]:
+    def content_length(self) -> int | None:
         content_length = self.request.headers.get("Content-Length")
         if content_length is not None:
             try:
@@ -232,7 +226,7 @@ class RequestInfo:
 
     async def get_json(
         self,
-    ) -> Optional[Any]:
+    ) -> Any | None:
 
         data = None
         try:
@@ -242,7 +236,7 @@ class RequestInfo:
         return data
 
 
-async def parse_response(response: StreamingResponse) -> Tuple[Any, int, MutableHeaders]:
+async def parse_response(response: StreamingResponse) -> tuple[Any, int, MutableHeaders]:
     """
     Parse a FastAPI response into a body, a status code, and headers
 

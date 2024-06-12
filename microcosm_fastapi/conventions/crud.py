@@ -1,4 +1,4 @@
-from typing import Callable, Dict
+from collections.abc import Callable
 
 from fastapi.exceptions import FastAPIError
 
@@ -9,7 +9,7 @@ from microcosm_fastapi.operations import Operation
 def configure_crud(
     graph,
     namespace: Namespace,
-    mappings: Dict[Operation, Callable],
+    mappings: dict[Operation, Callable],
     response_model_exclude_none: bool = False,
 ):
     """

@@ -1,9 +1,4 @@
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-)
+from typing import Any
 
 from microcosm_fastapi.conventions.schemas import BaseSchema
 
@@ -13,27 +8,27 @@ class SubErrorSchema(BaseSchema):
 
 
 class ErrorContextSchema(BaseSchema):
-    errors: List[SubErrorSchema]
+    errors: list[SubErrorSchema]
 
 
 class ErrorSchema(BaseSchema):
     message: str
     code: int
     retryable: bool
-    context: Optional[ErrorContextSchema]
+    context: ErrorContextSchema | None
 
 
 class ParsedException:
     def __init__(self, error):
         self.error = error
 
-        self.context: Dict[Any, Any] = self.extract_context()
+        self.context: dict[Any, Any] = self.extract_context()
         self.retryable: bool = self.extract_retryable()
         self.error_message: str = self.extract_error_message()
         self.status_code: int = self.extract_status_code()
         self.include_stack_trace: bool = self.extract_include_stack_trace()
 
-    def extract_context(self) -> Dict[Any, Any]:
+    def extract_context(self) -> dict[Any, Any]:
         """
         Extract context from an error.
 

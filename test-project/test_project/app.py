@@ -24,8 +24,7 @@ def create_app(debug=False, testing=False, model_only=False):
         "sessionmaker",
         "postgres",
         "pizza_store",
-        "postgres_async",
-        "session_manager",
+        "sessionmaker",
         # Conventions
         "documentation_convention",
         "build_info_convention",

@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-fastapi"
-version = "0.1.11"
+version = "1.0.0"
 
 
 setup(
@@ -18,7 +18,7 @@ setup(
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=3.6",
+    python_requires=">=3.11",
     keywords="microcosm",
     install_requires=[
         "microcosm>=3.0.0",
@@ -33,14 +33,15 @@ setup(
         "sqlalchemy-utils",
         # @piercefreeman 02/16/2021 - required until we refactor async code
         # into microcosm-postgres and microcosm-pubsub
-        "microcosm-pubsub",
-        "microcosm-postgres[encryption]>=2.0.0",
+        "microcosm-pubsub>=3.0.0",
+        "microcosm-postgres[encryption]>=4.0.0",
         "asyncpg",
         "psycopg2-binary>=2.7.5",
         "makefun",
+        "pydantic<2.0.0",
+        "greenlet",
     ],
     setup_requires=[
-        "nose>=1.3.7",
     ],
     dependency_links=[
     ],
@@ -65,16 +66,17 @@ setup(
         ],
     },
     extras_require={
-        "metrics": "microcosm-metrics>=2.5.1",
+        "metrics": "microcosm-metrics>=3.0.0",
         "test": [
             "coverage>=3.7.1",
             "PyHamcrest>=1.9.0",
             "pytest",
             "pytest-cov",
             "pytest-asyncio",
-            "microcosm-metrics"
+            "microcosm-metrics>=3.0.0",
         ],
         "typehinting": [
+            "mypy",
             "types-pkg-resources",
             "types-requests",
             "types-setuptools"
@@ -82,7 +84,6 @@ setup(
         "lint": [
             "flake8",
             "flake8-print",
-            "flake8-logging-format",
             "flake8-isort",
         ]
     }

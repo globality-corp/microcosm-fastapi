@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -13,7 +12,7 @@ class EncryptableCRUDStoreAdapter(CRUDStoreAdapter):
     """
 
     async def _update_and_reencrypt(
-        self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None
+        self, identifier: UUID, body: BaseModel, session: AsyncSession | None = None
     ):
         """
         Support re-encryption by enforcing that every update triggers a

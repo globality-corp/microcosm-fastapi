@@ -3,8 +3,8 @@ Helper functions for pubsub daemons
 
 """
 from asyncio import get_event_loop
+from collections.abc import Callable
 from functools import partial
-from typing import Callable
 
 
 async def run_as_async(sync_fn: Callable, *args, **kwargs):

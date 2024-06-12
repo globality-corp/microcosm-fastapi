@@ -1,5 +1,3 @@
-from typing import Optional
-
 from microcosm_postgres.encryption.models import decrypt_instance
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,14 +20,14 @@ class EncryptableStoreAsync(StoreAsync):
         super().__init__(graph, model_class, **kwargs)
         self.encrypted_store = encrypted_store
 
-    async def delete(self, identifier, session: Optional[AsyncSession] = None):
+    async def delete(self, identifier, session: AsyncSession | None = None):
         instance = await self.retrieve(identifier, session=session)
         result = super().delete(identifier, session=session)
         if instance.encrypted_identifier:
             await self.encrypted_store.delete(instance.encrypted_identifier, session=session)
         return result
 
-    async def update(self, identifier, new_instance, session: Optional[AsyncSession] = None):
+    async def update(self, identifier, new_instance, session: AsyncSession | None = None):
         """
         Update an encryptable field, make sure that:
         * We won't change the encryption context key
@@ -84,7 +82,7 @@ class EncryptableStoreAsync(StoreAsync):
         values[self.model_class.__encryption_context_key__] = encryption_context_key
         return self.model_class(**values)
 
-    async def search_encrypted_ids(self, context_id, session: Optional[AsyncSession] = None):
+    async def search_encrypted_ids(self, context_id, session: AsyncSession | None = None):
         async with self.with_maybe_session(session) as session:
             query = select(self.model_class.id).where(
                 getattr(self.model_class, self.model_class.__encrypted_identifier__)
@@ -92,6 +90,6 @@ class EncryptableStoreAsync(StoreAsync):
                 getattr(self.model_class, self.model_class.__encryption_context_key__)
                 == context_id,
             )
-            results = await session.execute(query)
+            results = await session.execute(query)   # type: ignore
 
         return [response[0] for response in results.all()]

@@ -1,5 +1,5 @@
 from json import dumps, loads
-from typing import Any, Dict
+from typing import Any
 
 from microcosm.loaders.compose import PartitioningLoader
 
@@ -13,7 +13,7 @@ class Config:
         self.graph = graph
         self.name = graph.metadata.name
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Encode the name, the status of all checks, and the current overall status.
         """

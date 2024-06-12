@@ -1,6 +1,5 @@
 import asyncio
 from itertools import chain
-from typing import Dict
 
 from microcosm_fastapi.conventions.build_info.models import BuildInfo
 from microcosm_fastapi.conventions.health.resources import HealthResultSchema, HealthSchema
@@ -73,15 +72,15 @@ class Health:
             checks = self.checks.items()
 
         # evaluate checks
-        check_results: Dict[str, HealthResult] = {
+        check_results: dict[str, HealthResult] = {
             key: await HealthResult.evaluate(func, self.graph)
             for key, func in checks
         }
 
-        health = HealthSchema(
+        health = HealthSchema(   # type: ignore
             # return the service name helps for routing debugging
             name=self.name,
-            ok=all(check_results.values()),
+            ok=all(check_results.values()),   # type: ignore
         )
 
         if checks:

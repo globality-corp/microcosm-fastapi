@@ -1,5 +1,4 @@
 from copy import copy
-from typing import Optional
 from uuid import UUID, uuid4
 
 from microcosm_postgres.errors import ModelNotFoundError
@@ -41,8 +40,8 @@ class PersonSchema(NewPersonSchema):
 
 
 class UpdatePersonSchema(BaseSchema):
-    first_name: Optional[str]
-    last_name: Optional[str]
+    first_name: str | None
+    last_name: str | None
 
 
 async def person_create(body: NewPersonSchema) -> PersonSchema:

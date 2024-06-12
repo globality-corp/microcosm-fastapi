@@ -12,7 +12,9 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        "microcosm-postgres"
+        "microcosm-postgres>=4.0.0",
+        "greenlet",
+        "SQLAlchemy[asyncio]>=1.4.0",
     ],
     entry_points={
         "console_scripts": [

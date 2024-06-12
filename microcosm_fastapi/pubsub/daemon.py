@@ -8,7 +8,7 @@ class ConsumerDaemonAsync(ConsumerDaemon):
         Lambda Function method that runs only once
         """
         self.initialize()
-        self.graph.logger.info("Local starting daemon {}".format(self.name))
+        self.graph.logger.info(f"Local starting daemon {self.name}")
         with self.graph.error_policy:
             self.graph.sqs_message_dispatcher_async.handle_batch(self.bound_handlers)
 

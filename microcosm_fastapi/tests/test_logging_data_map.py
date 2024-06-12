@@ -4,7 +4,7 @@ from microcosm_fastapi.operations import Operation
 
 
 class TestLoggingDataMap:
-    def setup(self):
+    def setup_method(self):
 
         self.logging_data_map = LoggingDataMap()
         self.ns_pizza = Namespace(

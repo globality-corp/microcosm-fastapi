@@ -1,5 +1,6 @@
 import traceback
-from typing import Any, Awaitable, Callable
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
@@ -32,4 +33,4 @@ def configure_global_exception_handler(graph: ObjectGraph) -> None:
     Configure global exception middleware - i.e this middleware will catch all exceptions
 
     """
-    graph.app.middleware("http")(global_exception_handler)
+    graph.app.middleware("http")(global_exception_handler)   # type: ignore
