@@ -6,7 +6,7 @@ from test_project.daemons.pizza_daemon.main import PizzaDaemon
 
 
 class TestDaemon:
-    def setup(self):
+    def setup_method(self):
         self.graph = PizzaDaemon.create_for_testing().graph
         self.handler = self.graph.pizza_daemon_handler
 

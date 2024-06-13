@@ -58,10 +58,10 @@ def configure_landing(graph):  # noqa: C901
             conf_string = []
         for key, value in config.items():
             if isinstance(value, dict):
-                get_env_file_commands(value, "{}__{}".format(conf_key, key), conf_string)
+                get_env_file_commands(value, f"{conf_key}__{key}", conf_string)
             else:
                 conf_string.append(
-                    "export {}__{}='{}'".format(conf_key.upper(), key.upper(), value)
+                    f"export {conf_key.upper()}__{key.upper()}='{value}'"
                 )
         return conf_string
 
@@ -74,7 +74,7 @@ def configure_landing(graph):  # noqa: C901
 
         # add links for each swagger version
         for swagger_version in swagger_versions:
-            links["swagger {}".format(swagger_version)] = "api/{}/swagger".format(swagger_version)
+            links[f"swagger {swagger_version}"] = f"api/{swagger_version}/swagger"
 
         # add link to home page
         if hasattr(properties, "url"):

@@ -1,5 +1,5 @@
+from collections.abc import Callable
 from http import HTTPStatus
-from typing import Callable, Optional
 from uuid import UUID
 
 from fastapi import Response
@@ -18,29 +18,29 @@ class CRUDStoreAdapter:
         self.graph = graph
         self.store = store
 
-    async def _create(self, body: BaseModel, session: Optional[AsyncSession] = None):
+    async def _create(self, body: BaseModel, session: AsyncSession | None = None):
         model = self.store.model_class(**body.dict())
         return await self.store.create(model, session=session)
 
-    async def _delete(self, identifier: UUID, session: Optional[AsyncSession] = None):
+    async def _delete(self, identifier: UUID, session: AsyncSession | None = None):
         await self.store.delete(identifier, session=session)
         return Response(status_code=HTTPStatus.NO_CONTENT.value)
 
     async def _replace(
-        self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None
+        self, identifier: UUID, body: BaseModel, session: AsyncSession | None = None
     ):
         model = self.store.model_class(id=identifier, **body.dict())
         return await self.store.replace(identifier, model, session=session)
 
-    async def _retrieve(self, identifier: UUID, session: Optional[AsyncSession] = None):
+    async def _retrieve(self, identifier: UUID, session: AsyncSession | None = None):
         return await self.store.retrieve(identifier, session=session)
 
     async def _search(
         self,
         offset: int,
         limit: int,
-        link_provider: Optional[Callable] = None,
-        session: Optional[AsyncSession] = None,
+        link_provider: Callable | None = None,
+        session: AsyncSession | None = None,
         **kwargs,
     ):
         """
@@ -70,16 +70,16 @@ class CRUDStoreAdapter:
 
     async def _count(
         self,
-        offset: Optional[int] = None,
-        limit: Optional[int] = None,
-        session: Optional[AsyncSession] = None,
+        offset: int | None = None,
+        limit: int | None = None,
+        session: AsyncSession | None = None,
         **kwargs,
     ):
         count = await self.store.count(session=session, **kwargs)
         return count
 
     async def _update(
-        self, identifier: UUID, body: BaseModel, session: Optional[AsyncSession] = None
+        self, identifier: UUID, body: BaseModel, session: AsyncSession | None = None
     ):
         model = self.store.model_class(id=identifier, **body.dict())
         return await self.store.update(identifier, model, session=session)

@@ -25,19 +25,20 @@
 
 if [ "$1" = "test" ]; then
    # Install standard test dependencies; YMMV
-   pip --quiet install \
-       .[test] pytest pytest-cov PyHamcrest
-   pytest
+   pip --quiet install -e .\[test\]
+   cd test-project
+   pip --quiet install -e .
+   pytest test_project
+   cd ../
+   pip --quiet install -e .\[test\]
+   pytest ${NAME}
 elif [ "$1" = "lint" ]; then
    # Install standard linting dependencies; YMMV
-   pip --quiet install \
-       .[lint]
-   exec flake8 ${NAME}
+   pip --quiet install .\[lint\]
+   flake8 ${NAME}
 elif [ "$1" = "typehinting" ]; then
-   pip install .[typehinting]
-   # Install standard type-linting dependencies
-   pip --quiet install mypy
-   exec mypy ${NAME} --ignore-missing-imports
+   pip --quiet install .\[typehinting\]
+   mypy ${NAME}
 else
    echo "Cannot execute $@"
    exit 3

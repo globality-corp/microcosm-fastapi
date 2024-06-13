@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-from typing import Optional
 
 from microcosm_postgres.diff import Version
 from microcosm_postgres.errors import (
@@ -89,7 +88,7 @@ class StoreAsync:
 
     @asynccontextmanager
     async def with_maybe_transactional_flushing_session(
-        self, session: Optional[AsyncSession] = None
+        self, session: AsyncSession | None = None
     ):
         if session:
             # if providing a session then transactions should be managed outside
@@ -104,7 +103,7 @@ class StoreAsync:
                         yield session
 
     @asynccontextmanager
-    async def with_maybe_session(self, session: Optional[AsyncSession] = None):
+    async def with_maybe_session(self, session: AsyncSession | None = None):
         if session:
             yield session
 
@@ -113,19 +112,19 @@ class StoreAsync:
                 yield session
 
     @postgres_metric_timing(action="create")
-    async def create(self, instance, session: Optional[AsyncSession] = None):
+    async def create(self, instance, session: AsyncSession | None = None):
         """
         Create a new model instance.
         """
         async with self.with_maybe_transactional_flushing_session(session) as session:
             if instance.id is None:
                 instance.id = self.new_object_id()
-            session.add(instance)
+            session.add(instance)   # type: ignore
 
         return instance
 
     @postgres_metric_timing(action="retrieve")
-    async def retrieve(self, identifier, *criterion, session: Optional[AsyncSession] = None):
+    async def retrieve(self, identifier, *criterion, session: AsyncSession | None = None):
         """
         Retrieve a model by primary key and zero or more other criteria.
         :raises `NotFound` if there is no existing model
@@ -133,21 +132,21 @@ class StoreAsync:
         return await self._retrieve(self.model_class.id == identifier, *criterion, session=session)
 
     @postgres_metric_timing(action="update")
-    async def update(self, identifier, new_instance, session: Optional[AsyncSession] = None):
+    async def update(self, identifier, new_instance, session: AsyncSession | None = None):
         """
         Update an existing model with a new one.
         :raises `ModelNotFoundError` if there is no existing model
         """
         async with self.with_maybe_transactional_flushing_session(session) as session:
             instance = await self.retrieve(identifier, session=session)
-            await self.merge(instance, new_instance, session)
+            await self.merge(instance, new_instance, session)   # type: ignore
             instance.updated_at = instance.new_timestamp()
 
         return instance
 
     @postgres_metric_timing(action="update_with_diff")
     async def update_with_diff(
-        self, identifier, new_instance, session: Optional[AsyncSession] = None
+        self, identifier, new_instance, session: AsyncSession | None = None
     ):
         """
         Update an existing model with a new one.
@@ -156,13 +155,13 @@ class StoreAsync:
         async with self.with_maybe_transactional_flushing_session(session) as session:
             instance = await self.retrieve(identifier, session=session)
             before = Version(instance)
-            await self.merge(instance, new_instance, session)
+            await self.merge(instance, new_instance, session)   # type: ignore
             instance.updated_at = instance.new_timestamp()
             after = Version(instance)
 
         return instance, before - after
 
-    async def replace(self, identifier, new_instance, session: Optional[AsyncSession] = None):
+    async def replace(self, identifier, new_instance, session: AsyncSession | None = None):
         """
         Create or update a model.
         """
@@ -174,7 +173,7 @@ class StoreAsync:
             return await self.create(new_instance)
 
     @postgres_metric_timing(action="delete")
-    async def delete(self, identifier, session: Optional[AsyncSession] = None):
+    async def delete(self, identifier, session: AsyncSession | None = None):
         """
         Delete a model by primary key.
         :raises `ModelNotFoundError` if the row cannot be deleted.
@@ -182,7 +181,7 @@ class StoreAsync:
         return await self._delete(self.model_class.id == identifier)
 
     @postgres_metric_timing(action="count")
-    async def count(self, *criterion, session: Optional[AsyncSession] = None, **kwargs):
+    async def count(self, *criterion, session: AsyncSession | None = None, **kwargs):
         """
         Count the number of models matching some criterion.
         """
@@ -192,7 +191,7 @@ class StoreAsync:
         return await self.get_first(query, session=session)
 
     @postgres_metric_timing(action="search")
-    async def search(self, *criterion, session: Optional[AsyncSession] = None, **kwargs):
+    async def search(self, *criterion, session: AsyncSession | None = None, **kwargs):
         """
         Return the list of models matching some criterion.
         :param offset: pagination offset, if any
@@ -208,7 +207,7 @@ class StoreAsync:
         return await self.get_all(query, session=session)
 
     @postgres_metric_timing(action="search_first")
-    async def search_first(self, *criterion, session: Optional[AsyncSession] = None, **kwargs):
+    async def search_first(self, *criterion, session: AsyncSession | None = None, **kwargs):
         """
         Returns the first match based on criteria or None.
         """
@@ -220,21 +219,21 @@ class StoreAsync:
 
         return await self.get_first(query, session=session)
 
-    async def expunge(self, instance, session: Optional[AsyncSession] = None):
+    async def expunge(self, instance, session: AsyncSession | None = None):
         async with self.with_maybe_session(session) as session:
-            return session.expunge(instance)
+            return session.expunge(instance)   # type: ignore
 
     async def merge(self, instance, new_instance, session: AsyncSession):
         await session.merge(new_instance)
 
-    async def get_all(self, query, session: Optional[AsyncSession] = None):
+    async def get_all(self, query, session: AsyncSession | None = None):
         async with self.with_maybe_session(session) as session:
-            results = await session.execute(query)
+            results = await session.execute(query)   # type: ignore
             return [response[0] for response in results.all()]
 
-    async def get_first(self, query, session: Optional[AsyncSession] = None):
+    async def get_first(self, query, session: AsyncSession | None = None):
         async with self.with_maybe_session(session) as session:
-            results = await session.execute(query)
+            results = await session.execute(query)   # type: ignore
             first_result = results.first()
 
         if not first_result:
@@ -275,7 +274,7 @@ class StoreAsync:
 
         return query
 
-    async def _retrieve(self, *criterion, session: Optional[AsyncSession] = None):
+    async def _retrieve(self, *criterion, session: AsyncSession | None = None):
         """
         Retrieve a model by some criteria.
         :raises `ModelNotFoundError` if the row cannot be deleted.
@@ -283,7 +282,7 @@ class StoreAsync:
         try:
             query = self._query(*criterion)
             async with self.with_maybe_session(session) as session:
-                results = await session.execute(query)
+                results = await session.execute(query)   # type: ignore
                 return results.one()[0]
 
         except NoResultFound as error:
@@ -294,13 +293,13 @@ class StoreAsync:
                 error,
             )
 
-    async def _delete(self, *criterion, session: Optional[AsyncSession] = None):
+    async def _delete(self, *criterion, session: AsyncSession | None = None):
         """
         Delete a model by some criterion.
         """
         query = self._query(*criterion)
         async with self.with_maybe_transactional_flushing_session(session) as session:
-            count = len([await session.delete(row[0]) for row in await session.execute(query)])
+            count = len([await session.delete(row[0]) for row in await session.execute(query)])   # type: ignore
 
         if count == 0:
             raise ModelNotFoundError

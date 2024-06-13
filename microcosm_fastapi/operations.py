@@ -1,6 +1,6 @@
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum, unique
-from typing import Callable
 
 from microcosm_fastapi.naming import (
     collection_path_for,

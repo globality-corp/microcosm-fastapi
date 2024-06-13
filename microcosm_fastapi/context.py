@@ -1,5 +1,3 @@
-from typing import Dict
-
 from fastapi import Request
 from microcosm.api import defaults
 
@@ -8,7 +6,7 @@ X_REQUEST = "X-Request"
 HEADER_PREFIXES = [X_REQUEST]
 
 
-def capitalise_context(dct: Dict[str, str]):
+def capitalise_context(dct: dict[str, str]):
     # do conversion to upper case
     # {"x-request-id": "1234"} -> {"X-Request-Id": "1234"}
     return {

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import Request
 from microcosm_logging.decorators import logger
@@ -12,9 +12,9 @@ from microcosm_fastapi.operations import OperationInfo, OperationType
 @dataclass
 class Namespace:
     subject: Any
-    version: Optional[str] = None
+    version: str | None = None
     prefix: str = "api"
-    object_: Optional[Any] = None
+    object_: Any | None = None
 
     @property
     def path(self) -> str:

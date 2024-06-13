@@ -3,7 +3,7 @@ Used to store information that useful for audit logging purposes
 
 """
 from dataclasses import dataclass
-from typing import Any, Optional, Tuple
+from typing import Any
 
 from microcosm_fastapi.namespaces import Namespace
 from microcosm_fastapi.operations import OperationInfo
@@ -11,8 +11,8 @@ from microcosm_fastapi.operations import OperationInfo
 
 @dataclass(frozen=True)
 class LoggingInfo:
-    operation_name: Optional[str] = None
-    function_name: Optional[str] = None
+    operation_name: str | None = None
+    function_name: str | None = None
 
     def is_empty(self) -> bool:
         return self.operation_name is None and self.function_name is None
@@ -37,7 +37,7 @@ class LoggingDataMap:
 
     def _generate_key_from_path_url(
         self, path: str, operation_method: str
-    ) -> Optional[Tuple[str, str, Optional[str], str, Optional[str]]]:
+    ) -> tuple[str, str, str | None, str, str | None] | None:
         # single subject -> key = ("v1", "pizza", None, "GET", None)
         # subject + object -> key = ("v1", "pizza", "order", "GET", None)
 
@@ -65,7 +65,7 @@ class LoggingDataMap:
 
     def _generate_key_from_namespace_and_operation(
         self, namespace: Namespace, operation: OperationInfo
-    ) -> Tuple[Optional[str], Any, Any, str, Optional[str]]:
+    ) -> tuple[str | None, Any, Any, str, str | None]:
         # single subject -> key = ("v1", "pizza", None, "GET", None)
         # subject + object -> key = ("v1", "pizza", "order", "GET", None)
         optional_identifier = self._get_optional_identifier(operation)
@@ -77,7 +77,7 @@ class LoggingDataMap:
             optional_identifier,
         )
 
-    def _get_optional_identifier(self, operation: OperationInfo) -> Optional[str]:
+    def _get_optional_identifier(self, operation: OperationInfo) -> str | None:
         """
         There is a potential clash between search and retrieve so we use an extra identifier
         inside to distinguish between these two methods

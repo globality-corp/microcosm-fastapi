@@ -1,11 +1,5 @@
 from enum import Enum
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Type,
-)
+from typing import Any
 
 from pydantic import AnyHttpUrl, BaseModel as BaseModel, Field
 
@@ -33,7 +27,7 @@ class EnhancedBaseModel(BaseModel):
         # Because it is more common to want to use enum names, consumers of the enum
         # base class that don't want to use enum names have to explicitly
         # put `use_enum_names` = False in their cls.Config.
-        if isinstance(value, Enum) and getattr(cls.Config, "use_enum_names", True):
+        if isinstance(value, Enum) and getattr(cls.Config, "use_enum_names", True):  # type: ignore
             return value.name
 
         return super()._get_value(
@@ -61,13 +55,13 @@ class BaseSchema(EnhancedBaseModel):
         arbitrary_types_allowed = True
 
         @staticmethod
-        def schema_extra(schema: Dict[str, Any], model: Type["BaseSchema"]) -> None:
+        def schema_extra(schema: dict[str, Any], model: type["BaseSchema"]) -> None:
             """
             Pydantic hook to post process the json schema output.
 
             """
-            for field_name, model_field in model.__fields__.items():
-                if hasattr(model.__config__, "alias_generator"):
+            for field_name, model_field in model.__fields__.items():   # type: ignore
+                if hasattr(model.__config__, "alias_generator"):   # type: ignore
                     field_name = model.__config__.alias_generator(field_name)  # type: ignore
 
                 if model_field.type_ == float:
@@ -81,9 +75,9 @@ class HrefSchema(EnhancedBaseModel):
 
 
 class LinksSchema(EnhancedBaseModel):
-    next: Optional[HrefSchema]
+    next: HrefSchema | None
     self: HrefSchema
-    prev: Optional[HrefSchema]
+    prev: HrefSchema | None
 
     def dict(self, *args, exclude_none=True, **kwargs):
         # Exclude next/prev key if not present
@@ -92,9 +86,9 @@ class LinksSchema(EnhancedBaseModel):
 
 def SearchSchema(item_class):
     class _SearchSchema(EnhancedBaseModel):
-        links: Optional[LinksSchema] = Field(alias="_links")
+        links: LinksSchema | None = Field(alias="_links")
         count: int
-        items: List[item_class]
+        items: list[item_class]
         offset: int
         limit: int
 

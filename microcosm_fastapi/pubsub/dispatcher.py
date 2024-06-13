@@ -1,6 +1,6 @@
 from asyncio import gather
 from time import time
-from typing import Any, List
+from typing import Any
 
 from microcosm.api import defaults, typed
 from microcosm_logging.decorators import logger
@@ -32,7 +32,7 @@ class SQSMessageDispatcherAsync(SQSMessageDispatcher):
             graph.config.sqs_message_dispatcher_async.message_max_concurrent_operations
         )
 
-    def handle_batch(self, bound_handlers) -> List[MessageHandlingResultAsync]:
+    def handle_batch(self, bound_handlers) -> list[MessageHandlingResultAsync]:
         """
         Send a batch of messages to a function.
         """
@@ -116,7 +116,7 @@ class SQSMessageDispatcherAsync(SQSMessageDispatcher):
             instance.resolve(message)
             return instance
 
-    def iter_batch(self, batch: List[Any], k: int):
+    def iter_batch(self, batch: list[Any], k: int):
         for i in range(0, len(batch), k):
             yield batch[i: i + k]
 
