@@ -1,13 +1,13 @@
 {
   "params": {
+    "database": "postgres",
     "lib_name": "microcosm_fastapi",
     "name": "microcosm-fastapi",
-    "database": "postgres",
     "pypi": {
       "repository": "pypi"
     },
     "test_command": "pytest"
   },
   "type": "python-library",
-  "version": "2024.52.0"
+  "version": "2024.53.0"
 }
